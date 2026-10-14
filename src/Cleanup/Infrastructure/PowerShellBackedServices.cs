@@ -152,6 +152,100 @@ public sealed class AppxService(IPowerShellRunner runner) : IAppxService
     }
 }
 
+/// <summary>
+/// Edge e OneDrive pelos scripts fixos de <see cref="PowerShellCalls"/>. Os scripts devolvem { found, exitCode, installed }
+/// e só falam inglês; as falhas que chegam ao usuário são montadas aqui, já traduzidas.
+/// </summary>
+/// <param name="installRunner">Executor usado na reinstalação, que pode baixar o programa (winget) e precisa de mais tempo.</param>
+public sealed class ProgramService(IPowerShellRunner runner, IPowerShellRunner? installRunner = null) : IProgramService
+{
+    /// <summary>Tempo máximo da reinstalação: o winget pode precisar baixar o instalador inteiro.</summary>
+    public static readonly TimeSpan InstallTimeout = TimeSpan.FromMinutes(15);
+
+    private readonly IPowerShellRunner _installRunner = installRunner ?? runner;
+
+    public async Task<bool> IsInstalledAsync(ManagedProgram program, CancellationToken cancellationToken)
+    {
+        var json = PowerShellExtensions.ParseObject(
+            await runner.RunOrThrowAsync(PowerShellCalls.GetProgram(program), cancellationToken).ConfigureAwait(false),
+            Query(program));
+
+        return json.GetBool("installed");
+    }
+
+    public async Task UninstallAsync(ManagedProgram program, CancellationToken cancellationToken)
+    {
+        var outcome = await RunAsync(runner, PowerShellCalls.UninstallProgram(program), program, cancellationToken).ConfigureAwait(false);
+        var name = ManagedPrograms.DisplayName(program);
+
+        if (!outcome.Found)
+        {
+            throw new InvalidOperationException(CoreText.Format("Program.UninstallerNotFound", name));
+        }
+
+        if (program == ManagedProgram.Edge)
+        {
+            // Fora das regiões em que a Microsoft libera a remoção, o setup.exe recusa (código diferente de zero) ou
+            // termina sem remover nada. Não há plano B: nenhum truque de registro para contornar a trava.
+            if (outcome.ExitCode != 0 || outcome.Installed)
+            {
+                throw new InvalidOperationException(CoreText.Format("Program.EdgeRemovalRefused", ExitCodeText(outcome.ExitCode)));
+            }
+
+            return;
+        }
+
+        // Código zero com o programa ainda presente é apontado pela verificação do engine.
+        if (outcome.ExitCode != 0)
+        {
+            throw new InvalidOperationException(CoreText.Format("Program.UninstallFailed", name, ExitCodeText(outcome.ExitCode)));
+        }
+    }
+
+    public async Task ReinstallAsync(ManagedProgram program, CancellationToken cancellationToken)
+    {
+        var outcome = await RunAsync(_installRunner, PowerShellCalls.ReinstallProgram(program), program, cancellationToken).ConfigureAwait(false);
+
+        // O que vale é o programa estar de volta (o winget, por exemplo, devolve código diferente de zero quando
+        // não há nada a atualizar).
+        if (outcome.Installed)
+        {
+            return;
+        }
+
+        if (!outcome.Found)
+        {
+            throw new InvalidOperationException(program == ManagedProgram.Edge
+                ? CoreText.Get("Program.EdgeInstallerUnavailable")
+                : CoreText.Get("Program.OneDriveInstallerUnavailable"));
+        }
+
+        if (outcome.ExitCode != 0)
+        {
+            throw new InvalidOperationException(
+                CoreText.Format("Program.ReinstallFailed", ManagedPrograms.DisplayName(program), ExitCodeText(outcome.ExitCode)));
+        }
+    }
+
+    private sealed record Outcome(bool Found, int? ExitCode, bool Installed);
+
+    private static async Task<Outcome> RunAsync(IPowerShellRunner runner, PowerShellCall call, ManagedProgram program, CancellationToken ct)
+    {
+        var json = PowerShellExtensions.ParseObject(await runner.RunOrThrowAsync(call, ct).ConfigureAwait(false), Query(program));
+
+        int? exitCode = json.TryGetProperty("exitCode", out var code) && code.ValueKind == JsonValueKind.Number && code.TryGetInt32(out var value)
+            ? value
+            : null;
+
+        return new Outcome(json.GetBool("found"), exitCode, json.GetBool("installed"));
+    }
+
+    private static string Query(ManagedProgram program) => CoreText.Format("Query.Program", ManagedPrograms.DisplayName(program));
+
+    private static string ExitCodeText(int? exitCode) =>
+        exitCode?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "?";
+}
+
 public sealed class RestorePointService(IPowerShellRunner runner) : IRestorePointService
 {
     public async Task<bool> IsProtectionEnabledAsync(CancellationToken cancellationToken)
