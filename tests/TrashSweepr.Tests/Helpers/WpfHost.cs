@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Globalization;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -37,11 +38,37 @@ internal static class WpfHost
         return dispatcher!;
     }
 
-    public static Task RunAsync(Action work) => Host.Value.InvokeAsync(work).Task;
+    // A thread do WPF é compartilhada: cada chamada roda na língua do teste que a fez (ver TestCulture.Use).
+    public static Task RunAsync(Action work) => RunAsync(() => { work(); return true; });
 
-    public static Task<T> RunAsync<T>(Func<T> work) => Host.Value.InvokeAsync(work).Task;
+    public static Task<T> RunAsync<T>(Func<T> work)
+    {
+        var (culture, uiCulture) = (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
+        return Host.Value.InvokeAsync(() =>
+        {
+            var previous = (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
+            (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture) = (culture, uiCulture);
+            try
+            {
+                return work();
+            }
+            finally
+            {
+                (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture) = previous;
+            }
+        }).Task;
+    }
 
-    public static Task RunAsync(Func<Task> work) => Host.Value.InvokeAsync(work).Task.Unwrap();
+    public static Task RunAsync(Func<Task> work)
+    {
+        var (culture, uiCulture) = (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture);
+        return Host.Value.InvokeAsync(() =>
+        {
+            // O código assíncrono herda a língua daqui pelo contexto de execução.
+            (CultureInfo.CurrentCulture, CultureInfo.CurrentUICulture) = (culture, uiCulture);
+            return work();
+        }).Task.Unwrap();
+    }
 
     /// <summary>Deixa o WPF processar bindings e layout pendentes.</summary>
     public static void Flush() => Dispatcher.CurrentDispatcher.Invoke(() => { }, DispatcherPriority.ApplicationIdle);
