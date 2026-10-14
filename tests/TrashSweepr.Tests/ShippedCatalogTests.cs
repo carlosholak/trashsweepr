@@ -41,6 +41,22 @@ public class ShippedCatalogTests
     }
 
     [Fact]
+    public void Removing_copilot_takes_only_the_store_app_and_is_part_of_the_light_profile()
+    {
+        var tweak = Catalog.Find("apps.copilot");
+        Assert.NotNull(tweak);
+        Assert.Equal(RiskLevel.Safe, tweak.Risk);
+        Assert.False(tweak.OptIn);
+
+        // Só o app da Store: o componente do sistema (Microsoft.Windows.Ai.Copilot.Provider) fica para o ajuste por política.
+        var removed = Assert.Single(tweak.Apply.OfType<AppxAction>());
+        Assert.Equal(("Microsoft.Copilot", AppxOperation.Remove), (removed.PackageName, removed.Operation));
+
+        var light = Catalog.Profiles.Single(p => p.Id == "light");
+        Assert.Contains(ProfileResolver.Resolve(Catalog, light, 26100), t => t.Id == "apps.copilot");
+    }
+
+    [Fact]
     public void Ids_are_unique()
     {
         Assert.Equal(Catalog.Tweaks.Count, Catalog.Tweaks.Select(t => t.Id).Distinct().Count());
