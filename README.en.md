@@ -105,9 +105,10 @@ Messing with Windows is scary, and rightly so. That's why:
 - **Moderate and advanced tweaks** show their risk warning and ask you to confirm you've read it.
 - **Undo** works per tweak or all at once, newest first. If a tweak was already applied before the app came along,
   it goes back to the Windows default.
-- **Some things are never touched**: Edge, Microsoft Store, Windows Update, Defender, networking, audio and system
-  components. That list lives in the code (`CriticalComponents`), not in the catalog, so no JSON file can change it.
-- **The catalog carries no scripts.** The JSON files describe actions (registry, service, task, app); the PowerShell
+- **Some things are never touched**: Microsoft Store, Windows Update, Defender, networking, audio, system components,
+  WebView2 and Edge Update. Edge can only be removed by the optional **Advanced** tweak "Remove Microsoft Edge", which
+  uses Edge's own uninstaller; no other action touches it. That list lives in the code (`CriticalComponents`), not in the catalog, so no JSON file can change it.
+- **The catalog carries no scripts.** The JSON files describe actions (registry, service, task, app, program); the PowerShell
   scripts are fixed in the app, and names go in as validated arguments, never pasted into the command text.
 
 Everything is logged to `%ProgramData%\trashsweepr\limpeza\logs`, and the backups go to
@@ -121,6 +122,11 @@ straight to the same section.
 **About removing apps:** removal applies to your user only (no `-AllUsers`, no deprovisioning). The package files
 usually stay on disk, and "Undo" registers the app again. If Windows has already deleted those files, the app tells
 you, and the way back is reinstalling from the Microsoft Store.
+
+**About OneDrive and Edge:** both are removed with their own official uninstallers, in optional tweaks (OneDrive is
+Moderate, Edge is Advanced). Microsoft only allows Edge to be fully removed in some regions (the European Economic
+Area); elsewhere Windows refuses and the app tells you nothing was changed. "Undo" reinstalls OneDrive with the
+installer that ships with Windows, and Edge with winget (needs internet).
 
 ## To build:
 
