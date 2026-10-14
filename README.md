@@ -1,9 +1,11 @@
 # trashsweepr
 
+[Read in English](README.en.md)
+
 Um app para Windows que responde duas perguntas: **"o que está enchendo meu disco?"** e **"como tiro o excesso
 do Windows 11 sem quebrar nada?"**.
 
-![Seção Disco](screenshot.png)
+![Seção Disco](screenshot-disk.png)
 
 ## Por que mais um analisador de disco
 
@@ -24,11 +26,16 @@ Pegue o `.zip` mais recente em [Releases](https://github.com/carlosholak/trashsw
 Também dá para abrir pela linha de comando:
 
 ```
-trashsweepr.exe [pasta] [--aba recriavel|mudancas|maiores] [--limpeza]
+trashsweepr.exe [pasta] [--tab recoverable|changes|largest] [--cleanup]
 ```
 
-Passar uma pasta já começa a varredura (arrastar a pasta sobre o `.exe` faz o mesmo), e `--limpeza` abre direto
-na segunda seção.
+Passar uma pasta já começa a varredura (arrastar a pasta sobre o `.exe` faz o mesmo), e `--cleanup` abre direto
+na segunda seção. Os nomes antigos (`--aba recriavel|mudancas|maiores` e `--limpeza`) continuam funcionando.
+
+### Idioma
+
+O app aparece em português quando o Windows está em português e em inglês em qualquer outro idioma. Não há
+opção para trocar: ele segue o idioma de exibição do Windows (Configurações > Hora e idioma > Idioma e região).
 
 ## Disco
 
@@ -74,7 +81,7 @@ desde então contam como inalterados.
 
 ## Limpeza do Windows
 
-![Seção Limpeza do Windows (dados de exemplo)](screenshot-limpeza.png)
+![Seção Limpeza do Windows (dados de exemplo)](screenshot-cleanup.png)
 
 Aqui fica uma lista de ajustes ("tweaks"): remover apps que vêm de fábrica, desligar telemetria, tirar anúncios
 do menu Iniciar e coisas do tipo. Cada um diz o que faz, qual o risco (**Seguro**, **Moderado** ou **Avançado**)
@@ -103,6 +110,7 @@ Mexer no Windows dá medo, com razão. Por isso:
   são fixos no app e os nomes entram como argumentos validados, nunca colados no texto do comando.
 
 Tudo fica registrado em `%ProgramData%\trashsweepr\limpeza\logs`, e os backups em `%ProgramData%\trashsweepr\limpeza\backups`.
+A pasta continua com o nome antigo, `limpeza`, para o "Desfazer" seguir achando os backups de versões anteriores.
 
 O app abre sem pedir administrador, porque o mapa do disco não precisa. Na Limpeza você pode ver e simular à vontade;
 na hora de aplicar ou desfazer, ele oferece **Reabrir como administrador** e volta direto para a mesma seção.
@@ -121,21 +129,25 @@ dotnet test trashsweepr.sln
 dotnet publish src/trashsweepr/trashsweepr.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish
 ```
 
-Os testes usam um sistema falso, então nenhum ajuste de verdade é executado. Três variáveis de ambiente ligam testes extras:
+Os testes usam um sistema falso, então nenhum ajuste de verdade é executado. Algumas variáveis de ambiente mudam os testes:
 
 - `TRASHSWEEPR_UI_SNAPSHOT_DIR=<pasta>` salva PNGs da interface renderizada.
 - `TRASHSWEEPR_READONLY_SMOKE=1` roda a detecção e a simulação no seu Windows, só lendo.
-- `TRASHSWEEPR_INTEGRATION=1` testa o acesso ao registro numa chave temporária (`HKCU\Software\LimpezaTests`), que é apagada no final.
+- `TRASHSWEEPR_TEST_CULTURE=en-US` roda os testes em outra língua (o padrão é `pt-BR`, seja qual for a do Windows).
+- `TRASHSWEEPR_INTEGRATION=1` testa o acesso ao registro numa chave temporária (`HKCU\Software\CleanupTests`), que é apagada no final.
+- `TRASHSWEEPR_LANG=en-US` (ou `pt-BR`) abre o próprio app em outra língua, para testar e tirar capturas.
 
 Para publicar uma versão nova: suba a `<Version>` em `src/trashsweepr/trashsweepr.csproj`, escreva a seção dela no
-[CHANGELOG.md](CHANGELOG.md) e envie a tag (`git tag v1.3.1 && git push origin v1.3.1`). O GitHub Actions roda os testes,
+[CHANGELOG.md](CHANGELOG.md) e envie a tag (`git tag v1.4.0 && git push origin v1.4.0`). O GitHub Actions roda os testes,
 gera o `.zip` e cria o release.
 
 ### Onde fica cada coisa
 
 - `src/trashsweepr`: o app WPF. A seção Disco está na raiz (`Scanner`, `Recoverables`, `Snapshots`, `RecycleBin`,
-  `Coloring`, `Squarify`, `TreemapControl`, `MainWindow`) e a Limpeza em `Limpeza/` (ViewModels, Views e os textos em `Resources/Strings.resx`).
-- `src/Limpeza/Core`: o motor da Limpeza, sem WPF: catálogo e validação, lista de proteção, plano, backup, restauração e log.
-- `src/Limpeza/Infrastructure`: o que fala com o Windows de verdade (registro, PowerShell, serviços, tarefas, apps, ponto de restauração).
+  `Coloring`, `Squarify`, `TreemapControl`, `MainWindow`) e a Limpeza em `Cleanup/` (ViewModels e Views).
+  Os textos da interface ficam em `Resources/Strings.resx` (inglês) e `Resources/Strings.pt.resx` (português).
+- `src/Cleanup/Core`: o motor da Limpeza, sem WPF: catálogo e validação, lista de proteção, plano, backup, restauração e log.
+  As mensagens dele ficam em `Resources/Messages.resx` e `Messages.pt.resx`.
+- `src/Cleanup/Infrastructure`: o que fala com o Windows de verdade (registro, PowerShell, serviços, tarefas, apps, ponto de restauração).
 - `tweaks`: o catálogo em JSON, os perfis e o esquema.
 - `tests`: testes do motor, da interface e da integração com o sistema falso.
