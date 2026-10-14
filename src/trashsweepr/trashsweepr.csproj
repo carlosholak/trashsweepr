@@ -9,14 +9,15 @@
     <AssemblyName>trashsweepr</AssemblyName>
     <RootNamespace>TrashSweepr</RootNamespace>
     <Product>trashsweepr</Product>
-    <Version>1.3.1</Version>
+    <Version>1.4.0</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <SatelliteResourceLanguages>pt-BR</SatelliteResourceLanguages>
+    <NeutralLanguage>en</NeutralLanguage>
+    <SatelliteResourceLanguages>pt</SatelliteResourceLanguages>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Limpeza\Core\Limpeza.Core.csproj" />
-    <ProjectReference Include="..\Limpeza\Infrastructure\Limpeza.Infrastructure.csproj" />
+    <ProjectReference Include="..\Cleanup\Core\Cleanup.Core.csproj" />
+    <ProjectReference Include="..\Cleanup\Infrastructure\Cleanup.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
