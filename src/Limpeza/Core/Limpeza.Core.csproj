@@ -1,9 +1,0 @@
-<Project Sdk="Microsoft.NET.Sdk">
-
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <AssemblyName>TrashSweepr.Limpeza.Core</AssemblyName>
-    <RootNamespace>TrashSweepr.Limpeza.Core</RootNamespace>
-  </PropertyGroup>
-
-</Project>

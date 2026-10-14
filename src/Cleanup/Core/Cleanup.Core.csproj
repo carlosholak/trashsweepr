@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <AssemblyName>TrashSweepr.Cleanup.Core</AssemblyName>
+    <RootNamespace>TrashSweepr.Cleanup.Core</RootNamespace>
+    <!-- Mensagens em Resources\Messages*.resx: inglês no neutro, português no satélite "pt". -->
+    <NeutralLanguage>en</NeutralLanguage>
+    <SatelliteResourceLanguages>pt</SatelliteResourceLanguages>
+  </PropertyGroup>
+
+</Project>
