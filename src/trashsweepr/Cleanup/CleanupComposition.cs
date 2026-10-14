@@ -1,17 +1,17 @@
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Logging;
-using TrashSweepr.Limpeza.Infrastructure;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.ViewModels;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Logging;
+using TrashSweepr.Cleanup.Infrastructure;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.ViewModels;
 
-namespace TrashSweepr.Limpeza;
+namespace TrashSweepr.Cleanup;
 
 /// <summary>Monta a seção "Limpeza do Windows" com as implementações reais (acesso ao registro, serviços, PowerShell).</summary>
-internal static class LimpezaComposition
+internal static class CleanupComposition
 {
-    public static (LimpezaViewModel ViewModel, IDisposable Runtime) Create()
+    public static (CleanupViewModel ViewModel, IDisposable Runtime) Create()
     {
-        var runtime = LimpezaRuntime.Create();
+        var runtime = CleanupRuntime.Create();
 
         var catalog = TweakCatalogLoader.LoadFromDirectory(Path.Combine(AppContext.BaseDirectory, "tweaks"));
         foreach (var issue in catalog.Issues)
@@ -19,7 +19,7 @@ internal static class LimpezaComposition
             runtime.Log.Write(new LogEntry(DateTimeOffset.Now, LogSeverity.Error, issue.TweakId, "catalog", issue.Source, "invalid", issue.Message));
         }
 
-        var viewModel = new LimpezaViewModel(
+        var viewModel = new CleanupViewModel(
             catalog.Catalog,
             catalog.Issues.Count,
             runtime.Engine,
