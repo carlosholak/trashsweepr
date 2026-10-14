@@ -2,16 +2,17 @@ using System.Collections.ObjectModel;
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Backup;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Backup;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Localization;
 
-namespace TrashSweepr.Limpeza.ViewModels;
+namespace TrashSweepr.Cleanup.ViewModels;
 
-public sealed partial class LimpezaViewModel : ObservableObject
+public sealed partial class CleanupViewModel : ObservableObject
 {
     private readonly TweakCatalog _catalog;
     private readonly TweakEngine _engine;
@@ -36,7 +37,7 @@ public sealed partial class LimpezaViewModel : ObservableObject
     private bool _protectionChecked;
     private bool _rebootPending;
 
-    public LimpezaViewModel(
+    public CleanupViewModel(
         TweakCatalog catalog,
         int catalogIssueCount,
         TweakEngine engine,
@@ -691,7 +692,7 @@ public sealed partial class LimpezaViewModel : ObservableObject
         return new BusyScope(this);
     }
 
-    private sealed class BusyScope(LimpezaViewModel owner) : IDisposable
+    private sealed class BusyScope(CleanupViewModel owner) : IDisposable
     {
         private bool _disposed;
 
