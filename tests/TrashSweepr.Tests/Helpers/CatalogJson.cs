@@ -28,6 +28,9 @@ internal static class CatalogJson
     public static string Appx(string package = "Contoso.SampleApp", string operation = "remove") =>
         $$"""{ "type": "appx", "operation": {{Q(operation)}}, "packageName": {{Q(package)}} }""";
 
+    public static string Program(string program = "onedrive", string operation = "uninstall") =>
+        $$"""{ "type": "program", "program": {{Q(program)}}, "operation": {{Q(operation)}} }""";
+
     public static string Tweak(
         string id = "test.sample",
         string risk = "safe",
