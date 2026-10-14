@@ -122,27 +122,9 @@ straight to the same section.
 usually stay on disk, and "Undo" registers the app again. If Windows has already deleted those files, the app tells
 you, and the way back is reinstalling from the Microsoft Store.
 
-### Writing your own tweaks
+## To build:
 
-Tweaks live in `tweaks\*.json` (`apps`, `interface`, `privacy`, `services` and `tasks`), and `tweak.schema.json`
-gives you autocomplete in the editor. The texts (`name`, `description`, `riskNote`, `revertNote`) carry both
-languages, as `{ "en": "...", "pt-BR": "..." }`. Each tweak needs `id`, `name`, `description`, `category`, `risk`,
-`apply` and `revert`; `riskNote` is required for Moderate and Advanced, and there are also `revertNote`,
-`requiresReboot`, `optIn`, `minBuild` and `maxBuild`. The available actions:
-
-| `type` | Main fields |
-|---|---|
-| `registry` | `hive` (`hkcu`/`hklm`), `path`, `name`, `kind` (`dword`/`qword`/`sz`/`expandSz`), `value` and `operation`: `set` (default), `deleteValue` or `deleteKey` (the latter only in `revert`, only under `HKCU\Software\Classes\CLSID\{GUID}`, and only for a key the same tweak's `apply` creates) |
-| `service` | `name`, `startType` (`automatic`/`automaticDelayed`/`manual`/`disabled`), `stop` |
-| `scheduledTask` | `taskPath`, `taskName`, `enabled` |
-| `appx` | `operation` (`remove`/`reinstall`), `packageName` (exact name, no wildcards) |
-
-A tweak with an error, with no `revert`, or that tries to touch something protected is skipped when loading (the
-reason goes to the log), and the rest of the catalog keeps working.
-
-## Building it yourself
-
-You need the .NET 8 SDK.
+(You need the .NET 8 SDK)
 
 ```bash
 dotnet build trashsweepr.sln
@@ -172,9 +154,3 @@ tests, builds the `.zip` and creates the release.
 - `src/Cleanup/Infrastructure`: what actually talks to Windows (registry, PowerShell, services, tasks, apps, restore points).
 - `tweaks`: the JSON catalog, the profiles and the schema.
 - `tests`: tests for the engine, the interface and the integration with the fake system.
-
----
-
-The app used to be called **Mapa de Disco**, and the cleanup part was a separate project, `sweepr`. If you used the
-old name, the scans saved in `%LOCALAPPDATA%\MapaDeDisco\snapshots` are copied over the first time trashsweepr opens
-(the old folder is left as it is).
