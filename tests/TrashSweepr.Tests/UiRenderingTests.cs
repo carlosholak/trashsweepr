@@ -5,13 +5,14 @@ using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using TrashSweepr.Limpeza.Converters;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.ViewModels;
-using TrashSweepr.Limpeza.Views;
+using TrashSweepr.Localization;
+using TrashSweepr.Cleanup.Converters;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.ViewModels;
+using TrashSweepr.Cleanup.Views;
 using TrashSweepr.Tests.Helpers;
 
 namespace TrashSweepr.Tests;
@@ -28,7 +29,7 @@ public sealed class UiRenderingTests
     private static string? SnapshotDir => Environment.GetEnvironmentVariable("TRASHSWEEPR_UI_SNAPSHOT_DIR");
 
     /// <summary>Catálogo real com um computador falso em estados variados (aplicado, parcial, pendente, incompatível).</summary>
-    private static async Task<LimpezaViewModel> BuildScenarioAsync(bool elevated = true)
+    private static async Task<CleanupViewModel> BuildScenarioAsync(bool elevated = true)
     {
         var sys = new FakeSystem();
         sys.Windows.IsElevated = elevated;
@@ -52,12 +53,12 @@ public sealed class UiRenderingTests
         sys.Tasks.Tasks[@"\Microsoft\Windows\Application Experience\Microsoft Compatibility Appraiser"] = new TaskState(true, true);
         sys.Tasks.Tasks[@"\Microsoft\Windows\Customer Experience Improvement Program\Consolidator"] = new TaskState(true, true);
 
-        var vm = new LimpezaViewModel(
+        var vm = new CleanupViewModel(
             catalog.Catalog, 0, sys.Engine, sys.Detector, sys.Windows, sys.RestorePoints, sys.Backups,
             new FakeDialogs(), new FakeRelauncher(), new FakeGate(), "logs");
         await vm.InitializeAsync();
 
-        vm.ProfileFilter.Options.Single(o => o.Label == "Moderado").IsSelected = true;
+        vm.ProfileFilter.Options.Single(o => o.Value?.Id == "moderate").IsSelected = true;
         vm.SelectedTweak = vm.AllTweaks.First(t => t.Id == "services.diagtrack");
         return vm;
     }
@@ -124,7 +125,7 @@ public sealed class UiRenderingTests
                     await vm.RunCommand.ExecuteAsync(null); // simulação
                 }
 
-                var view = new LimpezaView { DataContext = vm };
+                var view = new CleanupView { DataContext = vm };
                 WpfHost.Layout(view, Width, Height);
 
                 var list = FindFirst<ListBox>(view)!;
@@ -134,7 +135,7 @@ public sealed class UiRenderingTests
                 // O visual do trashsweepr (fundo claro) realmente chegou aos pixels.
                 Assert.True(Brightness(Render(view), 4, 4) > 200);
 
-                SaveIfRequested(view, $"limpeza-{(resultsTab ? "resultado" : "detalhes")}{(elevated ? string.Empty : "-sem-admin")}");
+                SaveIfRequested(view, $"cleanup-{(resultsTab ? "results" : "details")}{(elevated ? string.Empty : "-not-elevated")}");
                 Assert.True(listener.Messages.Count == 0, string.Join(Environment.NewLine, listener.Messages));
             }
             finally
@@ -153,14 +154,14 @@ public sealed class UiRenderingTests
             try
             {
                 var sys = new FakeSystem();
-                var vm = new LimpezaViewModel(
+                var vm = new CleanupViewModel(
                     TweakCatalog.Empty, 0, sys.Engine, sys.Detector, sys.Windows, sys.RestorePoints, sys.Backups,
                     new FakeDialogs(), new FakeRelauncher(), new FakeGate(), "logs");
                 await vm.InitializeAsync();
 
-                var view = new LimpezaView { DataContext = vm };
+                var view = new CleanupView { DataContext = vm };
                 WpfHost.Layout(view, Width, Height);
-                SaveIfRequested(view, "limpeza-vazia");
+                SaveIfRequested(view, "cleanup-empty");
 
                 Assert.True(listener.Messages.Count == 0, string.Join(Environment.NewLine, listener.Messages));
             }
@@ -177,17 +178,17 @@ public sealed class UiRenderingTests
         await WpfHost.RunAsync(async () =>
         {
             var vm = await BuildScenarioAsync(elevated: false);
-            var view = new LimpezaView { DataContext = vm };
+            var view = new CleanupView { DataContext = vm };
             WpfHost.Layout(view, Width, Height);
 
-            var button = FindAll<Button>(view).Single(b => Equals(b.Content, "Reabrir como administrador"));
+            var button = FindAll<Button>(view).Single(b => Equals(b.Content, Loc.Get("Banner.ElevateAction")));
             Assert.Equal(Visibility.Visible, button.Visibility);
             Assert.NotNull(button.Command);
 
             var elevated = await BuildScenarioAsync(elevated: true);
-            var elevatedView = new LimpezaView { DataContext = elevated };
+            var elevatedView = new CleanupView { DataContext = elevated };
             WpfHost.Layout(elevatedView, Width, Height);
-            Assert.DoesNotContain(FindAll<Button>(elevatedView), b => Equals(b.Content, "Reabrir como administrador"));
+            Assert.DoesNotContain(FindAll<Button>(elevatedView), b => Equals(b.Content, Loc.Get("Banner.ElevateAction")));
         });
     }
 
@@ -197,7 +198,7 @@ public sealed class UiRenderingTests
         // O visual do Mapa tem uma cor de destaque; a Limpeza não pode trazer cores próprias nos controles.
         await WpfHost.RunAsync(() =>
         {
-            var xaml = File.ReadAllText(Path.Combine(RepoPaths.Root, "src", "TrashSweepr", "Limpeza", "Views", "LimpezaView.xaml"));
+            var xaml = File.ReadAllText(Path.Combine(RepoPaths.Root, "src", "trashsweepr", "Cleanup", "Views", "CleanupView.xaml"));
 
             Assert.DoesNotMatch(@"(?i)(Color|Background|Foreground|BorderBrush|Fill)=""#[0-9a-f]{3,8}""", xaml);
             Assert.DoesNotContain("CornerRadius=\"1", xaml, StringComparison.Ordinal);
@@ -206,8 +207,8 @@ public sealed class UiRenderingTests
 
     // ---------- Janela do app: seções Disco e Limpeza ----------
 
-    private static MainWindow CreateWindow(Func<(LimpezaViewModel, IDisposable)> factory) =>
-        new() { LimpezaFactory = factory };
+    private static MainWindow CreateWindow(Func<(CleanupViewModel, IDisposable)> factory) =>
+        new() { CleanupFactory = factory };
 
     private sealed class NoDispose : IDisposable
     {
@@ -231,17 +232,17 @@ public sealed class UiRenderingTests
 
             Assert.Equal(0, created); // abrir o app não consulta o sistema
             Assert.Equal(Visibility.Visible, window.DiskPane.Visibility);
-            Assert.Equal(Visibility.Collapsed, window.LimpezaPane.Visibility);
+            Assert.Equal(Visibility.Collapsed, window.CleanupPane.Visibility);
 
             window.CleanupSection.IsChecked = true;
             Assert.Equal(1, created);
             Assert.Equal(Visibility.Collapsed, window.DiskPane.Visibility);
-            Assert.Equal(Visibility.Visible, window.LimpezaPane.Visibility);
-            Assert.Same(vm, window.LimpezaPane.DataContext);
+            Assert.Equal(Visibility.Visible, window.CleanupPane.Visibility);
+            Assert.Same(vm, window.CleanupPane.DataContext);
 
             window.DiskSection.IsChecked = true;
             Assert.Equal(Visibility.Visible, window.DiskPane.Visibility);
-            Assert.Equal(Visibility.Collapsed, window.LimpezaPane.Visibility);
+            Assert.Equal(Visibility.Collapsed, window.CleanupPane.Visibility);
 
             window.CleanupSection.IsChecked = true;
             Assert.Equal(1, created); // volta à seção sem recriar nem reconsultar
@@ -292,11 +293,11 @@ public sealed class UiRenderingTests
                 TextElement.SetFontSize(host, window.FontSize);
 
                 WpfHost.Layout(host, Width, 820);
-                SaveIfRequested(host, "janela-disco");
+                SaveIfRequested(host, "window-disk");
 
                 window.CleanupSection.IsChecked = true;
                 WpfHost.Layout(host, Width, 820);
-                SaveIfRequested(host, "janela-limpeza");
+                SaveIfRequested(host, "window-cleanup");
 
                 Assert.True(listener.Messages.Count == 0, string.Join(Environment.NewLine, listener.Messages));
             }
@@ -326,10 +327,10 @@ public sealed class UiRenderingTests
                 var content = HostLikeWindow(dialog, 580);
 
                 Assert.False(model.Accepted);
-                Assert.Equal(["Avançado", "Moderado"], model.Items.Select(i => i.RiskText));
+                Assert.Equal([Loc.Get("Risk.Advanced"), Loc.Get("Risk.Moderate")], model.Items.Select(i => i.RiskText));
                 Assert.Equal([Tone.Danger, Tone.Warning], model.Items.Select(i => i.Tone));
 
-                var continueButton = FindAll<Button>(content).Single(b => Equals(b.Content, "Continuar"));
+                var continueButton = FindAll<Button>(content).Single(b => Equals(b.Content, Loc.Get("Dialog.RiskContinue")));
                 Assert.False(continueButton.IsEnabled);
                 model.Accepted = true;
                 WpfHost.Flush();
@@ -337,7 +338,7 @@ public sealed class UiRenderingTests
                 model.Accepted = false;
                 WpfHost.Flush();
 
-                SaveIfRequested(content, "dialogo-riscos");
+                SaveIfRequested(content, "dialog-risks");
                 Assert.True(listener.Messages.Count == 0, string.Join(Environment.NewLine, listener.Messages));
             }
             finally
@@ -363,7 +364,7 @@ public sealed class UiRenderingTests
             Assert.Same(Application.Current.FindResource("DangerBtn"), confirm.ConfirmButton.Style);
             Assert.Same(Application.Current.FindResource("PrimaryBtn"), info.ConfirmButton.Style);
 
-            SaveIfRequested(HostLikeWindow(confirm, 500), "dialogo-mensagem");
+            SaveIfRequested(HostLikeWindow(confirm, 500), "dialog-message");
         });
     }
 
