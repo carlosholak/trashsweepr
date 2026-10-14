@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Motor: aplicar e reverter -->
+  <data name="Engine.InvalidActions" xml:space="preserve"><value>Ações inválidas: {0}</value></data>
+  <data name="Engine.BackupFailed" xml:space="preserve"><value>Backup não realizado; nada foi alterado. {0}</value></data>
+  <data name="Engine.Cancelled" xml:space="preserve"><value>Cancelado pelo usuário.</value></data>
+  <data name="Engine.RollbackFailed" xml:space="preserve"><value>{0} A restauração automática também falhou ({1}); use Desfazer para tentar de novo.</value></data>
+  <data name="Engine.VerificationFailed" xml:space="preserve"><value>A verificação após a execução falhou: o sistema não ficou no estado esperado.</value></data>
+  <data name="Engine.InvalidBackup" xml:space="preserve"><value>Backup inválido, nada foi alterado: {0}</value></data>
+  <data name="Engine.BackupNoLongerActive" xml:space="preserve"><value>backup {0} não está mais ativo</value></data>
+  <data name="Engine.UnsupportedOperation" xml:space="preserve"><value>Operação não suportada: {0}.</value></data>
+  <data name="Engine.UnsupportedAction" xml:space="preserve"><value>Ação não suportada: {0}.</value></data>
+  <data name="RestorePoint.DefaultDescription" xml:space="preserve"><value>trashsweepr: antes de aplicar ajustes</value></data>
+
+  <!-- Backup e restauração -->
+  <data name="Backup.UnsupportedValueType" xml:space="preserve"><value>O valor {0} é do tipo {1}, que o trashsweepr não consegue salvar. Nada foi alterado.</value></data>
+  <data name="Backup.ValueNotRestorable" xml:space="preserve"><value>O valor atual de {0} não poderia ser restaurado ({1}). Nada foi alterado.</value></data>
+  <data name="Backup.InvalidFileId" xml:space="preserve"><value>Id de tweak ou de backup inválido para uso em nome de arquivo.</value></data>
+  <data name="Restore.Problem" xml:space="preserve"><value>Backup {0}: {1}</value></data>
+  <data name="Restore.MissingItems" xml:space="preserve"><value>lista de itens ausente.</value></data>
+  <data name="Restore.NullItem" xml:space="preserve"><value>item vazio (null).</value></data>
+  <data name="Restore.CreatedRootNotPrefix" xml:space="preserve"><value>a raiz de chaves criadas não é um prefixo do caminho do valor.</value></data>
+  <data name="Restore.PreviousValueMissing" xml:space="preserve"><value>valor anterior ilegível (tipo ou valor ausente).</value></data>
+  <data name="Restore.PreviousValueUnreadable" xml:space="preserve"><value>valor anterior ilegível ({0}).</value></data>
+
+  <!-- Windows: PowerShell, registro, serviços, apps e ponto de restauração -->
+  <data name="PowerShell.ExitCode" xml:space="preserve"><value>O PowerShell terminou com código {0}.</value></data>
+  <data name="PowerShell.UnexpectedResponse" xml:space="preserve"><value>Resposta inesperada do PowerShell ao consultar {0}: {1}</value></data>
+  <data name="PowerShell.Timeout" xml:space="preserve"><value>O PowerShell não terminou em {0:0} s e foi encerrado.</value></data>
+  <data name="Query.Service" xml:space="preserve"><value>o serviço {0}</value></data>
+  <data name="Query.Task" xml:space="preserve"><value>a tarefa {0}</value></data>
+  <data name="Query.InstalledApps" xml:space="preserve"><value>os apps instalados</value></data>
+  <data name="Query.App" xml:space="preserve"><value>o app {0}</value></data>
+  <data name="Query.SystemProtection" xml:space="preserve"><value>a Proteção do Sistema</value></data>
+  <data name="Query.RestorePoint" xml:space="preserve"><value>o ponto de restauração</value></data>
+  <data name="Service.UnsupportedStartType" xml:space="preserve"><value>O serviço {0} tem tipo de inicialização '{1}', que o trashsweepr não sabe salvar nem restaurar.</value></data>
+  <data name="Appx.PackageNotFound" xml:space="preserve"><value>Pacote não encontrado no sistema. Reinstale pela Microsoft Store.</value></data>
+  <data name="RestorePoint.ExitCode" xml:space="preserve"><value>código {0}</value></data>
+  <data name="RestorePoint.Throttled" xml:space="preserve"><value>Nenhum ponto novo foi criado: o Windows só permite um a cada 24 horas por padrão, então já deve existir um recente.</value></data>
+  <data name="Registry.CannotOpenKey" xml:space="preserve"><value>Não foi possível criar ou abrir {0}.</value></data>
+  <data name="Registry.EmptyPath" xml:space="preserve"><value>Caminho de registro vazio.</value></data>
+
+  <!-- Catálogo: leitura dos arquivos -->
+  <data name="Catalog.DirectoryNotFound" xml:space="preserve"><value>Pasta de tweaks não encontrada.</value></data>
+  <data name="Catalog.CannotReadFile" xml:space="preserve"><value>Não foi possível ler o arquivo: {0}</value></data>
+  <data name="Catalog.InvalidJson" xml:space="preserve"><value>JSON inválido: {0}</value></data>
+  <data name="Catalog.RootNotObject" xml:space="preserve"><value>A raiz do arquivo deve ser um objeto.</value></data>
+  <data name="Catalog.SchemaVersion" xml:space="preserve"><value>'schemaVersion' deve ser {0}.</value></data>
+  <data name="Catalog.NoContent" xml:space="preserve"><value>O arquivo não contém 'tweaks' nem 'profiles'.</value></data>
+  <data name="Catalog.EmptyTweak" xml:space="preserve"><value>Tweak vazio.</value></data>
+  <data name="Catalog.InvalidTweak" xml:space="preserve"><value>Tweak inválido: {0}</value></data>
+  <data name="Catalog.DuplicateId" xml:space="preserve"><value>Id duplicado (já definido em {0}).</value></data>
+  <data name="Catalog.EmptyProfile" xml:space="preserve"><value>Perfil vazio.</value></data>
+  <data name="Catalog.InvalidProfile" xml:space="preserve"><value>Perfil inválido: {0}</value></data>
+  <data name="Catalog.ProfileProblem" xml:space="preserve"><value>Perfil: {0}</value></data>
+  <data name="Catalog.DuplicateProfileId" xml:space="preserve"><value>Id de perfil duplicado.</value></data>
+  <data name="Catalog.TextMustBeString" xml:space="preserve"><value>O texto da cultura '{0}' deve ser uma string.</value></data>
+  <data name="Catalog.TextInvalidShape" xml:space="preserve"><value>Texto localizado deve ser uma string ou um objeto que associa culturas a textos.</value></data>
+  <data name="Catalog.ActionTypeRequired" xml:space="preserve"><value>Toda ação precisa do campo 'type'.</value></data>
+  <data name="Catalog.UnknownActionType" xml:space="preserve"><value>Tipo de ação desconhecido: '{0}'.</value></data>
+  <data name="Catalog.InvalidAction" xml:space="preserve"><value>Ação inválida.</value></data>
+  <data name="Catalog.UnsupportedActionClass" xml:space="preserve"><value>Tipo de ação não suportado: {0}.</value></data>
+  <data name="Catalog.ValueRequired" xml:space="preserve"><value>O valor ('value') é obrigatório para a operação 'set'.</value></data>
+  <data name="Catalog.DwordRange" xml:space="preserve"><value>Valor DWORD deve ser um inteiro de 32 bits.</value></data>
+  <data name="Catalog.QwordRange" xml:space="preserve"><value>Valor QWORD deve ser um inteiro de 64 bits.</value></data>
+  <data name="Catalog.StringValue" xml:space="preserve"><value>Valor sz/expandSz deve ser texto.</value></data>
+
+  <!-- Catálogo: validação de tweaks, perfis e ações -->
+  <data name="Validator.InvalidTweakId" xml:space="preserve"><value>Id inválido: use minúsculas, números e hífens separados por pontos (ex.: privacy.advertising-id).</value></data>
+  <data name="Validator.NeedsText" xml:space="preserve"><value>'{0}' precisa ter texto em en ou pt-BR.</value></data>
+  <data name="Validator.InvalidCategory" xml:space="preserve"><value>Categoria inválida.</value></data>
+  <data name="Validator.InvalidRisk" xml:space="preserve"><value>Nível de risco inválido.</value></data>
+  <data name="Validator.RiskNoteRequired" xml:space="preserve"><value>Tweaks Moderados/Avançados exigem 'riskNote' explicando o risco.</value></data>
+  <data name="Validator.MinBuild" xml:space="preserve"><value>'minBuild' não pode ser menor que {0} (Windows 11).</value></data>
+  <data name="Validator.MaxBuild" xml:space="preserve"><value>'maxBuild' não pode ser menor que 'minBuild'.</value></data>
+  <data name="Validator.ApplyEmpty" xml:space="preserve"><value>'apply' precisa ter ao menos uma ação.</value></data>
+  <data name="Validator.RevertEmpty" xml:space="preserve"><value>'revert' precisa ter ao menos uma ação: todo tweak deve ser reversível.</value></data>
+  <data name="Validator.InvalidProfileId" xml:space="preserve"><value>Id de perfil inválido: use minúsculas, números e hífens.</value></data>
+  <data name="Validator.ProfileMaxRisk" xml:space="preserve"><value>Perfis pré-definidos não podem incluir tweaks Avançados ('maxRisk' deve ser safe ou moderate).</value></data>
+  <data name="Validator.ActionLabel" xml:space="preserve"><value>ação</value></data>
+  <data name="Validator.FieldRequired" xml:space="preserve"><value>'{0}' é obrigatório e não pode ser null.</value></data>
+  <data name="Validator.DeleteKeyNotCreated" xml:space="preserve"><value>revert[{0}]: 'deleteKey' só pode apagar uma chave criada pelo 'apply' do mesmo tweak (mesmo hive e caminho).</value></data>
+  <data name="Validator.NullAction" xml:space="preserve"><value>{0}: ação vazia (null).</value></data>
+  <data name="Validator.UnsupportedActionType" xml:space="preserve"><value>{0}: tipo de ação não suportado.</value></data>
+  <data name="Validator.PathRequired" xml:space="preserve"><value>{0}: 'path' é obrigatório.</value></data>
+  <data name="Validator.InvalidRegistryEnums" xml:space="preserve"><value>{0}: hive, operação ou tipo de valor inválido.</value></data>
+  <data name="Validator.InvalidRegistryPath" xml:space="preserve"><value>{0}: caminho de registro inválido '{1}'.</value></data>
+  <data name="Validator.ProtectedRegistryPath" xml:space="preserve"><value>{0}: o caminho '{1}' pertence a um componente crítico protegido.</value></data>
+  <data name="Validator.DeleteTakesNoValue" xml:space="preserve"><value>{0}: '{1}' não aceita 'value' nem 'kind'.</value></data>
+  <data name="Validator.DeleteKeyOnlyInRevert" xml:space="preserve"><value>{0}: 'deleteKey' só é permitido em 'revert' (não há como fazer backup de uma chave apagada).</value></data>
+  <data name="Validator.DeleteKeyOnlyClsid" xml:space="preserve"><value>{0}: 'deleteKey' só é permitido em HKCU\Software\Classes\CLSID\{{GUID}}.</value></data>
+  <data name="Validator.DeleteKeyTakesNoName" xml:space="preserve"><value>{0}: 'deleteKey' não aceita 'name'.</value></data>
+  <data name="Validator.ValueNameRequired" xml:space="preserve"><value>{0}: 'name' é obrigatório (use "" para o valor padrão da chave).</value></data>
+  <data name="Validator.InvalidValueName" xml:space="preserve"><value>{0}: nome de valor inválido.</value></data>
+  <data name="Validator.InvalidStringValue" xml:space="preserve"><value>{0}: valor de texto inválido (muito longo ou com caracteres de controle).</value></data>
+  <data name="Validator.CommandPath" xml:space="preserve"><value>{0}: '{1}' registra um comando, servidor COM ou DLL; só é aceito texto vazio (componente protegido).</value></data>
+  <data name="Validator.InvalidStartType" xml:space="preserve"><value>{0}: tipo de inicialização inválido.</value></data>
+  <data name="Validator.ServiceNameRequired" xml:space="preserve"><value>{0}: 'name' do serviço é obrigatório.</value></data>
+  <data name="Validator.InvalidServiceName" xml:space="preserve"><value>{0}: nome de serviço inválido '{1}'.</value></data>
+  <data name="Validator.ProtectedService" xml:space="preserve"><value>{0}: o serviço '{1}' é crítico e protegido.</value></data>
+  <data name="Validator.TaskFieldsRequired" xml:space="preserve"><value>{0}: 'taskPath' e 'taskName' são obrigatórios.</value></data>
+  <data name="Validator.InvalidTaskPath" xml:space="preserve"><value>{0}: 'taskPath' inválido (ex.: \Microsoft\Windows\Pasta\).</value></data>
+  <data name="Validator.InvalidTaskName" xml:space="preserve"><value>{0}: 'taskName' inválido.</value></data>
+  <data name="Validator.ProtectedTask" xml:space="preserve"><value>{0}: a tarefa '{1}' é crítica e protegida.</value></data>
+  <data name="Validator.InvalidAppxOperation" xml:space="preserve"><value>{0}: operação inválida.</value></data>
+  <data name="Validator.PackageNameRequired" xml:space="preserve"><value>{0}: 'packageName' é obrigatório.</value></data>
+  <data name="Validator.InvalidPackageName" xml:space="preserve"><value>{0}: nome de pacote inválido '{1}' (curingas não são permitidos).</value></data>
+  <data name="Validator.ProtectedPackage" xml:space="preserve"><value>{0}: o pacote '{1}' é um componente crítico protegido.</value></data>
+</root>
