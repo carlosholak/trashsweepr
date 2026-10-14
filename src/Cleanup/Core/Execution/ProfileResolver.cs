@@ -1,7 +1,7 @@
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Execution;
+namespace TrashSweepr.Cleanup.Core.Execution;
 
 /// <summary>
 /// Decide quais tweaks entram em um perfil pré-definido. Regras fixas, independentes do JSON:
