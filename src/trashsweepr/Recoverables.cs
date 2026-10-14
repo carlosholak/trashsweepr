@@ -1,11 +1,19 @@
 using System.IO;
+using TrashSweepr.Localization;
 
 namespace TrashSweepr;
 
-/// <param name="Label">O que a pasta é ("Dependências npm").</param>
-/// <param name="Command">Como ela volta ("npm install").</param>
-/// <param name="IsProject">Pertence a um projeto (faz sentido mostrar há quanto tempo ele não é mexido).</param>
-public sealed record RecoverableRule(string Label, string Command, bool IsProject = true);
+/// <summary>
+/// O que a pasta é ("Dependências npm") e como ela volta ("npm install"). Os dois textos são montados
+/// na hora de mostrar, na língua da interface; comandos ficam sempre como são digitados.
+/// </summary>
+/// <param name="isProject">Pertence a um projeto (faz sentido mostrar há quanto tempo ele não é mexido).</param>
+public sealed class RecoverableRule(Func<string> label, Func<string> command, bool isProject = true)
+{
+    public string Label => label();
+    public string Command => command();
+    public bool IsProject { get; } = isProject;
+}
 
 /// <summary>
 /// Reconhece pastas que são cache ou resultado de build. Uma pasta só conta se o arquivo de projeto
@@ -21,29 +29,36 @@ public static class Recoverables
     static readonly string[] Gradle = ["build.gradle", "build.gradle.kts", "settings.gradle", "settings.gradle.kts"];
     static readonly string[] Anywhere = [];
 
+    // Textos resolvidos só na hora de mostrar: a regra é criada uma vez, a língua é a da interface no momento.
+    static Func<string> T(string key, params object[] args) => () => Loc.Format(key, args);
+    static Func<string> Cmd(string command) => () => command; // comando: igual em qualquer língua
+    static Func<string> Build(string tool) => T("Disk.Rec.Build", tool);
+    static Func<string> Cache(string tool) => T("Disk.Rec.Cache", tool);
+    static RecoverableRule Rule(Func<string> label, Func<string> command, bool isProject = true) => new(label, command, isProject);
+
     static readonly DirRule[] Rules =
     [
-        new("node_modules", Npm, new("Dependências npm", "npm install")),
-        new(".next", Npm, new("Build do Next.js", "npm run build")),
-        new(".nuxt", Npm, new("Build do Nuxt", "npm run build")),
-        new(".svelte-kit", Npm, new("Build do SvelteKit", "npm run build")),
-        new(".turbo", Npm, new("Cache do Turborepo", "recriado no próximo build")),
-        new(".parcel-cache", Npm, new("Cache do Parcel", "recriado no próximo build")),
-        new(".angular", ["angular.json"], new("Cache do Angular", "recriado no próximo build")),
-        new("target", ["Cargo.toml"], new("Build do Rust", "cargo build")),
-        new("bin", DotNet, new("Build do .NET", "dotnet build")),
-        new("obj", DotNet, new("Intermediários do .NET", "dotnet build")),
-        new(".venv", Python, new("Ambiente virtual Python", "python -m venv .venv e pip install")),
-        new("venv", Python, new("Ambiente virtual Python", "python -m venv venv e pip install")),
-        new("__pycache__", Anywhere, new("Bytecode Python", "recriado ao rodar", IsProject: false)),
-        new(".pytest_cache", Anywhere, new("Cache do pytest", "recriado ao rodar os testes", IsProject: false)),
-        new(".mypy_cache", Anywhere, new("Cache do mypy", "recriado na próxima checagem", IsProject: false)),
-        new(".ruff_cache", Anywhere, new("Cache do Ruff", "recriado na próxima checagem", IsProject: false)),
-        new(".gradle", Gradle, new("Cache do Gradle do projeto", "gradlew build")),
-        new("build", Gradle, new("Build do Gradle", "gradlew build")),
-        new(".dart_tool", ["pubspec.yaml"], new("Cache do Dart/Flutter", "flutter pub get")),
-        new("build", ["pubspec.yaml"], new("Build do Flutter", "flutter build")),
-        new("build", ["CMakeLists.txt"], new("Build do CMake", "cmake --build")),
+        new("node_modules", Npm, Rule(T("Disk.Rec.NpmDeps"), Cmd("npm install"))),
+        new(".next", Npm, Rule(Build("Next.js"), Cmd("npm run build"))),
+        new(".nuxt", Npm, Rule(Build("Nuxt"), Cmd("npm run build"))),
+        new(".svelte-kit", Npm, Rule(Build("SvelteKit"), Cmd("npm run build"))),
+        new(".turbo", Npm, Rule(Cache("Turborepo"), T("Disk.Rec.Cmd.NextBuild"))),
+        new(".parcel-cache", Npm, Rule(Cache("Parcel"), T("Disk.Rec.Cmd.NextBuild"))),
+        new(".angular", ["angular.json"], Rule(Cache("Angular"), T("Disk.Rec.Cmd.NextBuild"))),
+        new("target", ["Cargo.toml"], Rule(Build("Rust"), Cmd("cargo build"))),
+        new("bin", DotNet, Rule(Build(".NET"), Cmd("dotnet build"))),
+        new("obj", DotNet, Rule(T("Disk.Rec.DotNetObj"), Cmd("dotnet build"))),
+        new(".venv", Python, Rule(T("Disk.Rec.PythonVenv"), T("Disk.Rec.Cmd.Venv", ".venv"))),
+        new("venv", Python, Rule(T("Disk.Rec.PythonVenv"), T("Disk.Rec.Cmd.Venv", "venv"))),
+        new("__pycache__", Anywhere, Rule(T("Disk.Rec.PythonBytecode"), T("Disk.Rec.Cmd.OnRun"), isProject: false)),
+        new(".pytest_cache", Anywhere, Rule(Cache("pytest"), T("Disk.Rec.Cmd.OnTests"), isProject: false)),
+        new(".mypy_cache", Anywhere, Rule(Cache("mypy"), T("Disk.Rec.Cmd.NextCheck"), isProject: false)),
+        new(".ruff_cache", Anywhere, Rule(Cache("Ruff"), T("Disk.Rec.Cmd.NextCheck"), isProject: false)),
+        new(".gradle", Gradle, Rule(T("Disk.Rec.GradleProjectCache"), Cmd("gradlew build"))),
+        new("build", Gradle, Rule(Build("Gradle"), Cmd("gradlew build"))),
+        new(".dart_tool", ["pubspec.yaml"], Rule(Cache("Dart/Flutter"), Cmd("flutter pub get"))),
+        new("build", ["pubspec.yaml"], Rule(Build("Flutter"), Cmd("flutter build"))),
+        new("build", ["CMakeLists.txt"], Rule(Build("CMake"), Cmd("cmake --build"))),
     ];
 
     /// <summary>Caches globais de gerenciadores de pacote: baixados de novo sob demanda.</summary>
@@ -54,15 +69,17 @@ public static class Recoverables
         string local = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
         string home = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
         var map = new Dictionary<string, RecoverableRule>(StringComparer.OrdinalIgnoreCase);
-        void Add(string path, string label, string command) => map[Path.GetFullPath(path)] = new(label, command, IsProject: false);
+        void Add(string path, Func<string> label, Func<string> command) =>
+            map[Path.GetFullPath(path)] = new(label, command, isProject: false);
 
-        Add(Path.Combine(local, "npm-cache"), "Cache do npm", "baixado de novo quando preciso");
-        Add(Path.Combine(local, "Yarn", "Cache"), "Cache do Yarn", "baixado de novo quando preciso");
-        Add(Path.Combine(local, "pnpm-cache"), "Cache do pnpm", "baixado de novo quando preciso");
-        Add(Path.Combine(local, "pip", "Cache"), "Cache do pip", "baixado de novo quando preciso");
-        Add(Path.Combine(home, ".nuget", "packages"), "Pacotes NuGet", "dotnet restore baixa de novo");
-        Add(Path.Combine(home, ".cargo", "registry"), "Registro do Cargo", "cargo build baixa de novo");
-        Add(Path.Combine(home, ".gradle", "caches"), "Cache global do Gradle", "gradlew build baixa de novo");
+        var onDemand = T("Disk.Rec.Cmd.OnDemand");
+        Add(Path.Combine(local, "npm-cache"), Cache("npm"), onDemand);
+        Add(Path.Combine(local, "Yarn", "Cache"), Cache("Yarn"), onDemand);
+        Add(Path.Combine(local, "pnpm-cache"), Cache("pnpm"), onDemand);
+        Add(Path.Combine(local, "pip", "Cache"), Cache("pip"), onDemand);
+        Add(Path.Combine(home, ".nuget", "packages"), T("Disk.Rec.NuGetPackages"), T("Disk.Rec.Cmd.DownloadsAgain", "dotnet restore"));
+        Add(Path.Combine(home, ".cargo", "registry"), T("Disk.Rec.CargoRegistry"), T("Disk.Rec.Cmd.DownloadsAgain", "cargo build"));
+        Add(Path.Combine(home, ".gradle", "caches"), T("Disk.Rec.GradleGlobalCache"), T("Disk.Rec.Cmd.DownloadsAgain", "gradlew build"));
         return map;
     }
 
