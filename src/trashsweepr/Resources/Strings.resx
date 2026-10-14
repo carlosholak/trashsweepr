@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Aplicativo -->
+
+  <!-- Perfis, filtros e busca -->
+  <data name="Profile.Custom" xml:space="preserve"><value>Custom</value></data>
+  <data name="Filter.Categories" xml:space="preserve"><value>Category</value></data>
+  <data name="Filter.AllCategories" xml:space="preserve"><value>All</value></data>
+  <data name="Filter.Risk" xml:space="preserve"><value>Risk</value></data>
+  <data name="Filter.AllRisks" xml:space="preserve"><value>All</value></data>
+  <data name="Filter.State" xml:space="preserve"><value>State</value></data>
+  <data name="Filter.AllStates" xml:space="preserve"><value>All</value></data>
+  <data name="Filter.StatePending" xml:space="preserve"><value>Pending</value></data>
+  <data name="Filter.StateApplied" xml:space="preserve"><value>Applied</value></data>
+  <data name="Search.Placeholder" xml:space="preserve"><value>Search this list…</value></data>
+
+  <!-- Categorias, riscos e estados -->
+  <data name="Category.Apps" xml:space="preserve"><value>Preinstalled apps</value></data>
+  <data name="Category.Privacy" xml:space="preserve"><value>Telemetry and privacy</value></data>
+  <data name="Category.Services" xml:space="preserve"><value>Services</value></data>
+  <data name="Category.Tasks" xml:space="preserve"><value>Scheduled tasks</value></data>
+  <data name="Category.Interface" xml:space="preserve"><value>Interface</value></data>
+  <data name="Category.Performance" xml:space="preserve"><value>Performance</value></data>
+  <data name="Risk.Safe" xml:space="preserve"><value>Safe</value></data>
+  <data name="Risk.Moderate" xml:space="preserve"><value>Moderate</value></data>
+  <data name="Risk.Advanced" xml:space="preserve"><value>Advanced</value></data>
+  <data name="State.NotApplied" xml:space="preserve"><value>Not applied</value></data>
+  <data name="State.Applied" xml:space="preserve"><value>Applied</value></data>
+  <data name="State.Partial" xml:space="preserve"><value>Partial</value></data>
+  <data name="State.NotApplicable" xml:space="preserve"><value>Not applicable</value></data>
+  <data name="State.Unknown" xml:space="preserve"><value>Unknown</value></data>
+  <data name="State.Incompatible" xml:space="preserve"><value>Incompatible</value></data>
+  <data name="State.Checking" xml:space="preserve"><value>Checking…</value></data>
+  <data name="Compat.NotWindows11" xml:space="preserve"><value>Requires Windows 11 (build {0} or later).</value></data>
+  <data name="Compat.BuildTooOld" xml:space="preserve"><value>Requires Windows 11 build {0} or later; this computer is on build {1}.</value></data>
+  <data name="Compat.BuildTooNew" xml:space="preserve"><value>Not compatible with builds above {0}; this computer is on build {1}.</value></data>
+  <data name="Badge.OptIn" xml:space="preserve"><value>optional</value></data>
+
+  <!-- Lista -->
+  <data name="List.SelectAllVisible" xml:space="preserve"><value>Select all visible</value></data>
+  <data name="List.Count" xml:space="preserve"><value>{0} of {1} tweaks</value></data>
+  <data name="List.Empty" xml:space="preserve"><value>No tweak matches the filters.</value></data>
+  <data name="Mode.DryRun" xml:space="preserve"><value>Simulation mode</value></data>
+  <data name="Mode.DryRunHint" xml:space="preserve"><value>Shows exactly what would be done, without changing anything on the computer.</value></data>
+
+  <!-- Painel de detalhes -->
+  <data name="Details.Title" xml:space="preserve"><value>Details</value></data>
+  <data name="Details.Results" xml:space="preserve"><value>Results</value></data>
+  <data name="Details.NothingSelected" xml:space="preserve"><value>Click a tweak in the list to see what it does and how to revert it.</value></data>
+  <data name="Details.WhatItDoes" xml:space="preserve"><value>What will be done</value></data>
+  <data name="Details.RiskWarning" xml:space="preserve"><value>Risk warning</value></data>
+  <data name="Details.HowToRevert" xml:space="preserve"><value>How to revert</value></data>
+  <data name="Details.RevertWithBackup" xml:space="preserve"><value>If trashsweepr applied this tweak, the previous value was saved and is restored exactly. If it was already applied before, the Windows default listed below is used.</value></data>
+  <data name="Details.RevertActions" xml:space="preserve"><value>Windows default</value></data>
+  <data name="Details.RequiresReboot" xml:space="preserve"><value>Requires restarting Windows (or File Explorer) to take effect.</value></data>
+  <data name="Details.OptInNote" xml:space="preserve"><value>Optional: never included in the automatic profiles. Check it manually if you want it.</value></data>
+  <data name="Details.UndoButton" xml:space="preserve"><value>Undo this tweak</value></data>
+
+  <!-- Descrição das ações -->
+  <data name="Action.RegistrySet" xml:space="preserve"><value>Registry: sets {0} = {1} ({2})</value></data>
+  <data name="Action.RegistryDeleteValue" xml:space="preserve"><value>Registry: removes the value {0}</value></data>
+  <data name="Action.RegistryDeleteKey" xml:space="preserve"><value>Registry: deletes the key {0} (created by trashsweepr)</value></data>
+  <data name="Action.ServiceStartType" xml:space="preserve"><value>Service {0}: startup type set to {1}</value></data>
+  <data name="Action.ServiceStartTypeAndStop" xml:space="preserve"><value>Service {0}: startup type set to {1}, and the service is stopped</value></data>
+  <data name="Action.TaskDisable" xml:space="preserve"><value>Scheduled task {0}: disables it (does not delete)</value></data>
+  <data name="Action.TaskEnable" xml:space="preserve"><value>Scheduled task {0}: enables it</value></data>
+  <data name="Action.AppxRemove" xml:space="preserve"><value>App {0}: removes it, for your user only</value></data>
+  <data name="Action.AppxReinstall" xml:space="preserve"><value>App {0}: reinstalls it</value></data>
+  <data name="StartType.Automatic" xml:space="preserve"><value>Automatic</value></data>
+  <data name="StartType.AutomaticDelayed" xml:space="preserve"><value>Automatic (delayed)</value></data>
+  <data name="StartType.Manual" xml:space="preserve"><value>Manual</value></data>
+  <data name="StartType.Disabled" xml:space="preserve"><value>Disabled</value></data>
+  <data name="RegType.Dword" xml:space="preserve"><value>DWORD</value></data>
+  <data name="RegType.Qword" xml:space="preserve"><value>QWORD</value></data>
+  <data name="RegType.Sz" xml:space="preserve"><value>text</value></data>
+  <data name="RegType.ExpandSz" xml:space="preserve"><value>expandable text</value></data>
+
+  <!-- Barra de ações e status -->
+  <data name="Run.Simulate" xml:space="preserve"><value>Simulate {0} selected</value></data>
+  <data name="Run.Apply" xml:space="preserve"><value>Apply {0} selected</value></data>
+  <data name="Run.RevertAll" xml:space="preserve"><value>Revert all</value></data>
+  <data name="Run.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Run.Refresh" xml:space="preserve"><value>Refresh states</value></data>
+  <data name="Status.Loading" xml:space="preserve"><value>Loading the catalog…</value></data>
+  <data name="Status.Detecting" xml:space="preserve"><value>Checking the current state of each tweak…</value></data>
+  <data name="Status.Running" xml:space="preserve"><value>Running {0} ({1} of {2})…</value></data>
+  <data name="Status.Cancelling" xml:space="preserve"><value>Cancelling…</value></data>
+
+  <!-- Avisos -->
+  <data name="Banner.NotElevated" xml:space="preserve"><value>Without administrator mode you can view and simulate everything, but applying or undoing changes requires reopening as administrator.</value></data>
+  <data name="Banner.NoProtection" xml:space="preserve"><value>System Protection is turned off: trashsweepr won't be able to create a restore point before applying tweaks.</value></data>
+  <data name="Banner.ProtectionUnknown" xml:space="preserve"><value>Couldn't check System Protection (that requires administrator mode).</value></data>
+  <data name="Banner.CatalogIssues" xml:space="preserve"><value>{0} problem(s) in the tweak catalog; the affected items were skipped. Details in the log.</value></data>
+  <data name="Banner.CatalogMissing" xml:space="preserve"><value>The tweak catalog was not found or is empty. Reinstall trashsweepr.</value></data>
+  <data name="Banner.Reboot" xml:space="preserve"><value>Some changes only take effect after restarting Windows (or File Explorer).</value></data>
+
+  <!-- Resultados -->
+  <data name="Result.Success" xml:space="preserve"><value>Success</value></data>
+  <data name="Result.Failed" xml:space="preserve"><value>Failed</value></data>
+  <data name="Result.Skipped" xml:space="preserve"><value>Skipped</value></data>
+  <data name="Result.DryRun" xml:space="preserve"><value>Simulated</value></data>
+  <data name="Skip.AlreadyApplied" xml:space="preserve"><value>It was already applied.</value></data>
+  <data name="Skip.NotApplied" xml:space="preserve"><value>It was not applied.</value></data>
+  <data name="Skip.NotApplicable" xml:space="preserve"><value>Doesn't apply to this computer (the item doesn't exist here).</value></data>
+  <data name="Skip.Incompatible" xml:space="preserve"><value>Incompatible with this version of Windows.</value></data>
+  <data name="Skip.NotConfirmed" xml:space="preserve"><value>Not confirmed by the user.</value></data>
+  <data name="Skip.NoRestorePoint" xml:space="preserve"><value>Cancelled: couldn't create the restore point.</value></data>
+  <data name="Skip.None" xml:space="preserve"><value></value></data>
+  <data name="Result.RolledBack" xml:space="preserve"><value>The changes already made were undone automatically.</value></data>
+  <data name="Result.UsedBackup" xml:space="preserve"><value>Restored from the backup of the previous value.</value></data>
+  <data name="Result.Reboot" xml:space="preserve"><value>Restart required.</value></data>
+  <data name="Result.ShowCommands" xml:space="preserve"><value>Show commands</value></data>
+  <data name="Result.HideCommands" xml:space="preserve"><value>Hide commands</value></data>
+  <data name="Result.Summary" xml:space="preserve"><value>{0} succeeded, {1} skipped, {2} failed.</value></data>
+  <data name="Result.SummaryDryRun" xml:space="preserve"><value>Simulation: {0} tweak(s) would be changed, {1} skipped, {2} failed. Nothing was modified.</value></data>
+  <data name="Result.None" xml:space="preserve"><value>No results yet. Check some tweaks and use Simulate or Apply.</value></data>
+  <data name="Result.RestorePointCreated" xml:space="preserve"><value>Restore point created before the changes.</value></data>
+  <data name="Result.RestorePointThrottled" xml:space="preserve"><value>A recent restore point already exists (Windows allows one every 24 hours).</value></data>
+  <data name="Result.RestorePointSkipped" xml:space="preserve"><value>No restore point: {0}</value></data>
+
+  <!-- Diálogos -->
+  <data name="Dialog.RiskTitle" xml:space="preserve"><value>Confirm risky tweaks</value></data>
+  <data name="Dialog.RiskIntro" xml:space="preserve"><value>The tweaks below may have side effects. Read each warning before continuing.</value></data>
+  <data name="Dialog.RiskCheckbox" xml:space="preserve"><value>I have read the warnings and understand the risks.</value></data>
+  <data name="Dialog.RiskContinue" xml:space="preserve"><value>Continue</value></data>
+  <data name="Dialog.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Dialog.Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Dialog.NoRestoreTitle" xml:space="preserve"><value>No restore point</value></data>
+  <data name="Dialog.NoRestoreMessage" xml:space="preserve"><value>Couldn't create a restore point ({0}).
+
+If something goes wrong you can still use "Undo" (trashsweepr keeps the previous value of each item), but you won't have a Windows restore point as a second safety net.
+
+Continue anyway?</value></data>
+  <data name="Dialog.NoRestoreContinue" xml:space="preserve"><value>Continue without a restore point</value></data>
+  <data name="Dialog.RevertAllTitle" xml:space="preserve"><value>Revert all</value></data>
+  <data name="Dialog.RevertAllMessage" xml:space="preserve"><value>This undoes every tweak applied by trashsweepr, restoring the previous value of each one ({0} active backup(s)).
+
+Continue?</value></data>
+  <data name="Dialog.RevertAllNone" xml:space="preserve"><value>There are no tweaks applied by trashsweepr to revert.</value></data>
+  <data name="Dialog.RevertAllConfirm" xml:space="preserve"><value>Revert all</value></data>
+  <data name="Dialog.RevertOneTitle" xml:space="preserve"><value>Undo tweak</value></data>
+  <data name="Dialog.RevertOneMessage" xml:space="preserve"><value>Undo "{0}"?</value></data>
+  <data name="Dialog.RevertOneConfirm" xml:space="preserve"><value>Undo</value></data>
+  <data name="Dialog.NeedAdminTitle" xml:space="preserve"><value>Administrator mode required</value></data>
+  <data name="Dialog.NeedAdminMessage" xml:space="preserve"><value>Applying or undoing changes requires administrator mode. trashsweepr can reopen now, straight into this section; simulation and the disk map keep working without it.</value></data>
+  <data name="Dialog.UnexpectedTitle" xml:space="preserve"><value>Unexpected error</value></data>
+  <data name="Dialog.UnexpectedMessage" xml:space="preserve"><value>An unexpected error occurred: {0}
+
+trashsweepr is still open and nothing was changed beyond what the results already show. The details were written to the log, in {1}.</value></data>
+  <data name="Profile.Label" xml:space="preserve"><value>Profile</value></data>
+  <data name="Banner.ElevateAction" xml:space="preserve"><value>Reopen as administrator</value></data>
+  <data name="Dialog.NeedAdminConfirm" xml:space="preserve"><value>Reopen as administrator</value></data>
+  <data name="Dialog.NeedAdminDeclined" xml:space="preserve"><value>The Windows permission prompt was declined, so trashsweepr was not reopened as administrator. Nothing was changed.</value></data>
+  <data name="Dialog.NeedAdminUnavailable" xml:space="preserve"><value>Couldn't reopen trashsweepr as administrator. Close the app and open it again with "Run as administrator". Nothing was changed.</value></data>
+  <data name="Dialog.AnotherRunTitle" xml:space="preserve"><value>Another window is running</value></data>
+  <data name="Dialog.AnotherRunMessage" xml:space="preserve"><value>Another trashsweepr window is applying or undoing tweaks right now. Wait for it to finish so the backups don't get mixed up.</value></data>
+
+  <!-- Disco -->
+  <!-- Disco: Shell -->
+  <data name="App.Section.Disk" xml:space="preserve"><value>Disk</value></data>
+  <data name="App.Section.Cleanup" xml:space="preserve"><value>Windows Cleanup</value></data>
+  <data name="App.UnexpectedError" xml:space="preserve"><value>Unexpected error</value></data>
+  <!-- Disco: Barra de ferramentas e caminho -->
+  <data name="Disk.Scan" xml:space="preserve"><value>Scan drive</value></data>
+  <data name="Disk.PickFolder" xml:space="preserve"><value>Choose folder…</value></data>
+  <data name="Disk.PickFolder.Title" xml:space="preserve"><value>Choose the folder to map</value></data>
+  <data name="Disk.Cancel" xml:space="preserve"><value>Cancel</value></data>
+  <data name="Disk.Refresh" xml:space="preserve"><value>Refresh folder</value></data>
+  <data name="Disk.Refresh.Tip" xml:space="preserve"><value>Rescan just the open folder (F5)</value></data>
+  <data name="Disk.Up.Tip" xml:space="preserve"><value>Up one level (Backspace)</value></data>
+  <data name="Disk.ColorBy" xml:space="preserve"><value>Color by</value></data>
+  <data name="Disk.Mode.Type" xml:space="preserve"><value>File type</value></data>
+  <data name="Disk.Mode.Age" xml:space="preserve"><value>Age</value></data>
+  <data name="Disk.Mode.Recoverable" xml:space="preserve"><value>Rebuildable</value></data>
+  <data name="Disk.Mode.Changes" xml:space="preserve"><value>Changes</value></data>
+  <data name="Disk.Drive.Fixed" xml:space="preserve"><value>Local</value></data>
+  <data name="Disk.Drive.Removable" xml:space="preserve"><value>Removable</value></data>
+  <data name="Disk.Drive.Network" xml:space="preserve"><value>Network</value></data>
+  <data name="Disk.Drive.Optical" xml:space="preserve"><value>Optical</value></data>
+  <data name="Disk.Drive.Free" xml:space="preserve"><value>{0} free of {1}</value></data>
+  <data name="Disk.FolderDenied" xml:space="preserve"><value>no permission to read this folder</value></data>
+  <!-- Disco: Varredura -->
+  <data name="Disk.Overlay.Title" xml:space="preserve"><value>Find out what's taking up space</value></data>
+  <data name="Disk.Overlay.Text" xml:space="preserve"><value>Choose a drive and click Scan drive, or open a specific folder. The app only reads the disk: nothing is moved or deleted.</value></data>
+  <data name="Disk.Overlay.TextIdle" xml:space="preserve"><value>Choose a drive and click Scan drive, or open a specific folder. Build and cache folders that can be recreated can go to the Recycle Bin.</value></data>
+  <data name="Disk.Scanning" xml:space="preserve"><value>Scanning {0}</value></data>
+  <data name="Disk.Refreshing" xml:space="preserve"><value>Refreshing {0}</value></data>
+  <data name="Disk.ScanDone" xml:space="preserve"><value>Scanned in {0} · {1}</value></data>
+  <data name="Disk.ScanCancelled" xml:space="preserve"><value>Scan cancelled</value></data>
+  <data name="Disk.ScanError" xml:space="preserve"><value>Couldn't scan the folder</value></data>
+  <data name="Disk.DeniedFolders.One" xml:space="preserve"><value>{0} folder skipped (no permission)</value></data>
+  <data name="Disk.DeniedFolders.Other" xml:space="preserve"><value>{0} folders skipped (no permission)</value></data>
+  <data name="Disk.SnapshotSaveError" xml:space="preserve"><value>couldn't save or read the records used for comparison</value></data>
+  <data name="Disk.SnapshotUnknownFormat" xml:space="preserve"><value>The scan file is in an unknown format.</value></data>
+  <data name="Disk.BaselineError" xml:space="preserve"><value>Couldn't read the previous scan: {0}</value></data>
+  <data name="Disk.Hint" xml:space="preserve"><value>Double-click a folder on the map to open it. Right-click to show it in Explorer or send rebuildable folders to the Recycle Bin.</value></data>
+  <!-- Disco: Contagens, tamanhos e tempo -->
+  <data name="Disk.Files.One" xml:space="preserve"><value>{0} file</value></data>
+  <data name="Disk.Files.Other" xml:space="preserve"><value>{0} files</value></data>
+  <data name="Disk.Folders.One" xml:space="preserve"><value>{0} folder</value></data>
+  <data name="Disk.Folders.Other" xml:space="preserve"><value>{0} folders</value></data>
+  <data name="Disk.SmallerItems.One" xml:space="preserve"><value>{0} smaller item</value></data>
+  <data name="Disk.SmallerItems.Other" xml:space="preserve"><value>{0} smaller items</value></data>
+  <data name="Disk.NoChange" xml:space="preserve"><value>no change</value></data>
+  <data name="Disk.OfThisFolder" xml:space="preserve"><value>{0} of this folder</value></data>
+  <data name="Disk.InThisFolder" xml:space="preserve"><value>in this folder</value></data>
+  <data name="Disk.Ago.JustNow" xml:space="preserve"><value>just now</value></data>
+  <data name="Disk.Ago.Minutes.One" xml:space="preserve"><value>{0} min ago</value></data>
+  <data name="Disk.Ago.Minutes.Other" xml:space="preserve"><value>{0} min ago</value></data>
+  <data name="Disk.Ago.Hours.One" xml:space="preserve"><value>{0} hour ago</value></data>
+  <data name="Disk.Ago.Hours.Other" xml:space="preserve"><value>{0} hours ago</value></data>
+  <data name="Disk.Ago.Days.One" xml:space="preserve"><value>{0} day ago</value></data>
+  <data name="Disk.Ago.Days.Other" xml:space="preserve"><value>{0} days ago</value></data>
+  <data name="Disk.Ago.Weeks.One" xml:space="preserve"><value>{0} week ago</value></data>
+  <data name="Disk.Ago.Weeks.Other" xml:space="preserve"><value>{0} weeks ago</value></data>
+  <data name="Disk.Ago.Months.One" xml:space="preserve"><value>{0} month ago</value></data>
+  <data name="Disk.Ago.Months.Other" xml:space="preserve"><value>{0} months ago</value></data>
+  <data name="Disk.Ago.Years.One" xml:space="preserve"><value>{0} year ago</value></data>
+  <data name="Disk.Ago.Years.Other" xml:space="preserve"><value>{0} years ago</value></data>
+  <!-- Disco: Abas e listas do painel lateral -->
+  <data name="Disk.Tab.Folder" xml:space="preserve"><value>Folder</value></data>
+  <data name="Disk.Tab.Largest" xml:space="preserve"><value>Largest</value></data>
+  <data name="Disk.Tab.Recoverable" xml:space="preserve"><value>Rebuildable</value></data>
+  <data name="Disk.Tab.Changes" xml:space="preserve"><value>Changes</value></data>
+  <data name="Disk.Empty.Folder" xml:space="preserve"><value>Empty folder.</value></data>
+  <data name="Disk.Empty.Largest" xml:space="preserve"><value>No files in this folder.</value></data>
+  <data name="Disk.Empty.InsideRecoverable" xml:space="preserve"><value>This folder is inside {0}, which is rebuildable as a whole.</value></data>
+  <data name="Disk.Empty.Recoverable" xml:space="preserve"><value>No rebuildable build or cache folders were found in this folder.</value></data>
+  <data name="Disk.Empty.ChangesFirst" xml:space="preserve"><value>The comparison shows up from the second scan of this folder onward.</value></data>
+  <data name="Disk.Empty.ChangesNone" xml:space="preserve"><value>Nothing has changed in this folder since the selected scan.</value></data>
+  <data name="Disk.Row.Link" xml:space="preserve"><value>Folder link (not followed)</value></data>
+  <data name="Disk.Row.Denied" xml:space="preserve"><value>No read permission</value></data>
+  <data name="Disk.Row.Recoverable" xml:space="preserve"><value>{0} · rebuildable ({1})</value></data>
+  <data name="Disk.Row.ProjectTouched" xml:space="preserve"><value>project last changed {0}</value></data>
+  <data name="Disk.Row.New" xml:space="preserve"><value>new · {0}</value></data>
+  <data name="Disk.Row.WasNow" xml:space="preserve"><value>was {0}, now {1}</value></data>
+  <data name="Disk.Row.Removed" xml:space="preserve"><value>removed · was {0}</value></data>
+  <!-- Disco: Recriáveis e Lixeira -->
+  <data name="Disk.Recover.None" xml:space="preserve"><value>No rebuildable build or cache folders here.</value></data>
+  <data name="Disk.Recover.Size" xml:space="preserve"><value>{0} rebuildable</value></data>
+  <data name="Disk.Recover.InProjects.One" xml:space="preserve"><value>in {0} project</value></data>
+  <data name="Disk.Recover.InProjects.Other" xml:space="preserve"><value>across {0} projects</value></data>
+  <data name="Disk.Recover.Hint" xml:space="preserve"><value>Each folder comes back with the command shown; check the ones you want to clear.</value></data>
+  <data name="Disk.Recover.CheckAll" xml:space="preserve"><value>Check all</value></data>
+  <data name="Disk.Recover.UncheckAll" xml:space="preserve"><value>Uncheck all</value></data>
+  <data name="Disk.Recover.Stale" xml:space="preserve"><value>Only projects idle for {0}+ days</value></data>
+  <data name="Disk.Recycle" xml:space="preserve"><value>Move to Recycle Bin</value></data>
+  <data name="Disk.RecycleCount" xml:space="preserve"><value>Move {0} to Recycle Bin · {1}</value></data>
+  <data name="Disk.Recycling" xml:space="preserve"><value>Moving to Recycle Bin</value></data>
+  <data name="Disk.RecyclingProgress" xml:space="preserve"><value>{0} of {1} · {2}</value></data>
+  <data name="Disk.Moved.One" xml:space="preserve"><value>{0} folder moved</value></data>
+  <data name="Disk.Moved.Other" xml:space="preserve"><value>{0} folders moved</value></data>
+  <data name="Disk.Recycled" xml:space="preserve"><value>{0} to the Recycle Bin · {1} freed</value></data>
+  <data name="Disk.RecycledPartial" xml:space="preserve"><value>{0} moved ({1}) · not moved: {2}</value></data>
+  <data name="Disk.NotMoved.Failed" xml:space="preserve"><value>{0} in use or access denied</value></data>
+  <data name="Disk.NotMoved.Cancelled" xml:space="preserve"><value>{0} cancelled</value></data>
+  <data name="Disk.NotMoved.TooLong" xml:space="preserve"><value>{0} with a path too long for the Recycle Bin</value></data>
+  <data name="Disk.Confirm.Question" xml:space="preserve"><value>Move {0} ({1}) to the Recycle Bin?</value></data>
+  <data name="Disk.Confirm.More" xml:space="preserve"><value>…and {0} more.</value></data>
+  <data name="Disk.Confirm.Footer" xml:space="preserve"><value>You can restore them from the Windows Recycle Bin. If something doesn't fit there, Windows will warn you before deleting it permanently.</value></data>
+  <!-- Disco: O que cada pasta recriável é e como volta -->
+  <data name="Disk.Rec.Build" xml:space="preserve"><value>{0} build output</value></data>
+  <data name="Disk.Rec.Cache" xml:space="preserve"><value>{0} cache</value></data>
+  <data name="Disk.Rec.NpmDeps" xml:space="preserve"><value>npm dependencies</value></data>
+  <data name="Disk.Rec.DotNetObj" xml:space="preserve"><value>.NET intermediate files</value></data>
+  <data name="Disk.Rec.PythonVenv" xml:space="preserve"><value>Python virtual environment</value></data>
+  <data name="Disk.Rec.PythonBytecode" xml:space="preserve"><value>Python bytecode</value></data>
+  <data name="Disk.Rec.GradleProjectCache" xml:space="preserve"><value>Project's Gradle cache</value></data>
+  <data name="Disk.Rec.GradleGlobalCache" xml:space="preserve"><value>Global Gradle cache</value></data>
+  <data name="Disk.Rec.NuGetPackages" xml:space="preserve"><value>NuGet packages</value></data>
+  <data name="Disk.Rec.CargoRegistry" xml:space="preserve"><value>Cargo registry</value></data>
+  <data name="Disk.Rec.Cmd.NextBuild" xml:space="preserve"><value>recreated on the next build</value></data>
+  <data name="Disk.Rec.Cmd.OnRun" xml:space="preserve"><value>recreated when the code runs</value></data>
+  <data name="Disk.Rec.Cmd.OnTests" xml:space="preserve"><value>recreated when the tests run</value></data>
+  <data name="Disk.Rec.Cmd.NextCheck" xml:space="preserve"><value>recreated on the next check</value></data>
+  <data name="Disk.Rec.Cmd.Venv" xml:space="preserve"><value>python -m venv {0} and pip install</value></data>
+  <data name="Disk.Rec.Cmd.OnDemand" xml:space="preserve"><value>downloaded again when needed</value></data>
+  <data name="Disk.Rec.Cmd.DownloadsAgain" xml:space="preserve"><value>{0} downloads it again</value></data>
+  <!-- Disco: Legenda e modos de cor -->
+  <data name="Disk.Legend.Type" xml:space="preserve"><value>By file type</value></data>
+  <data name="Disk.Legend.Age" xml:space="preserve"><value>By age (last modified)</value></data>
+  <data name="Disk.Legend.Recoverable" xml:space="preserve"><value>Rebuildable in this folder</value></data>
+  <data name="Disk.Legend.RecoverableShare" xml:space="preserve"><value>Rebuildable build and cache</value></data>
+  <data name="Disk.Legend.Rest" xml:space="preserve"><value>Everything else</value></data>
+  <data name="Disk.Legend.Changes" xml:space="preserve"><value>Changes</value></data>
+  <data name="Disk.Legend.ChangesSince" xml:space="preserve"><value>Changes since {0}</value></data>
+  <data name="Disk.Legend.NoBaseline" xml:space="preserve"><value>There's no earlier scan of this folder yet. The comparison will show up after the next scan.</value></data>
+  <data name="Disk.Category.Video" xml:space="preserve"><value>Video</value></data>
+  <data name="Disk.Category.Image" xml:space="preserve"><value>Images</value></data>
+  <data name="Disk.Category.Audio" xml:space="preserve"><value>Audio</value></data>
+  <data name="Disk.Category.Document" xml:space="preserve"><value>Documents</value></data>
+  <data name="Disk.Category.Code" xml:space="preserve"><value>Code and build</value></data>
+  <data name="Disk.Category.Archive" xml:space="preserve"><value>Archives and disk images</value></data>
+  <data name="Disk.Category.Program" xml:space="preserve"><value>Programs and libraries</value></data>
+  <data name="Disk.Category.Other" xml:space="preserve"><value>Other</value></data>
+  <data name="Disk.Age.LastMonth" xml:space="preserve"><value>Last month</value></data>
+  <data name="Disk.Age.SixMonths" xml:space="preserve"><value>1–6 months</value></data>
+  <data name="Disk.Age.OneYear" xml:space="preserve"><value>6 months – 1 year</value></data>
+  <data name="Disk.Age.ThreeYears" xml:space="preserve"><value>1–3 years</value></data>
+  <data name="Disk.Age.Older" xml:space="preserve"><value>Over 3 years</value></data>
+  <data name="Disk.Change.New" xml:space="preserve"><value>New</value></data>
+  <data name="Disk.Change.Grew" xml:space="preserve"><value>Grew</value></data>
+  <data name="Disk.Change.Shrank" xml:space="preserve"><value>Shrank</value></data>
+  <data name="Disk.Change.Same" xml:space="preserve"><value>Unchanged</value></data>
+  <data name="Disk.Change.Unknown" xml:space="preserve"><value>No baseline</value></data>
+  <data name="Disk.Map.Recoverable" xml:space="preserve"><value>rebuildable</value></data>
+  <!-- Disco: Comparação -->
+  <data name="Disk.CompareWith" xml:space="preserve"><value>Compare with</value></data>
+  <data name="Disk.Changes.First" xml:space="preserve"><value>First scan of this folder. A record was saved; the next scan will show what changed.</value></data>
+  <data name="Disk.Changes.Pick" xml:space="preserve"><value>Choose an earlier scan to compare with.</value></data>
+  <data name="Disk.Changes.Added" xml:space="preserve"><value>This folder didn't exist in the scan from {0}.</value></data>
+  <data name="Disk.Changes.SameSize" xml:space="preserve"><value>This folder's size hasn't changed since {0} ({1}).</value></data>
+  <data name="Disk.Changes.Delta" xml:space="preserve"><value>{0} in this folder ({1}): was {2}, now {3}.</value></data>
+  <!-- Disco: Mapa: dica ao passar o mouse e menu -->
+  <data name="Disk.Hover.Modified" xml:space="preserve"><value>modified {0}</value></data>
+  <data name="Disk.Hover.Recoverable" xml:space="preserve"><value>rebuildable: {0} ({1})</value></data>
+  <data name="Disk.Hover.NotRecoverable" xml:space="preserve"><value>not rebuildable</value></data>
+  <data name="Disk.Hover.New" xml:space="preserve"><value>new</value></data>
+  <data name="Disk.Hover.Was" xml:space="preserve"><value>{0} (was {1})</value></data>
+  <data name="Disk.Menu.Enter" xml:space="preserve"><value>Open folder</value></data>
+  <data name="Disk.Menu.EnterParent" xml:space="preserve"><value>Open containing folder</value></data>
+  <data name="Disk.Menu.ShowInExplorer" xml:space="preserve"><value>Show in Explorer</value></data>
+  <data name="Disk.Menu.CopyPath" xml:space="preserve"><value>Copy path</value></data>
+  <data name="Disk.Menu.Recycle" xml:space="preserve"><value>Move {0} to Recycle Bin… ({1}, rebuildable)</value></data>
+  <data name="Disk.CopyPathError" xml:space="preserve"><value>Couldn't copy the path</value></data>
+  <data name="Disk.ExplorerError" xml:space="preserve"><value>Couldn't open Explorer</value></data>
+</root>
