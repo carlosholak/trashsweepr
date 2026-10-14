@@ -3,11 +3,20 @@
   "tweaks": [
     {
       "id": "interface.start-suggestions",
-      "name": "Desativar sugestões no menu Iniciar",
-      "description": "Remove sugestões de apps, \"recomendações\" de conteúdo e notificações da conta Microsoft do menu Iniciar.",
+      "name": {
+        "en": "Turn off suggestions in the Start menu",
+        "pt-BR": "Desativar sugestões no menu Iniciar"
+      },
+      "description": {
+        "en": "Removes app suggestions, content \"recommendations\" and Microsoft account notifications from the Start menu.",
+        "pt-BR": "Remove sugestões de apps, \"recomendações\" de conteúdo e notificações da conta Microsoft do menu Iniciar."
+      },
       "category": "interface",
       "risk": "safe",
-      "revertNote": "Restaura os valores padrão do Windows para o seu usuário.",
+      "revertNote": {
+        "en": "Restores the Windows default values for your user account.",
+        "pt-BR": "Restaura os valores padrão do Windows para o seu usuário."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SystemPaneSuggestionsEnabled", "kind": "dword", "value": 0 },
         { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338388Enabled", "kind": "dword", "value": 0 },
@@ -23,12 +32,21 @@
     },
     {
       "id": "interface.start-bing-search",
-      "name": "Desativar pesquisa com Bing no menu Iniciar",
-      "description": "Faz a pesquisa do menu Iniciar buscar somente no PC, sem enviar o que você digita ao Bing nem mostrar resultados da web.",
+      "name": {
+        "en": "Turn off Bing search in the Start menu",
+        "pt-BR": "Desativar pesquisa com Bing no menu Iniciar"
+      },
+      "description": {
+        "en": "Makes Start menu search look only on your PC, without sending what you type to Bing or showing web results.",
+        "pt-BR": "Faz a pesquisa do menu Iniciar buscar somente no PC, sem enviar o que você digita ao Bing nem mostrar resultados da web."
+      },
       "category": "interface",
       "risk": "safe",
       "requiresReboot": true,
-      "revertNote": "Remove a política e reativa a pesquisa na web no menu Iniciar. Pode ser necessário sair e entrar novamente na conta.",
+      "revertNote": {
+        "en": "Removes the policy and turns web search in the Start menu back on. You may need to sign out and sign back in.",
+        "pt-BR": "Remove a política e reativa a pesquisa na web no menu Iniciar. Pode ser necessário sair e entrar novamente na conta."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\Explorer", "name": "DisableSearchBoxSuggestions", "kind": "dword", "value": 1 },
         { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Search", "name": "BingSearchEnabled", "kind": "dword", "value": 0 }
@@ -40,12 +58,21 @@
     },
     {
       "id": "interface.widgets",
-      "name": "Desativar Widgets",
-      "description": "Desativa o painel de Widgets (notícias, clima e feed MSN) por política do sistema, para todos os usuários.",
+      "name": {
+        "en": "Turn off Widgets",
+        "pt-BR": "Desativar Widgets"
+      },
+      "description": {
+        "en": "Turns off the Widgets board (news, weather and the MSN feed) through a system policy, for all users.",
+        "pt-BR": "Desativa o painel de Widgets (notícias, clima e feed MSN) por política do sistema, para todos os usuários."
+      },
       "category": "interface",
       "risk": "safe",
       "requiresReboot": true,
-      "revertNote": "Remove a política. O painel de Widgets volta após reiniciar o Explorador de Arquivos ou o PC.",
+      "revertNote": {
+        "en": "Removes the policy. The Widgets board comes back after restarting File Explorer or the PC.",
+        "pt-BR": "Remove a política. O painel de Widgets volta após reiniciar o Explorador de Arquivos ou o PC."
+      },
       "apply": [
         { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Dsh", "name": "AllowNewsAndInterests", "kind": "dword", "value": 0 }
       ],
@@ -55,13 +82,22 @@
     },
     {
       "id": "interface.copilot",
-      "name": "Desativar Copilot",
-      "description": "Desativa o Copilot integrado ao Windows por política (usuário e máquina) e esconde o botão da barra de tarefas. Em versões mais novas, o app Copilot da Store é separado e não é afetado.",
+      "name": {
+        "en": "Turn off Copilot",
+        "pt-BR": "Desativar Copilot"
+      },
+      "description": {
+        "en": "Turns off Copilot in Windows through policies (user and machine) and hides its taskbar button. On newer versions, the Copilot app from the Store is separate and is not affected.",
+        "pt-BR": "Desativa o Copilot integrado ao Windows por política (usuário e máquina) e esconde o botão da barra de tarefas. Em versões mais novas, o app Copilot da Store é separado e não é afetado."
+      },
       "category": "interface",
       "risk": "safe",
       "requiresReboot": true,
       "minBuild": 22621,
-      "revertNote": "Remove as políticas e mostra o botão do Copilot novamente.",
+      "revertNote": {
+        "en": "Removes the policies and shows the Copilot button again.",
+        "pt-BR": "Remove as políticas e mostra o botão do Copilot novamente."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\WindowsCopilot", "name": "TurnOffWindowsCopilot", "kind": "dword", "value": 1 },
         { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsCopilot", "name": "TurnOffWindowsCopilot", "kind": "dword", "value": 1 },
@@ -75,13 +111,22 @@
     },
     {
       "id": "interface.recall",
-      "name": "Desativar Recall (instantâneos de IA)",
-      "description": "Bloqueia por política a captura periódica de instantâneos da tela feita pelo Recall. Só existe em PCs Copilot+ com Windows 11 24H2 ou superior.",
+      "name": {
+        "en": "Turn off Recall (AI snapshots)",
+        "pt-BR": "Desativar Recall (instantâneos de IA)"
+      },
+      "description": {
+        "en": "Blocks, through policy, the periodic screen snapshots taken by Recall. Recall only exists on Copilot+ PCs running Windows 11 24H2 or later.",
+        "pt-BR": "Bloqueia por política a captura periódica de instantâneos da tela feita pelo Recall. Só existe em PCs Copilot+ com Windows 11 24H2 ou superior."
+      },
       "category": "interface",
       "risk": "safe",
       "requiresReboot": true,
       "minBuild": 26100,
-      "revertNote": "Remove as políticas, devolvendo a decisão às configurações do Windows.",
+      "revertNote": {
+        "en": "Removes the policies, handing the decision back to Windows Settings.",
+        "pt-BR": "Remove as políticas, devolvendo a decisão às configurações do Windows."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\WindowsAI", "name": "DisableAIDataAnalysis", "kind": "dword", "value": 1 },
         { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI", "name": "DisableAIDataAnalysis", "kind": "dword", "value": 1 }
@@ -93,12 +138,21 @@
     },
     {
       "id": "interface.classic-context-menu",
-      "name": "Restaurar menu de contexto clássico",
-      "description": "Faz o clique direito mostrar o menu completo do Windows 10 diretamente, sem o passo extra \"Mostrar mais opções\".",
+      "name": {
+        "en": "Restore the classic context menu",
+        "pt-BR": "Restaurar menu de contexto clássico"
+      },
+      "description": {
+        "en": "Makes right-click show the full Windows 10 menu directly, without the extra \"Show more options\" step.",
+        "pt-BR": "Faz o clique direito mostrar o menu completo do Windows 10 diretamente, sem o passo extra \"Mostrar mais opções\"."
+      },
       "category": "interface",
       "risk": "safe",
       "requiresReboot": true,
-      "revertNote": "Apaga a chave criada pelo trashsweepr (HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-...}). Reinicie o Explorador de Arquivos para ver a mudança.",
+      "revertNote": {
+        "en": "Deletes the key created by trashsweepr (HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-...}). Restart File Explorer to see the change.",
+        "pt-BR": "Apaga a chave criada pelo trashsweepr (HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-...}). Reinicie o Explorador de Arquivos para ver a mudança."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32", "name": "", "kind": "sz", "value": "" }
       ],
@@ -108,11 +162,20 @@
     },
     {
       "id": "interface.show-file-extensions",
-      "name": "Mostrar extensões de arquivos",
-      "description": "Mostra a extensão (.pdf, .exe, .docx) no nome dos arquivos no Explorador, ajudando a identificar arquivos disfarçados.",
+      "name": {
+        "en": "Show file name extensions",
+        "pt-BR": "Mostrar extensões de arquivos"
+      },
+      "description": {
+        "en": "Shows the extension (.pdf, .exe, .docx) in file names in File Explorer, helping you spot disguised files.",
+        "pt-BR": "Mostra a extensão (.pdf, .exe, .docx) no nome dos arquivos no Explorador, ajudando a identificar arquivos disfarçados."
+      },
       "category": "interface",
       "risk": "safe",
-      "revertNote": "Volta a ocultar as extensões de tipos de arquivo conhecidos.",
+      "revertNote": {
+        "en": "Hides extensions for known file types again.",
+        "pt-BR": "Volta a ocultar as extensões de tipos de arquivo conhecidos."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "HideFileExt", "kind": "dword", "value": 0 }
       ],
