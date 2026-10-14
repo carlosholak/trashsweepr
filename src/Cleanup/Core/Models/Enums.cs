@@ -1,4 +1,4 @@
-namespace TrashSweepr.Limpeza.Core.Models;
+namespace TrashSweepr.Cleanup.Core.Models;
 
 /// <summary>Nível de risco de um tweak. A ordem importa: valores maiores são mais arriscados.</summary>
 public enum RiskLevel
