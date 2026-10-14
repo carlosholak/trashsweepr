@@ -1,8 +1,8 @@
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Core.Operations;
 
-namespace TrashSweepr.Limpeza.Core.Backup;
+namespace TrashSweepr.Cleanup.Core.Backup;
 
 /// <summary>
 /// Transforma um backup em operações para devolver o sistema ao estado anterior. Os arquivos de backup
@@ -17,7 +17,7 @@ public static class RestorePlanner
 
         if (record.Items is null)
         {
-            return new OperationPlan(groups, [$"Backup {record.Id}: lista de itens ausente."]);
+            return new OperationPlan(groups, [Problem(record, CoreText.Get("Restore.MissingItems"))]);
         }
 
         // Do último alvo alterado para o primeiro.
@@ -25,7 +25,7 @@ public static class RestorePlanner
         {
             if (item is null)
             {
-                errors.Add($"Backup {record.Id}: item vazio (null).");
+                errors.Add(Problem(record, CoreText.Get("Restore.NullItem")));
                 continue;
             }
 
@@ -38,14 +38,14 @@ public static class RestorePlanner
             var problems = TweakValidator.ValidateAction(action, allowDeleteKey: true);
             if (problems.Count > 0)
             {
-                errors.AddRange(problems.Select(p => $"Backup {record.Id}: {p}"));
+                errors.AddRange(problems.Select(p => Problem(record, p)));
                 continue;
             }
 
             var built = operations();
             if (built.Error is not null)
             {
-                errors.Add($"Backup {record.Id}: {built.Error}");
+                errors.Add(Problem(record, built.Error));
                 continue;
             }
 
@@ -54,6 +54,8 @@ public static class RestorePlanner
 
         return new OperationPlan(groups, errors);
     }
+
+    private static string Problem(BackupRecord record, string problem) => CoreText.Format("Restore.Problem", record.Id, problem);
 
     private sealed record Built(IReadOnlyList<PlannedOperation> Operations, string? Error = null);
 
@@ -125,7 +127,7 @@ public static class RestorePlanner
             {
                 if (!TweakValidator.IsSameOrUnderKey(reg.Path, root))
                 {
-                    return new Built([], "a raiz de chaves criadas não é um prefixo do caminho do valor.");
+                    return new Built([], CoreText.Get("Restore.CreatedRootNotPrefix"));
                 }
 
                 operations.Add(new RegistryPruneKeysOperation(reg.Hive, reg.Path, root));
@@ -136,12 +138,12 @@ public static class RestorePlanner
 
         if (reg.Type is not { } type || reg.Value is not { } element)
         {
-            return new Built([], "valor anterior ilegível (tipo ou valor ausente).");
+            return new Built([], CoreText.Get("Restore.PreviousValueMissing"));
         }
 
         if (!RegistryValueConverter.TryConvert(type, element, out var value, out var error))
         {
-            return new Built([], $"valor anterior ilegível ({error}).");
+            return new Built([], CoreText.Format("Restore.PreviousValueUnreadable", error));
         }
 
         return new Built([new RegistrySetOperation(reg.Hive, reg.Path, reg.Name, type, value!)]);
