@@ -2,7 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:TrashSweepr"
-        xmlns:limpeza="clr-namespace:TrashSweepr.Limpeza.Views"
+        xmlns:cleanup="clr-namespace:TrashSweepr.Cleanup.Views"
+        xmlns:loc="clr-namespace:TrashSweepr.Localization"
         Title="trashsweepr" Width="1320" Height="820" MinWidth="920" MinHeight="560"
         WindowStartupLocation="CenterScreen" UseLayoutRounding="True"
         Background="{StaticResource Bg}" Foreground="{StaticResource Text}"
@@ -17,12 +18,12 @@
         <Border Grid.Row="0" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="14,0">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="trashsweepr" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,26,0"/>
-                <RadioButton x:Name="DiskSection" Style="{StaticResource Tab}" Content="Disco" IsChecked="True" Checked="OnSectionChanged"/>
-                <RadioButton x:Name="CleanupSection" Style="{StaticResource Tab}" Content="Limpeza do Windows" Checked="OnSectionChanged"/>
+                <RadioButton x:Name="DiskSection" Style="{StaticResource Tab}" Content="{loc:T App.Section.Disk}" IsChecked="True" Checked="OnSectionChanged"/>
+                <RadioButton x:Name="CleanupSection" Style="{StaticResource Tab}" Content="{loc:T App.Section.Cleanup}" Checked="OnSectionChanged"/>
             </StackPanel>
         </Border>
 
-        <limpeza:LimpezaView x:Name="LimpezaPane" Grid.Row="1" Visibility="Collapsed"/>
+        <cleanup:CleanupView x:Name="CleanupPane" Grid.Row="1" Visibility="Collapsed"/>
 
         <Grid x:Name="DiskPane" Grid.Row="1">
         <Grid.RowDefinitions>
@@ -36,14 +37,14 @@
         <Border Grid.Row="0" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="14,10">
             <DockPanel LastChildFill="False">
                 <ComboBox x:Name="DriveBox" Width="340" VerticalAlignment="Center" Padding="8,5"/>
-                <Button x:Name="ScanButton" Content="Varrer unidade" Style="{StaticResource PrimaryBtn}" Margin="8,0,0,0" Click="OnScanDrive"/>
-                <Button x:Name="FolderButton" Content="Escolher pasta…" Style="{StaticResource Btn}" Margin="8,0,0,0" Click="OnPickFolder"/>
-                <Button x:Name="CancelButton" Content="Cancelar" Style="{StaticResource Btn}" Margin="8,0,0,0" Click="OnCancel" Visibility="Collapsed"/>
+                <Button x:Name="ScanButton" Content="{loc:T Disk.Scan}" Style="{StaticResource PrimaryBtn}" Margin="8,0,0,0" Click="OnScanDrive"/>
+                <Button x:Name="FolderButton" Content="{loc:T Disk.PickFolder}" Style="{StaticResource Btn}" Margin="8,0,0,0" Click="OnPickFolder"/>
+                <Button x:Name="CancelButton" Content="{loc:T Disk.Cancel}" Style="{StaticResource Btn}" Margin="8,0,0,0" Click="OnCancel" Visibility="Collapsed"/>
                 <Button x:Name="RefreshButton" DockPanel.Dock="Right" Style="{StaticResource Btn}" Click="OnRefresh" IsEnabled="False"
-                        ToolTip="Varre de novo só a pasta aberta (F5)">
+                        ToolTip="{loc:T Disk.Refresh.Tip}">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="&#xE72C;" FontFamily="{StaticResource Icons}" FontSize="12" VerticalAlignment="Center" Margin="0,0,7,0"/>
-                        <TextBlock Text="Atualizar pasta"/>
+                        <TextBlock Text="{loc:T Disk.Refresh}"/>
                     </StackPanel>
                 </Button>
             </DockPanel>
@@ -53,17 +54,17 @@
         <Border Grid.Row="1" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="14,6">
             <DockPanel>
                 <Button x:Name="UpButton" DockPanel.Dock="Left" Style="{StaticResource Btn}" Padding="8,3" Margin="0,0,10,0"
-                        Click="OnUp" IsEnabled="False" ToolTip="Pasta acima (Backspace)">
+                        Click="OnUp" IsEnabled="False" ToolTip="{loc:T Disk.Up.Tip}">
                     <TextBlock Text="&#xE74A;" FontFamily="{StaticResource Icons}" FontSize="12"/>
                 </Button>
                 <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
                     <TextBlock x:Name="CurrentSummary" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,18,0"/>
-                    <TextBlock Text="Cores" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <TextBlock Text="{loc:T Disk.ColorBy}" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
                     <ComboBox x:Name="ModeBox" Width="170" Padding="8,4" SelectionChanged="OnModeChanged">
-                        <ComboBoxItem Content="Tipo de arquivo" IsSelected="True"/>
-                        <ComboBoxItem Content="Idade"/>
-                        <ComboBoxItem Content="Recriável"/>
-                        <ComboBoxItem Content="Mudanças"/>
+                        <ComboBoxItem Content="{loc:T Disk.Mode.Type}" IsSelected="True"/>
+                        <ComboBoxItem Content="{loc:T Disk.Mode.Age}"/>
+                        <ComboBoxItem Content="{loc:T Disk.Mode.Recoverable}"/>
+                        <ComboBoxItem Content="{loc:T Disk.Mode.Changes}"/>
                     </ComboBox>
                 </StackPanel>
                 <ItemsControl x:Name="Crumbs" VerticalAlignment="Center">
@@ -99,10 +100,10 @@
                     <Border x:Name="Overlay" Background="#F7FFFFFF">
                         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="560">
                             <TextBlock x:Name="OverlayTitle" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center"
-                                       Text="Descubra o que está ocupando espaço"/>
+                                       Text="{loc:T Disk.Overlay.Title}"/>
                             <TextBlock x:Name="OverlayText" Foreground="{StaticResource Muted}" HorizontalAlignment="Center" TextAlignment="Center"
                                        TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="20"
-                                       Text="Escolha uma unidade e clique em Varrer unidade, ou abra uma pasta específica. O app só lê o disco: nada é movido ou apagado."/>
+                                       Text="{loc:T Disk.Overlay.Text}"/>
                             <ProgressBar x:Name="OverlayProgress" IsIndeterminate="True" Height="3" Width="260" Margin="0,16,0,0"
                                          Foreground="{StaticResource Accent}" Background="{StaticResource Track}" BorderThickness="0" Visibility="Collapsed"/>
                             <TextBlock x:Name="OverlayDetail" Foreground="{StaticResource Muted}" FontSize="11.5" HorizontalAlignment="Center"
@@ -124,12 +125,13 @@
                     </Grid.RowDefinitions>
 
                     <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="12,0">
-                        <StackPanel Orientation="Horizontal">
-                            <RadioButton x:Name="ContentTab" Style="{StaticResource Tab}" Content="Pasta" IsChecked="True" Checked="OnTabChanged"/>
-                            <RadioButton x:Name="TopTab" Style="{StaticResource Tab}" Content="Maiores" Checked="OnTabChanged"/>
-                            <RadioButton x:Name="RecoverTab" Style="{StaticResource Tab}" Content="Recriável" Checked="OnTabChanged"/>
-                            <RadioButton x:Name="ChangesTab" Style="{StaticResource Tab}" Content="Mudanças" Checked="OnTabChanged"/>
-                        </StackPanel>
+                        <!-- WrapPanel: com o painel estreito, as abas descem de linha em vez de serem cortadas -->
+                        <WrapPanel Orientation="Horizontal">
+                            <RadioButton x:Name="ContentTab" Style="{StaticResource Tab}" Content="{loc:T Disk.Tab.Folder}" IsChecked="True" Checked="OnTabChanged"/>
+                            <RadioButton x:Name="TopTab" Style="{StaticResource Tab}" Content="{loc:T Disk.Tab.Largest}" Checked="OnTabChanged"/>
+                            <RadioButton x:Name="RecoverTab" Style="{StaticResource Tab}" Content="{loc:T Disk.Tab.Recoverable}" Checked="OnTabChanged"/>
+                            <RadioButton x:Name="ChangesTab" Style="{StaticResource Tab}" Content="{loc:T Disk.Tab.Changes}" Checked="OnTabChanged"/>
+                        </WrapPanel>
                     </Border>
 
                     <!-- Cabeçalho da aba Recriável -->
@@ -138,12 +140,19 @@
                         <StackPanel>
                             <TextBlock x:Name="RecoverSummary" TextWrapping="Wrap" LineHeight="19"/>
                             <WrapPanel Margin="0,8,0,0">
-                                <Button Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Content="Marcar todas" Click="OnCheckAll"/>
+                                <Button Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Content="{loc:T Disk.Recover.CheckAll}" Click="OnCheckAll"/>
                                 <Button x:Name="StaleButton" Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Click="OnCheckStale"/>
-                                <Button Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Content="Desmarcar" Click="OnUncheckAll"/>
+                                <Button Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Content="{loc:T Disk.Recover.UncheckAll}" Click="OnUncheckAll"/>
                             </WrapPanel>
                             <Button x:Name="RecycleButton" Style="{StaticResource PrimaryBtn}" Margin="0,2,0,0" Padding="12,6"
-                                    Content="Mover para a Lixeira" IsEnabled="False" Click="OnRecycleChecked"/>
+                                    Content="{loc:T Disk.Recycle}" IsEnabled="False" Click="OnRecycleChecked">
+                                <!-- "Mover 12 pastas para a Lixeira · 3,4 GB" pode passar da largura mínima do painel -->
+                                <Button.ContentTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding}" TextTrimming="CharacterEllipsis"/>
+                                    </DataTemplate>
+                                </Button.ContentTemplate>
+                            </Button>
                         </StackPanel>
                     </Border>
 
@@ -152,7 +161,7 @@
                             Padding="14,10,14,12" Visibility="Collapsed">
                         <StackPanel>
                             <DockPanel>
-                                <TextBlock Text="Comparar com" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <TextBlock Text="{loc:T Disk.CompareWith}" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
                                 <ComboBox x:Name="BaselineBox" Padding="8,4" SelectionChanged="OnBaselineChanged"/>
                             </DockPanel>
                             <TextBlock x:Name="ChangeSummary" TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="19"/>
@@ -233,7 +242,7 @@
 
                     <Border Grid.Row="3" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="14,12,14,10">
                         <StackPanel>
-                            <TextBlock x:Name="LegendTitle" Text="Por tipo de arquivo" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <TextBlock x:Name="LegendTitle" Text="{loc:T Disk.Legend.Type}" FontWeight="SemiBold" Margin="0,0,0,8"/>
                             <ItemsControl x:Name="Legend">
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate DataType="local:LegendRow">
@@ -268,7 +277,7 @@
             <DockPanel>
                 <TextBlock x:Name="ScanInfo" DockPanel.Dock="Right" Foreground="{StaticResource Muted}" Margin="16,0,0,0"/>
                 <TextBlock x:Name="HoverInfo" Foreground="{StaticResource Muted}" TextTrimming="CharacterEllipsis"
-                           Text="Clique duas vezes numa pasta do mapa para entrar nela. Botão direito mostra no Explorer ou manda pastas recriáveis para a Lixeira."/>
+                           Text="{loc:T Disk.Hint}"/>
             </DockPanel>
         </Border>
         </Grid>
