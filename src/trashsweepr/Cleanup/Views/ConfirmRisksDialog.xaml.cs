@@ -1,8 +1,8 @@
 using System.Windows;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.ViewModels;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.ViewModels;
 
-namespace TrashSweepr.Limpeza.Views;
+namespace TrashSweepr.Cleanup.Views;
 
 public partial class ConfirmRisksDialog : Window
 {
