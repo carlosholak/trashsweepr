@@ -1,9 +1,9 @@
 using System.Text.Json;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Backup;
-using TrashSweepr.Limpeza.Core.Logging;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Backup;
+using TrashSweepr.Cleanup.Core.Logging;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Core.Operations;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 using static TrashSweepr.Tests.Helpers.TestTweaks;
@@ -201,13 +201,13 @@ public sealed class RestorePlannerTests
     private static RegistryValueBackup Created(string path, string? root) =>
         new(RegistryHive.Hkcu, path, "V", false, null, null, root);
 
-    private static RegistryValueBackup Existing(RegistryValueType type, object value, string path = @"Software\Limpeza\Test", string name = "V") =>
+    private static RegistryValueBackup Existing(RegistryValueType type, object value, string path = @"Software\Cleanup\Test", string name = "V") =>
         new(RegistryHive.Hkcu, path, name, true, type, JsonSerializer.SerializeToElement(value), null);
 
     [Theory]
-    [InlineData(@"Software\Limpeza\Test\A", @"Software\Limpeza\Test\A")]
-    [InlineData(@"Software\Limpeza\Test\A", @"Software\Limpeza\Test")]
-    [InlineData(@"Software\Limpeza\Test\A", @"software\limpeza")]
+    [InlineData(@"Software\Cleanup\Test\A", @"Software\Cleanup\Test\A")]
+    [InlineData(@"Software\Cleanup\Test\A", @"Software\Cleanup\Test")]
+    [InlineData(@"Software\Cleanup\Test\A", @"software\cleanup")]
     public void Created_key_root_may_be_the_key_itself_or_an_ancestor(string path, string root)
     {
         var plan = RestorePlanner.Plan(RecordWith(Created(path, root)));
@@ -217,11 +217,11 @@ public sealed class RestorePlannerTests
     }
 
     [Theory]
-    [InlineData(@"Software\Limpeza\TestX\A", @"Software\Limpeza\Test")]
-    [InlineData(@"Software\Limpeza\Test", @"Software\Limpeza\Test\A")]
-    [InlineData(@"Software\Limpeza\Test", @"Software\Outra")]
-    [InlineData(@"Software\Limpeza\Test", "")]
-    [InlineData(@"Software\Limpeza\Test", @"Software\Limpeza\")]
+    [InlineData(@"Software\Cleanup\TestX\A", @"Software\Cleanup\Test")]
+    [InlineData(@"Software\Cleanup\Test", @"Software\Cleanup\Test\A")]
+    [InlineData(@"Software\Cleanup\Test", @"Software\Outra")]
+    [InlineData(@"Software\Cleanup\Test", "")]
+    [InlineData(@"Software\Cleanup\Test", @"Software\Limpeza\")]
     public void Created_key_root_that_is_not_a_segment_ancestor_is_rejected(string path, string root)
     {
         var plan = RestorePlanner.Plan(RecordWith(Created(path, root)));
