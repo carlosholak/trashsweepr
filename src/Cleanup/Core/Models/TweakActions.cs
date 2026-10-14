@@ -140,6 +140,82 @@ public sealed record AppxAction : TweakAction
     public required string PackageName { get; init; }
 }
 
+/// <summary>
+/// Desinstala ou reinstala um programa da lista fechada <see cref="ManagedProgram"/>. O JSON não traz caminho nem
+/// comando: cada par (programa, operação) corresponde a um script fixo em PowerShellCalls.
+/// </summary>
+public sealed record ProgramAction : TweakAction
+{
+    [JsonConverter(typeof(ManagedProgramJsonConverter))]
+    public required ManagedProgram Program { get; init; }
+
+    public required ProgramOperation Operation { get; init; }
+}
+
+/// <summary>Nomes dos programas gerenciados no JSON (catálogo e backups) e na tela.</summary>
+public static class ManagedPrograms
+{
+    /// <summary>Nome exato no JSON. Só estes dois valores são aceitos.</summary>
+    public static string JsonName(ManagedProgram program) => program switch
+    {
+        ManagedProgram.Edge => "edge",
+        ManagedProgram.OneDrive => "onedrive",
+        _ => throw new ArgumentOutOfRangeException(nameof(program)),
+    };
+
+    /// <summary>Nome do produto (igual em todas as línguas).</summary>
+    public static string DisplayName(ManagedProgram program) => program switch
+    {
+        ManagedProgram.Edge => "Microsoft Edge",
+        ManagedProgram.OneDrive => "OneDrive",
+        _ => throw new ArgumentOutOfRangeException(nameof(program)),
+    };
+
+    internal static bool TryParse(string? text, out ManagedProgram program)
+    {
+        // Comparação exata (ordinal): "Edge", "EDGE" ou "1" não passam. A lista é fechada de propósito.
+        switch (text)
+        {
+            case "edge":
+                program = ManagedProgram.Edge;
+                return true;
+            case "onedrive":
+                program = ManagedProgram.OneDrive;
+                return true;
+            default:
+                program = default;
+                return false;
+        }
+    }
+}
+
+/// <summary>
+/// Lê e grava <see cref="ManagedProgram"/> só como "edge" ou "onedrive". Fica no atributo da propriedade porque o
+/// conversor genérico de enums das opções transformaria OneDrive em "oneDrive" e aceitaria variações de caixa.
+/// </summary>
+public sealed class ManagedProgramJsonConverter : JsonConverter<ManagedProgram>
+{
+    public override bool HandleNull => true;
+
+    public override ManagedProgram Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+    {
+        var text = reader.TokenType == JsonTokenType.String ? reader.GetString() : null;
+        if (!ManagedPrograms.TryParse(text, out var program))
+        {
+            var shown = reader.TokenType == JsonTokenType.String ? text : reader.TokenType.ToString();
+            throw new JsonException(CoreText.Format("Catalog.UnknownProgram", shown));
+        }
+
+        return program;
+    }
+
+    public override void Write(Utf8JsonWriter writer, ManagedProgram value, JsonSerializerOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(writer);
+        writer.WriteStringValue(ManagedPrograms.JsonName(value));
+    }
+}
+
 internal sealed class TweakActionConverter : JsonConverter<TweakAction>
 {
     public override TweakAction Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
@@ -164,6 +240,7 @@ internal sealed class TweakActionConverter : JsonConverter<TweakAction>
             "service" => JsonSerializer.Deserialize<ServiceAction>(raw, options),
             "scheduledTask" => JsonSerializer.Deserialize<ScheduledTaskAction>(raw, options),
             "appx" => JsonSerializer.Deserialize<AppxAction>(raw, options),
+            "program" => JsonSerializer.Deserialize<ProgramAction>(raw, options),
             _ => throw new JsonException(CoreText.Format("Catalog.UnknownActionType", type)),
         };
 
@@ -199,6 +276,7 @@ internal sealed class TweakActionConverter : JsonConverter<TweakAction>
             ServiceAction a => ("service", JsonSerializer.SerializeToElement(a, options)),
             ScheduledTaskAction a => ("scheduledTask", JsonSerializer.SerializeToElement(a, options)),
             AppxAction a => ("appx", JsonSerializer.SerializeToElement(a, options)),
+            ProgramAction a => ("program", JsonSerializer.SerializeToElement(a, options)),
             _ => throw new JsonException(CoreText.Format("Catalog.UnsupportedActionClass", value.GetType().Name)),
         };
 
