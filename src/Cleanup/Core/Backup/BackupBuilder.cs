@@ -1,9 +1,9 @@
 using System.Text.Json;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Core.Operations;
 
-namespace TrashSweepr.Limpeza.Core.Backup;
+namespace TrashSweepr.Cleanup.Core.Backup;
 
 /// <summary>Não foi possível salvar o estado anterior com segurança; nada deve ser alterado.</summary>
 public sealed class BackupNotPossibleException(string message) : Exception(message);
@@ -69,7 +69,7 @@ public static class BackupBuilder
         if (current.UnsupportedKind is not null)
         {
             throw new BackupNotPossibleException(
-                $"O valor {hive}\\{path}\\{(name.Length == 0 ? "(Default)" : name)} é do tipo {current.UnsupportedKind}, que o trashsweepr não consegue salvar. Nada foi alterado.");
+                CoreText.Format("Backup.UnsupportedValueType", Describe(hive, path, name), current.UnsupportedKind));
         }
 
         if (current.Exists)
@@ -83,7 +83,7 @@ public static class BackupBuilder
             if (problems.Count > 0)
             {
                 throw new BackupNotPossibleException(
-                    $"O valor atual de {hive}\\{path}\\{(name.Length == 0 ? "(Default)" : name)} não poderia ser restaurado ({string.Join(" ", problems)}). Nada foi alterado.");
+                    CoreText.Format("Backup.ValueNotRestorable", Describe(hive, path, name), string.Join(" ", problems)));
             }
 
             return backup;
@@ -92,6 +92,9 @@ public static class BackupBuilder
         var createdRoot = createsKey ? FirstMissingKey(system, hive, path) : null;
         return new RegistryValueBackup(hive, path, name, false, null, null, createdRoot);
     }
+
+    private static string Describe(Models.RegistryHive hive, string path, string name) =>
+        $"{hive}\\{path}\\{(name.Length == 0 ? "(Default)" : name)}";
 
     private static string? FirstMissingKey(SystemServices system, Models.RegistryHive hive, string path)
     {
