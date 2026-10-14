@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "tweaks": [
+    {
+      "id": "tasks.compat-appraiser",
+      "name": {
+        "en": "Turn off the Microsoft Compatibility Appraiser task",
+        "pt-BR": "Desativar tarefa Microsoft Compatibility Appraiser"
+      },
+      "description": {
+        "en": "Disables the scheduled task that scans installed programs and sends compatibility data to Microsoft. The task is not deleted, only disabled.",
+        "pt-BR": "Desativa a tarefa agendada que analisa os programas instalados e envia dados de compatibilidade à Microsoft. A tarefa não é apagada, apenas desativada."
+      },
+      "category": "tasks",
+      "risk": "moderate",
+      "riskNote": {
+        "en": "The Appraiser also feeds the compatibility check for Windows feature updates. With the task disabled, a version upgrade may take longer to be offered or be blocked for lack of data.",
+        "pt-BR": "O Appraiser também alimenta a verificação de compatibilidade das atualizações de recurso do Windows. Com a tarefa desativada, uma atualização de versão pode demorar a ser oferecida ou ser bloqueada por falta de dados."
+      },
+      "revertNote": {
+        "en": "Turns the scheduled task back on.",
+        "pt-BR": "Reativa a tarefa agendada."
+      },
+      "apply": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Application Experience\\", "taskName": "Microsoft Compatibility Appraiser", "enabled": false } ],
+      "revert": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Application Experience\\", "taskName": "Microsoft Compatibility Appraiser", "enabled": true } ]
+    },
+    {
+      "id": "tasks.ceip-consolidator",
+      "name": {
+        "en": "Turn off the Consolidator task (CEIP)",
+        "pt-BR": "Desativar tarefa Consolidator (CEIP)"
+      },
+      "description": {
+        "en": "Disables the Customer Experience Improvement Program task that consolidates usage data and sends it to Microsoft. The task is not deleted, only disabled.",
+        "pt-BR": "Desativa a tarefa do Programa de Melhoria da Experiência do Usuário que consolida e envia dados de uso à Microsoft. A tarefa não é apagada, apenas desativada."
+      },
+      "category": "tasks",
+      "risk": "safe",
+      "revertNote": {
+        "en": "Turns the scheduled task back on.",
+        "pt-BR": "Reativa a tarefa agendada."
+      },
+      "apply": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Customer Experience Improvement Program\\", "taskName": "Consolidator", "enabled": false } ],
+      "revert": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Customer Experience Improvement Program\\", "taskName": "Consolidator", "enabled": true } ]
+    }
+  ]
+}
