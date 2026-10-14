@@ -5,7 +5,7 @@
 Um app gratuito para Windows que ajuda com duas coisas: **descobrir o que está enchendo o disco** e **tirar o
 excesso do Windows 11 sem quebrar nada**.
 
-É um projeto de código aberto, sob a [licença MIT](LICENSE), e foi feito com ajuda de inteligência artificial
+Projeto de código aberto, sob a [licença MIT](LICENSE), feito com ajuda de inteligência artificial
 (veja [como](#feito-com-ajuda-de-ia)).
 
 ![Seção Disco](screenshot-disk.png)
