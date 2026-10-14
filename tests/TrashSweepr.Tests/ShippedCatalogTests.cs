@@ -158,11 +158,52 @@ public class ShippedCatalogTests
         {
             var removed = tweak.Apply.OfType<AppxAction>().Select(a => a.PackageName).Order().ToList();
             var restored = tweak.Revert.OfType<AppxAction>().Select(a => a.PackageName).Order().ToList();
+            var uninstalled = tweak.Apply.OfType<ProgramAction>().Select(a => a.Program).Order().ToList();
+            var reinstalled = tweak.Revert.OfType<ProgramAction>().Select(a => a.Program).Order().ToList();
 
-            Assert.NotEmpty(removed);
+            Assert.True(removed.Count + uninstalled.Count > 0, tweak.Id);
             Assert.Equal(removed, restored);
+            Assert.Equal(uninstalled, reinstalled);
             Assert.All(tweak.Apply.OfType<AppxAction>(), a => Assert.Equal(AppxOperation.Remove, a.Operation));
+            Assert.All(tweak.Apply.OfType<ProgramAction>(), a => Assert.Equal(ProgramOperation.Uninstall, a.Operation));
         }
+    }
+
+    [Fact]
+    public void Edge_and_onedrive_removal_are_opt_in_with_the_expected_risk_and_never_in_a_profile()
+    {
+        var onedrive = Catalog.Find("apps.onedrive")!;
+        var edge = Catalog.Find("apps.edge")!;
+
+        Assert.Equal(RiskLevel.Moderate, onedrive.Risk);
+        Assert.Equal(RiskLevel.Advanced, edge.Risk);
+        Assert.True(onedrive.OptIn);
+        Assert.True(edge.OptIn);
+        Assert.Equal([new ProgramAction { Program = ManagedProgram.OneDrive, Operation = ProgramOperation.Uninstall }], onedrive.Apply);
+        Assert.Equal([new ProgramAction { Program = ManagedProgram.OneDrive, Operation = ProgramOperation.Reinstall }], onedrive.Revert);
+        Assert.Equal([new ProgramAction { Program = ManagedProgram.Edge, Operation = ProgramOperation.Uninstall }], edge.Apply);
+        Assert.Equal([new ProgramAction { Program = ManagedProgram.Edge, Operation = ProgramOperation.Reinstall }], edge.Revert);
+
+        foreach (var profile in Catalog.Profiles)
+        {
+            var ids = ProfileResolver.Resolve(Catalog, profile, 26100).Select(t => t.Id).ToList();
+            Assert.DoesNotContain("apps.onedrive", ids);
+            Assert.DoesNotContain("apps.edge", ids);
+        }
+    }
+
+    [Fact]
+    public void Edge_risk_note_explains_the_region_lock_and_that_webview2_is_kept()
+    {
+        var note = Catalog.Find("apps.edge")!.RiskNote!;
+
+        var en = note.Resolve(CultureInfo.GetCultureInfo("en-US"));
+        var pt = note.Resolve(CultureInfo.GetCultureInfo("pt-BR"));
+        Assert.Contains("European Economic Area", en, StringComparison.Ordinal);
+        Assert.Contains("WebView2", en, StringComparison.Ordinal);
+        Assert.Contains("microsoft-edge:", en, StringComparison.Ordinal);
+        Assert.Contains("Espaço Econômico Europeu", pt, StringComparison.Ordinal);
+        Assert.Contains("WebView2", pt, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -202,6 +243,7 @@ public class ShippedCatalogTests
         (ServiceAction a, ServiceAction r) => string.Equals(a.Name, r.Name, StringComparison.OrdinalIgnoreCase),
         (ScheduledTaskAction a, ScheduledTaskAction r) => a.TaskPath == r.TaskPath && a.TaskName == r.TaskName && a.Enabled != r.Enabled,
         (AppxAction a, AppxAction r) => a.PackageName == r.PackageName && a.Operation != r.Operation,
+        (ProgramAction a, ProgramAction r) => a.Program == r.Program && a.Operation != r.Operation,
         _ => false,
     };
 
