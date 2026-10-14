@@ -21,6 +21,25 @@
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Clipchamp.Clipchamp" } ]
     },
     {
+      "id": "apps.copilot",
+      "name": {
+        "en": "Remove Copilot",
+        "pt-BR": "Remover Copilot"
+      },
+      "description": {
+        "en": "Removes the Copilot app (Microsoft Store version), for your user account only. The built-in Copilot component of Windows is not removed; to turn it off, use \"Turn off Copilot\".",
+        "pt-BR": "Remove o app Copilot (a versão da Microsoft Store), apenas para o seu usuário. O componente do Copilot que faz parte do Windows não é removido; para desligá-lo, use \"Desativar Copilot\"."
+      },
+      "category": "apps",
+      "risk": "safe",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install Copilot from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o Copilot pela Microsoft Store."
+      },
+      "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.Copilot" } ],
+      "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.Copilot" } ]
+    },
+    {
       "id": "apps.xbox",
       "name": {
         "en": "Remove Xbox apps",
