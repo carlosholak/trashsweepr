@@ -1,5 +1,5 @@
 using System.Text.Json;
-using TrashSweepr.Limpeza.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Catalog;
 
 namespace TrashSweepr.Tests.Helpers;
 
@@ -9,7 +9,7 @@ internal static class CatalogJson
     private static string Q(string? value) => JsonSerializer.Serialize(value);
 
     public static string Registry(
-        string path = @"Software\Limpeza\Test",
+        string path = @"Software\Cleanup\Test",
         string hive = "hkcu",
         string? name = "Value",
         string valueJson = "1",
@@ -19,10 +19,10 @@ internal static class CatalogJson
         { "type": "registry", {{(operation is null ? "" : $"\"operation\": {Q(operation)},")}} "hive": {{Q(hive)}}, "path": {{Q(path)}}, {{(name is null ? "" : $"\"name\": {Q(name)},")}} "kind": {{Q(kind)}}, "value": {{valueJson}} }
         """;
 
-    public static string Service(string name = "LimpezaTestSvc", string startType = "disabled", bool stop = false) =>
+    public static string Service(string name = "CleanupTestSvc", string startType = "disabled", bool stop = false) =>
         $$"""{ "type": "service", "name": {{Q(name)}}, "startType": {{Q(startType)}}, "stop": {{(stop ? "true" : "false")}} }""";
 
-    public static string SchedTask(string path = @"\Limpeza\Test\", string name = "TestTask", bool enabled = false) =>
+    public static string SchedTask(string path = @"\Cleanup\Test\", string name = "TestTask", bool enabled = false) =>
         $$"""{ "type": "scheduledTask", "taskPath": {{Q(path)}}, "taskName": {{Q(name)}}, "enabled": {{(enabled ? "true" : "false")}} }""";
 
     public static string Appx(string package = "Contoso.SampleApp", string operation = "remove") =>
