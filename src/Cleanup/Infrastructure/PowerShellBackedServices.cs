@@ -1,8 +1,9 @@
 using System.Text.Json;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Infrastructure;
+namespace TrashSweepr.Cleanup.Infrastructure;
 
 internal static class PowerShellExtensions
 {
@@ -13,7 +14,7 @@ internal static class PowerShellExtensions
         if (!result.Succeeded)
         {
             var message = string.IsNullOrWhiteSpace(result.StandardError)
-                ? $"O PowerShell terminou com código {result.ExitCode}."
+                ? CoreText.Format("PowerShell.ExitCode", result.ExitCode)
                 : result.StandardError;
             throw new InvalidOperationException(message);
         }
@@ -30,7 +31,7 @@ internal static class PowerShellExtensions
         }
         catch (JsonException ex)
         {
-            throw new InvalidOperationException($"Resposta inesperada do PowerShell ao consultar {what}: {ex.Message}", ex);
+            throw new InvalidOperationException(CoreText.Format("PowerShell.UnexpectedResponse", what, ex.Message), ex);
         }
     }
 
@@ -47,7 +48,7 @@ public sealed class ServiceManager(IPowerShellRunner runner) : IServiceManager
     {
         var json = PowerShellExtensions.ParseObject(
             await runner.RunOrThrowAsync(PowerShellCalls.GetService(name), cancellationToken).ConfigureAwait(false),
-            $"o serviço {name}");
+            CoreText.Format("Query.Service", name));
 
         if (!json.GetBool("exists"))
         {
@@ -60,7 +61,7 @@ public sealed class ServiceManager(IPowerShellRunner runner) : IServiceManager
             "Manual" => ServiceStartType.Manual,
             "Disabled" => ServiceStartType.Disabled,
             var other => throw new InvalidOperationException(
-                $"O serviço {name} tem tipo de inicialização '{other}', que o trashsweepr não sabe salvar nem restaurar."),
+                CoreText.Format("Service.UnsupportedStartType", name, other)),
         };
 
         return new ServiceState(true, startType, json.GetBool("running"));
@@ -82,7 +83,7 @@ public sealed class TaskSchedulerService(IPowerShellRunner runner) : ITaskSchedu
     {
         var json = PowerShellExtensions.ParseObject(
             await runner.RunOrThrowAsync(PowerShellCalls.GetTask(taskPath, taskName), cancellationToken).ConfigureAwait(false),
-            $"a tarefa {taskPath}{taskName}");
+            CoreText.Format("Query.Task", taskPath + taskName));
 
         return json.GetBool("exists") ? new TaskState(true, json.GetBool("enabled")) : TaskState.Missing;
     }
@@ -97,7 +98,7 @@ public sealed class AppxService(IPowerShellRunner runner) : IAppxService
     {
         var json = PowerShellExtensions.ParseObject(
             await runner.RunOrThrowAsync(PowerShellCalls.ListAppx(), cancellationToken).ConfigureAwait(false),
-            "os apps instalados");
+            CoreText.Get("Query.InstalledApps"));
 
         // O PowerShell 5.1 pode serializar uma lista de um único item como string solta.
         var names = json.ValueKind switch
@@ -114,7 +115,7 @@ public sealed class AppxService(IPowerShellRunner runner) : IAppxService
     {
         var json = PowerShellExtensions.ParseObject(
             await runner.RunOrThrowAsync(PowerShellCalls.GetAppx(packageName), cancellationToken).ConfigureAwait(false),
-            $"o app {packageName}");
+            CoreText.Format("Query.App", packageName));
 
         var packages = new List<AppxPackageFile>();
         if (json.TryGetProperty("packages", out var list))
@@ -137,8 +138,18 @@ public sealed class AppxService(IPowerShellRunner runner) : IAppxService
     public Task RemoveAsync(string packageName, CancellationToken cancellationToken) =>
         runner.RunOrThrowAsync(PowerShellCalls.RemoveAppx(packageName), cancellationToken);
 
-    public Task ReinstallAsync(string packageName, CancellationToken cancellationToken) =>
-        runner.RunOrThrowAsync(PowerShellCalls.ReinstallAppx(packageName), cancellationToken);
+    public async Task ReinstallAsync(string packageName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await runner.RunOrThrowAsync(PowerShellCalls.ReinstallAppx(packageName), cancellationToken).ConfigureAwait(false);
+        }
+        catch (InvalidOperationException ex) when (ex.Message == PowerShellCalls.PackageNotFoundError)
+        {
+            // O script só fala inglês; este é o único erro dele que pede uma ação do usuário, então vai traduzido.
+            throw new InvalidOperationException(CoreText.Get("Appx.PackageNotFound"), ex);
+        }
+    }
 }
 
 public sealed class RestorePointService(IPowerShellRunner runner) : IRestorePointService
@@ -147,7 +158,7 @@ public sealed class RestorePointService(IPowerShellRunner runner) : IRestorePoin
     {
         var json = PowerShellExtensions.ParseObject(
             await runner.RunOrThrowAsync(PowerShellCalls.GetRestoreProtection(), cancellationToken).ConfigureAwait(false),
-            "a Proteção do Sistema");
+            CoreText.Get("Query.SystemProtection"));
 
         return json.GetBool("enabled");
     }
@@ -157,14 +168,14 @@ public sealed class RestorePointService(IPowerShellRunner runner) : IRestorePoin
         var result = await runner.RunAsync(PowerShellCalls.CreateRestorePoint(description), cancellationToken).ConfigureAwait(false);
         if (!result.Succeeded)
         {
-            return new RestorePointResult(RestorePointOutcome.Failed, string.IsNullOrWhiteSpace(result.StandardError) ? $"código {result.ExitCode}" : result.StandardError);
+            return new RestorePointResult(RestorePointOutcome.Failed, string.IsNullOrWhiteSpace(result.StandardError) ? CoreText.Format("RestorePoint.ExitCode", result.ExitCode) : result.StandardError);
         }
 
-        var json = PowerShellExtensions.ParseObject(result.StandardOutput, "o ponto de restauração");
+        var json = PowerShellExtensions.ParseObject(result.StandardOutput, CoreText.Get("Query.RestorePoint"));
         return json.GetBool("created")
             ? new RestorePointResult(RestorePointOutcome.Created)
             : new RestorePointResult(
                 RestorePointOutcome.Throttled,
-                "Nenhum ponto novo foi criado: o Windows só permite um a cada 24 horas por padrão, então já deve existir um recente.");
+                CoreText.Get("RestorePoint.Throttled"));
     }
 }
