@@ -237,6 +237,54 @@
       },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.SkypeApp" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.SkypeApp" } ]
+    },
+    {
+      "id": "apps.onedrive",
+      "name": {
+        "en": "Remove OneDrive",
+        "pt-BR": "Remover OneDrive"
+      },
+      "description": {
+        "en": "Uninstalls OneDrive with the uninstaller that ships with Windows (OneDriveSetup.exe /uninstall). Your files are not deleted.",
+        "pt-BR": "Desinstala o OneDrive pelo desinstalador que vem com o Windows (OneDriveSetup.exe /uninstall). Seus arquivos não são apagados."
+      },
+      "category": "apps",
+      "risk": "moderate",
+      "optIn": true,
+      "riskNote": {
+        "en": "Files already on this PC stay where they are, but files that are \"online-only\" stop opening until you reinstall OneDrive or open them on the web (onedrive.com). Syncing stops.",
+        "pt-BR": "Os arquivos que já estão neste PC continuam onde estão, mas os arquivos \"somente online\" deixam de abrir até você reinstalar o OneDrive ou abri-los pela web (onedrive.com). A sincronização para."
+      },
+      "revertNote": {
+        "en": "Reinstalls OneDrive with the installer that ships with Windows (or with winget, if that installer is missing).",
+        "pt-BR": "Reinstala o OneDrive pelo instalador que vem com o Windows (ou pelo winget, se esse instalador não existir)."
+      },
+      "apply": [ { "type": "program", "program": "onedrive", "operation": "uninstall" } ],
+      "revert": [ { "type": "program", "program": "onedrive", "operation": "reinstall" } ]
+    },
+    {
+      "id": "apps.edge",
+      "name": {
+        "en": "Remove Microsoft Edge",
+        "pt-BR": "Remover o Microsoft Edge"
+      },
+      "description": {
+        "en": "Uninstalls Microsoft Edge with Edge's own uninstaller (setup.exe --uninstall). WebView2 and Edge Update are not touched.",
+        "pt-BR": "Desinstala o Microsoft Edge pelo desinstalador do próprio Edge (setup.exe --uninstall). O WebView2 e o Edge Update não são tocados."
+      },
+      "category": "apps",
+      "risk": "advanced",
+      "optIn": true,
+      "riskNote": {
+        "en": "Microsoft only allows Edge to be fully removed in some regions (the European Economic Area); elsewhere Windows may refuse and nothing changes. Windows Update may reinstall it. WebView2, used by Teams, Widgets and many other apps, is kept. Links that open Edge specifically (microsoft-edge:) stop working. Set another default browser first.",
+        "pt-BR": "A Microsoft só permite remover o Edge por completo em algumas regiões (Espaço Econômico Europeu); fora delas o Windows pode recusar e nada muda. O Windows Update pode reinstalá-lo. O WebView2, usado pelo Teams, pelos Widgets e por muitos outros apps, é mantido. Links que abrem especificamente o Edge (microsoft-edge:) deixam de funcionar. Defina outro navegador padrão antes."
+      },
+      "revertNote": {
+        "en": "Reinstalls Edge with winget (needs internet).",
+        "pt-BR": "Reinstala o Edge pelo winget (precisa de internet)."
+      },
+      "apply": [ { "type": "program", "program": "edge", "operation": "uninstall" } ],
+      "revert": [ { "type": "program", "program": "edge", "operation": "reinstall" } ]
     }
   ]
 }
