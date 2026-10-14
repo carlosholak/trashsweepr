@@ -1,4 +1,5 @@
 using System.Windows.Media;
+using TrashSweepr.Localization;
 
 namespace TrashSweepr;
 
@@ -50,11 +51,11 @@ public static class Coloring
 
     public static string Label(AgeBucket b) => b switch
     {
-        AgeBucket.UmMes => "Último mês",
-        AgeBucket.SeisMeses => "1 a 6 meses",
-        AgeBucket.UmAno => "6 meses a 1 ano",
-        AgeBucket.TresAnos => "1 a 3 anos",
-        _ => "Mais de 3 anos",
+        AgeBucket.UmMes => Loc.Get("Disk.Age.LastMonth"),
+        AgeBucket.SeisMeses => Loc.Get("Disk.Age.SixMonths"),
+        AgeBucket.UmAno => Loc.Get("Disk.Age.OneYear"),
+        AgeBucket.TresAnos => Loc.Get("Disk.Age.ThreeYears"),
+        _ => Loc.Get("Disk.Age.Older"),
     };
 
     public static Brush Brush(AgeBucket b) => AgeBrushes[(int)b];
@@ -81,11 +82,11 @@ public static class Coloring
 
     public static string Label(ChangeKind k) => k switch
     {
-        ChangeKind.Novo => "Novo",
-        ChangeKind.Cresceu => "Cresceu",
-        ChangeKind.Diminuiu => "Diminuiu",
-        ChangeKind.Igual => "Sem mudança",
-        _ => "Sem referência",
+        ChangeKind.Novo => Loc.Get("Disk.Change.New"),
+        ChangeKind.Cresceu => Loc.Get("Disk.Change.Grew"),
+        ChangeKind.Diminuiu => Loc.Get("Disk.Change.Shrank"),
+        ChangeKind.Igual => Loc.Get("Disk.Change.Same"),
+        _ => Loc.Get("Disk.Change.Unknown"),
     };
 
     public static Brush Brush(ChangeKind k) => ChangeBrushes[k];
