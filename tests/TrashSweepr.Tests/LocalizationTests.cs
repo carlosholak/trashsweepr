@@ -1,14 +1,15 @@
 using System.Text.RegularExpressions;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
 using TrashSweepr.Tests.Helpers;
+using TrashSweepr.Localization;
 
 namespace TrashSweepr.Tests;
 
 public partial class LocalizationTests
 {
-    private static readonly string AppDirectory = Path.Combine(RepoPaths.Root, "src", "TrashSweepr", "Limpeza");
+    private static readonly string AppDirectory = Path.Combine(RepoPaths.Root, "src", "trashsweepr");
 
     [GeneratedRegex(@"\{loc:T\s+([A-Za-z0-9_.]+)\}")]
     private static partial Regex XamlKeyRegex();
@@ -72,7 +73,7 @@ public partial class LocalizationTests
     public void Every_resource_is_translated_text_without_leftover_placeholders_mismatch()
     {
         // Os textos com {0}/{1} precisam funcionar com string.Format: um "{" solto lançaria FormatException em tempo de execução.
-        var manager = new System.Resources.ResourceManager("TrashSweepr.Limpeza.Resources.Strings", typeof(Loc).Assembly);
+        var manager = new System.Resources.ResourceManager("TrashSweepr.Resources.Strings", typeof(Loc).Assembly);
         var set = manager.GetResourceSet(System.Globalization.CultureInfo.InvariantCulture, createIfNotExists: true, tryParents: true)!;
 
         foreach (System.Collections.DictionaryEntry entry in set)
