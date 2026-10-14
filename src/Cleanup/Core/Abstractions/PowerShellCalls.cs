@@ -105,6 +105,148 @@ public static class PowerShellCalls
         """,
         ("name", packageName));
 
+    // ---------- Programas (Edge, OneDrive) ----------
+    //
+    // Um script fixo por par (programa, operação), sem argumentos: nada do JSON entra aqui. Os scripts que alteram
+    // o sistema devolvem { found, exitCode, installed } e quem executa (Infrastructure) decide se deu certo e
+    // traduz a mensagem. 'found' diz se o (des)instalador oficial existe; 'installed' é o estado depois de rodar.
+    // O Edge é desinstalado só pelo setup.exe do próprio Edge: nenhum truque de registro para contornar a trava
+    // regional, e o WebView2 (Microsoft\EdgeWebView) e o Edge Update nunca são tocados.
+
+    private const string EdgeDetection =
+        """
+        function Test-EdgeInstalled {
+            foreach ($root in @(${env:ProgramFiles(x86)}, $env:ProgramFiles)) {
+                if ($root -and (Test-Path -LiteralPath (Join-Path $root 'Microsoft\Edge\Application\msedge.exe'))) { return $true }
+            }
+            return $false
+        }
+        """;
+
+    private const string OneDriveDetection =
+        """
+        function Test-OneDriveInstalled {
+            $paths = @()
+            if ($env:LOCALAPPDATA) { $paths += Join-Path $env:LOCALAPPDATA 'Microsoft\OneDrive\OneDrive.exe' }
+            if ($env:ProgramFiles) { $paths += Join-Path $env:ProgramFiles 'Microsoft OneDrive\OneDrive.exe' }
+            if (${env:ProgramFiles(x86)}) { $paths += Join-Path ${env:ProgramFiles(x86)} 'Microsoft OneDrive\OneDrive.exe' }
+            foreach ($p in $paths) { if (Test-Path -LiteralPath $p) { return $true } }
+            return $false
+        }
+        """;
+
+    private const string OneDriveSetupLookup =
+        """
+        function Find-OneDriveSetup {
+            foreach ($dir in @('System32', 'SysWOW64')) {
+                $setup = Join-Path $env:SystemRoot ($dir + '\OneDriveSetup.exe')
+                if (Test-Path -LiteralPath $setup) { return $setup }
+            }
+            return $null
+        }
+        """;
+
+    private const string WingetLookup =
+        """
+        function Find-Winget {
+            Get-Command -Name winget.exe -CommandType Application -ErrorAction SilentlyContinue | Select-Object -First 1
+        }
+        """;
+
+    private const string GetEdgeScript = EdgeDetection + "\n" +
+        """
+        ConvertTo-Json -Compress -InputObject @{ installed = (Test-EdgeInstalled) }
+        """;
+
+    private const string GetOneDriveScript = OneDriveDetection + "\n" +
+        """
+        ConvertTo-Json -Compress -InputObject @{ installed = (Test-OneDriveInstalled) }
+        """;
+
+    private const string UninstallEdgeScript = EdgeDetection + "\n" +
+        """
+        $setup = $null
+        foreach ($root in @(${env:ProgramFiles(x86)}, $env:ProgramFiles)) {
+            if (-not $root) { continue }
+            $app = Join-Path $root 'Microsoft\Edge\Application'
+            if (-not (Test-Path -LiteralPath $app)) { continue }
+            # A pasta de versão mais nova que tenha o desinstalador do próprio Edge.
+            $newest = Get-ChildItem -LiteralPath $app -Directory |
+                Where-Object { ($_.Name -as [version]) -and (Test-Path -LiteralPath (Join-Path $_.FullName 'Installer\setup.exe')) } |
+                Sort-Object -Property @{ Expression = { [version]$_.Name } } -Descending |
+                Select-Object -First 1
+            if ($newest) { $setup = Join-Path $newest.FullName 'Installer\setup.exe'; break }
+        }
+        if (-not $setup) { ConvertTo-Json -Compress -InputObject @{ found = $false; exitCode = $null; installed = (Test-EdgeInstalled) }; return }
+        $p = Start-Process -FilePath $setup -ArgumentList '--uninstall', '--system-level', '--force-uninstall', '--verbose-logging' -Wait -PassThru -WindowStyle Hidden
+        # O setup.exe pode terminar um pouco antes de apagar o msedge.exe: espera até 30 s.
+        if ($p.ExitCode -eq 0) { for ($i = 0; $i -lt 60 -and (Test-EdgeInstalled); $i++) { Start-Sleep -Milliseconds 500 } }
+        ConvertTo-Json -Compress -InputObject @{ found = $true; exitCode = $p.ExitCode; installed = (Test-EdgeInstalled) }
+        """;
+
+    private const string ReinstallEdgeScript = EdgeDetection + "\n" + WingetLookup + "\n" +
+        """
+        $winget = Find-Winget
+        if (-not $winget) { ConvertTo-Json -Compress -InputObject @{ found = $false; exitCode = $null; installed = (Test-EdgeInstalled) }; return }
+        # A saída do winget (barra de progresso) é descartada: o stdout deste script é só o JSON final.
+        $null = & $winget.Source install --id Microsoft.Edge -e --silent --accept-package-agreements --accept-source-agreements
+        $code = $LASTEXITCODE
+        if ($code -eq 0) { for ($i = 0; $i -lt 60 -and -not (Test-EdgeInstalled); $i++) { Start-Sleep -Milliseconds 500 } }
+        ConvertTo-Json -Compress -InputObject @{ found = $true; exitCode = $code; installed = (Test-EdgeInstalled) }
+        """;
+
+    private const string UninstallOneDriveScript = OneDriveDetection + "\n" + OneDriveSetupLookup + "\n" +
+        """
+        $setup = Find-OneDriveSetup
+        # Sem o desinstalador, nada é feito (nem o OneDrive é fechado).
+        if (-not $setup) { ConvertTo-Json -Compress -InputObject @{ found = $false; exitCode = $null; installed = (Test-OneDriveInstalled) }; return }
+        Stop-Process -Name OneDrive -Force -ErrorAction SilentlyContinue
+        $p = Start-Process -FilePath $setup -ArgumentList '/uninstall' -Wait -PassThru -WindowStyle Hidden
+        # O desinstalador pode terminar um pouco antes de apagar o OneDrive.exe: espera até 30 s.
+        if ($p.ExitCode -eq 0) { for ($i = 0; $i -lt 60 -and (Test-OneDriveInstalled); $i++) { Start-Sleep -Milliseconds 500 } }
+        ConvertTo-Json -Compress -InputObject @{ found = $true; exitCode = $p.ExitCode; installed = (Test-OneDriveInstalled) }
+        """;
+
+    private const string ReinstallOneDriveScript = OneDriveDetection + "\n" + OneDriveSetupLookup + "\n" + WingetLookup + "\n" +
+        """
+        $setup = Find-OneDriveSetup
+        if ($setup) {
+            # Instalador que vem com o Windows, em modo silencioso.
+            $p = Start-Process -FilePath $setup -ArgumentList '/silent' -Wait -PassThru -WindowStyle Hidden
+            $code = $p.ExitCode
+        } else {
+            $winget = Find-Winget
+            if (-not $winget) { ConvertTo-Json -Compress -InputObject @{ found = $false; exitCode = $null; installed = (Test-OneDriveInstalled) }; return }
+            # A saída do winget (barra de progresso) é descartada: o stdout deste script é só o JSON final.
+            $null = & $winget.Source install --id Microsoft.OneDrive -e --silent --accept-package-agreements --accept-source-agreements
+            $code = $LASTEXITCODE
+        }
+        if ($code -eq 0) { for ($i = 0; $i -lt 120 -and -not (Test-OneDriveInstalled); $i++) { Start-Sleep -Milliseconds 500 } }
+        ConvertTo-Json -Compress -InputObject @{ found = $true; exitCode = $code; installed = (Test-OneDriveInstalled) }
+        """;
+
+    /// <summary>Só lê arquivos: devolve { installed }.</summary>
+    public static PowerShellCall GetProgram(ManagedProgram program) => Call(program switch
+    {
+        ManagedProgram.Edge => GetEdgeScript,
+        ManagedProgram.OneDrive => GetOneDriveScript,
+        _ => throw new ArgumentOutOfRangeException(nameof(program)),
+    });
+
+    public static PowerShellCall UninstallProgram(ManagedProgram program) => Call(program switch
+    {
+        ManagedProgram.Edge => UninstallEdgeScript,
+        ManagedProgram.OneDrive => UninstallOneDriveScript,
+        _ => throw new ArgumentOutOfRangeException(nameof(program)),
+    });
+
+    public static PowerShellCall ReinstallProgram(ManagedProgram program) => Call(program switch
+    {
+        ManagedProgram.Edge => ReinstallEdgeScript,
+        ManagedProgram.OneDrive => ReinstallOneDriveScript,
+        _ => throw new ArgumentOutOfRangeException(nameof(program)),
+    });
+
     // ---------- Ponto de restauração ----------
 
     public static PowerShellCall GetRestoreProtection() => Call(
