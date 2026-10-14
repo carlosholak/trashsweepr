@@ -1,9 +1,9 @@
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Backup;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Logging;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Backup;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Logging;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Core.Operations;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 using static TrashSweepr.Tests.Helpers.TestTweaks;
@@ -219,7 +219,7 @@ public sealed class EngineApplyTests : IDisposable
     public async Task Access_denied_becomes_a_failed_result_not_an_exception()
     {
         _sys.Registry.FailOnSet = target => target.Contains("HKLM", StringComparison.OrdinalIgnoreCase) || target.Contains("Hklm", StringComparison.Ordinal);
-        var tweak = Make("test.hklm", Registry(hive: "hklm", path: @"SOFTWARE\Limpeza\Test", valueJson: "0"), Registry(hive: "hklm", path: @"SOFTWARE\Limpeza\Test", valueJson: "1"));
+        var tweak = Make("test.hklm", Registry(hive: "hklm", path: @"SOFTWARE\Cleanup\Test", valueJson: "0"), Registry(hive: "hklm", path: @"SOFTWARE\Cleanup\Test", valueJson: "1"));
 
         var result = await _sys.Engine.ApplyAsync(tweak, FakeSystem.Real, Ct);
 
@@ -262,6 +262,39 @@ public sealed class EngineApplyTests : IDisposable
         Assert.Contains("Cancelado", result.Error, StringComparison.Ordinal);
         Assert.True(result.RolledBack);
         Assert.Equal(5, _sys.Registry.Get(RegistryHive.Hkcu, Key, "V"));
+    }
+
+    [Theory]
+    [InlineData("en-US", "Verification after running failed: the system did not end up in the expected state.")]
+    [InlineData("pt-BR", "A verificação após a execução falhou: o sistema não ficou no estado esperado.")]
+    [InlineData("pt-PT", "A verificação após a execução falhou: o sistema não ficou no estado esperado.")]
+    [InlineData("de-DE", "Verification after running failed: the system did not end up in the expected state.")]
+    public async Task Engine_errors_follow_the_interface_language(string culture, string expected)
+    {
+        _sys.Services.Services["FooSvc"] = new ServiceState(true, ServiceStartType.Automatic, true);
+        _sys.Services.IgnoreSetStartType.Add("FooSvc");
+
+        using (TestCulture.Use(culture))
+        {
+            var result = await _sys.Engine.ApplyAsync(ServiceTweak(), FakeSystem.Real, Ct);
+
+            Assert.Equal(expected, result.Error);
+        }
+    }
+
+    [Theory]
+    [InlineData("en-US", @"Backup failed; nothing was changed. The value Hkcu\Software\Cleanup\Test\V is of type Binary, which trashsweepr cannot back up. Nothing was changed.")]
+    [InlineData("pt-BR", @"Backup não realizado; nada foi alterado. O valor Hkcu\Software\Cleanup\Test\V é do tipo Binary, que o trashsweepr não consegue salvar. Nada foi alterado.")]
+    public async Task Backup_errors_follow_the_interface_language(string culture, string expected)
+    {
+        _sys.Registry.SeedBinary(RegistryHive.Hkcu, Key, "V");
+
+        using (TestCulture.Use(culture))
+        {
+            var result = await _sys.Engine.ApplyAsync(RegistryTweak(), FakeSystem.Real, Ct);
+
+            Assert.Equal(expected, result.Error);
+        }
     }
 
     [Fact]
@@ -368,19 +401,19 @@ public sealed class EngineApplyTests : IDisposable
     [Fact]
     public async Task Scheduled_task_is_disabled_and_not_deleted()
     {
-        _sys.Tasks.Tasks[@"\Limpeza\Test\Job"] = new TaskState(true, true);
-        var tweak = Make("test.task", SchedTask(@"\Limpeza\Test\", "Job", enabled: false), SchedTask(@"\Limpeza\Test\", "Job", enabled: true));
+        _sys.Tasks.Tasks[@"\Cleanup\Test\Job"] = new TaskState(true, true);
+        var tweak = Make("test.task", SchedTask(@"\Cleanup\Test\", "Job", enabled: false), SchedTask(@"\Cleanup\Test\", "Job", enabled: true));
 
         var result = await _sys.Engine.ApplyAsync(tweak, FakeSystem.Real, Ct);
 
         Assert.Equal(ResultStatus.Success, result.Status);
-        Assert.Equal(new TaskState(true, false), _sys.Tasks.Tasks[@"\Limpeza\Test\Job"]);
+        Assert.Equal(new TaskState(true, false), _sys.Tasks.Tasks[@"\Cleanup\Test\Job"]);
     }
 
     [Fact]
     public async Task Missing_task_is_skipped()
     {
-        var tweak = Make("test.task", SchedTask(@"\Limpeza\Test\", "Job", enabled: false), SchedTask(@"\Limpeza\Test\", "Job", enabled: true));
+        var tweak = Make("test.task", SchedTask(@"\Cleanup\Test\", "Job", enabled: false), SchedTask(@"\Cleanup\Test\", "Job", enabled: true));
 
         var result = await _sys.Engine.ApplyAsync(tweak, FakeSystem.Real, Ct);
 
