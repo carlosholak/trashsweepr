@@ -56,6 +56,19 @@ public sealed class OperationExecutor(SystemServices system)
                 await system.Appx.ReinstallAsync(add.PackageName, ct).ConfigureAwait(false);
                 break;
 
+            case ProgramUninstallOperation uninstall:
+                await system.Programs.UninstallAsync(uninstall.Program, ct).ConfigureAwait(false);
+                break;
+
+            case ProgramReinstallOperation reinstall:
+                if (reinstall.OnlyIfMissing && await system.Programs.IsInstalledAsync(reinstall.Program, ct).ConfigureAwait(false))
+                {
+                    break;
+                }
+
+                await system.Programs.ReinstallAsync(reinstall.Program, ct).ConfigureAwait(false);
+                break;
+
             default:
                 throw new InvalidOperationException(CoreText.Format("Engine.UnsupportedOperation", operation.GetType().Name));
         }
