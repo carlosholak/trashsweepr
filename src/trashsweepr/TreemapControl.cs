@@ -166,7 +166,7 @@ public sealed class TreemapControl : FrameworkElement
             if (r.Width >= MinHeaderWidth && r.Height >= MinHeaderHeight)
             {
                 string header = highlight
-                    ? $"{node.Name}   {Format.Bytes(node.Size)}   · recriável"
+                    ? $"{node.Name}   {Format.Bytes(node.Size)}   · {Localization.Loc.Get("Disk.Map.Recoverable")}"
                     : $"{node.Name}   {Format.Bytes(node.Size)}";
                 DrawLabel(dc, header, r.X + 4, r.Y + 1.5, r.Width - 8, _semibold, Palette.FolderText);
                 inner = new Rect(r.X + 2, r.Y + HeaderHeight, r.Width - 4, r.Height - HeaderHeight - 2);
