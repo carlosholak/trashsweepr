@@ -1,7 +1,7 @@
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Backup;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Backup;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 using static TrashSweepr.Tests.Helpers.TestTweaks;
@@ -126,13 +126,13 @@ public sealed class EngineRevertTests : IDisposable
     [Fact]
     public async Task Revert_re_enables_a_task_that_was_enabled()
     {
-        _sys.Tasks.Tasks[@"\Limpeza\Test\Job"] = new TaskState(true, true);
-        var tweak = Make("test.task", SchedTask(@"\Limpeza\Test\", "Job", enabled: false), SchedTask(@"\Limpeza\Test\", "Job", enabled: true));
+        _sys.Tasks.Tasks[@"\Cleanup\Test\Job"] = new TaskState(true, true);
+        var tweak = Make("test.task", SchedTask(@"\Cleanup\Test\", "Job", enabled: false), SchedTask(@"\Cleanup\Test\", "Job", enabled: true));
         await _sys.Engine.ApplyAsync(tweak, FakeSystem.Real, Ct);
 
         await _sys.Engine.RevertAsync(tweak, FakeSystem.Real, Ct);
 
-        Assert.Equal(new TaskState(true, true), _sys.Tasks.Tasks[@"\Limpeza\Test\Job"]);
+        Assert.Equal(new TaskState(true, true), _sys.Tasks.Tasks[@"\Cleanup\Test\Job"]);
     }
 
     [Fact]
