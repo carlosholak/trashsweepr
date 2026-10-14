@@ -1,4 +1,4 @@
-using TrashSweepr.Limpeza.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Catalog;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 
