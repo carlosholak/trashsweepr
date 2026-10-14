@@ -1,4 +1,4 @@
-namespace TrashSweepr.Limpeza.Core.Models;
+namespace TrashSweepr.Cleanup.Core.Models;
 
 /// <summary>
 /// Perfil pré-definido. Contém todos os tweaks de risco até <see cref="MaxRisk"/> que não sejam opt-in.
