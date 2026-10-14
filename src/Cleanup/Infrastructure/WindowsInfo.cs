@@ -1,9 +1,9 @@
 using System.Runtime.Versioning;
 using System.Security.Principal;
 using Microsoft.Win32;
-using TrashSweepr.Limpeza.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Abstractions;
 
-namespace TrashSweepr.Limpeza.Infrastructure;
+namespace TrashSweepr.Cleanup.Infrastructure;
 
 [SupportedOSPlatform("windows")]
 public sealed class WindowsInfo : IWindowsInfo
