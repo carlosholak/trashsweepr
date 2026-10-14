@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace TrashSweepr.Limpeza.Core.Logging;
+namespace TrashSweepr.Cleanup.Core.Logging;
 
 public enum LogSeverity
 {
