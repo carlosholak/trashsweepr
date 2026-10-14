@@ -104,9 +104,10 @@ Mexer no Windows dá medo, com razão. Por isso:
 - **Ajustes moderados e avançados** mostram o aviso de risco e pedem que você marque que leu.
 - **Desfazer** funciona por ajuste ou tudo de uma vez, do mais recente para o mais antigo. Se o ajuste já estava
   aplicado antes do app existir, ele volta ao padrão do Windows.
-- **Algumas coisas nunca são tocadas**: Edge, Microsoft Store, Windows Update, Defender, rede, áudio e componentes do sistema.
-  Essa lista fica no código (`CriticalComponents`), não no catálogo, então nenhum JSON consegue mudar isso.
-- **O catálogo não carrega scripts.** Os JSON descrevem ações (registro, serviço, tarefa, app); os scripts PowerShell
+- **Algumas coisas nunca são tocadas**: Microsoft Store, Windows Update, Defender, rede, áudio, componentes do sistema,
+  o WebView2 e o Edge Update. O Edge só pode ser removido pelo ajuste opcional **Avançado** "Remover o Microsoft Edge",
+  que usa o desinstalador do próprio Edge; nenhuma outra ação mexe nele. Essa lista fica no código (`CriticalComponents`), não no catálogo, então nenhum JSON consegue mudar isso.
+- **O catálogo não carrega scripts.** Os JSON descrevem ações (registro, serviço, tarefa, app, programa); os scripts PowerShell
   são fixos no app e os nomes entram como argumentos validados, nunca colados no texto do comando.
 
 Tudo fica registrado em `%ProgramData%\trashsweepr\limpeza\logs`, e os backups em `%ProgramData%\trashsweepr\limpeza\backups`.
@@ -118,6 +119,11 @@ na hora de aplicar ou desfazer, ele oferece **Reabrir como administrador** e vol
 **Sobre remover apps:** a remoção vale só para o seu usuário (nada de `-AllUsers` ou desprovisionar). Os arquivos do
 pacote costumam continuar no disco, e o "Desfazer" registra o app de novo. Se o Windows já tiver apagado esses arquivos,
 o app avisa e o caminho é reinstalar pela Microsoft Store.
+
+**Sobre o OneDrive e o Edge:** os dois saem pelo desinstalador oficial de cada um, em ajustes opcionais (o OneDrive é
+Moderado, o Edge é Avançado). A Microsoft só libera a remoção completa do Edge em algumas regiões (Espaço Econômico
+Europeu); nas outras, o Windows recusa e o app avisa que nada foi alterado. O "Desfazer" reinstala o OneDrive pelo
+instalador que vem com o Windows e o Edge pelo winget (precisa de internet).
 
 ## Para compilar:
 
