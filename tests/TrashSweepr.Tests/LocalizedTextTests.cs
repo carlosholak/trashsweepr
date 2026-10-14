@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Text.Json;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
 
 namespace TrashSweepr.Tests;
 
@@ -19,23 +19,87 @@ public class LocalizedTextTests
     }
 
     [Fact]
-    public void Object_form_resolves_by_exact_culture_then_language_then_default()
+    public void Object_form_resolves_by_exact_culture_then_language_then_english()
     {
         var text = Parse("""{ "pt-BR": "Olá", "en-US": "Hello", "es-ES": "Hola" }""");
 
         Assert.Equal("Hello", text.Resolve(CultureInfo.GetCultureInfo("en-US")));
         Assert.Equal("Hello", text.Resolve(CultureInfo.GetCultureInfo("en-GB")));
         Assert.Equal("Hola", text.Resolve(CultureInfo.GetCultureInfo("es-MX")));
-        Assert.Equal("Olá", text.Resolve(CultureInfo.GetCultureInfo("de-DE")));
+        Assert.Equal("Olá", text.Resolve(CultureInfo.GetCultureInfo("pt-PT")));
+        Assert.Equal("Hello", text.Resolve(CultureInfo.GetCultureInfo("de-DE")));
+    }
+
+    [Theory]
+    [InlineData("pt-BR", "Olá (BR)")]
+    [InlineData("pt-PT", "Olá (BR)")]
+    [InlineData("pt", "Olá (BR)")]
+    [InlineData("en-US", "Hello")]
+    [InlineData("en-GB", "Hello")]
+    [InlineData("de-DE", "Hello")]
+    [InlineData("ja-JP", "Hello")]
+    [InlineData("", "Hello")]
+    public void Shipped_shape_falls_back_from_exact_culture_to_language_to_english(string culture, string expected)
+    {
+        var text = Parse("""{ "en": "Hello", "pt-BR": "Olá (BR)" }""");
+
+        Assert.Equal(expected, text.Resolve(CultureInfo.GetCultureInfo(culture)));
+    }
+
+    [Fact]
+    public void Exact_culture_wins_over_the_neutral_language()
+    {
+        var text = Parse("""{ "en": "Color", "en-GB": "Colour", "pt": "Cor (PT)", "pt-BR": "Cor" }""");
+
+        Assert.Equal("Colour", text.Resolve(CultureInfo.GetCultureInfo("en-GB")));
+        Assert.Equal("Color", text.Resolve(CultureInfo.GetCultureInfo("en-AU")));
+        Assert.Equal("Cor", text.Resolve(CultureInfo.GetCultureInfo("pt-BR")));
+        Assert.Equal("Cor (PT)", text.Resolve(CultureInfo.GetCultureInfo("pt-PT")));
+    }
+
+    [Fact]
+    public void Without_english_portuguese_comes_next_then_any_value()
+    {
+        Assert.Equal("Olá", Parse("""{ "es": "Hola", "pt-BR": "Olá" }""").Resolve(CultureInfo.GetCultureInfo("de-DE")));
+        Assert.Equal("Hola", Parse("""{ "es": "Hola" }""").Resolve(CultureInfo.GetCultureInfo("de-DE")));
+    }
+
+    [Fact]
+    public void Empty_translations_are_skipped()
+    {
+        var text = Parse("""{ "en": "  ", "pt-BR": "Olá" }""");
+
+        Assert.Equal("Olá", text.Resolve(CultureInfo.GetCultureInfo("en-US")));
+        Assert.False(text.HasText("en"));
+        Assert.True(text.HasSupportedText);
+    }
+
+    [Fact]
+    public void Plain_string_is_portuguese_but_shown_in_every_language()
+    {
+        var text = Parse("\"Olá\"");
+
+        Assert.True(text.HasText("pt-BR"));
+        Assert.False(text.HasText("en"));
+        Assert.Equal("Olá", text.Resolve(CultureInfo.GetCultureInfo("en-US")));
+    }
+
+    [Fact]
+    public void Supported_text_needs_en_or_pt_br()
+    {
+        Assert.True(Parse("""{ "en": "Hello" }""").HasSupportedText);
+        Assert.True(Parse("""{ "pt-BR": "Olá" }""").HasSupportedText);
+        Assert.False(Parse("""{ "es": "Hola" }""").HasSupportedText);
+        Assert.False(Parse("""{ "en": "" }""").HasSupportedText);
     }
 
     [Fact]
     public void Without_a_default_culture_any_value_is_used_as_last_resort()
     {
-        var text = Parse("""{ "en-US": "Hello" }""");
+        var text = Parse("""{ "es-ES": "Hola" }""");
 
         Assert.False(text.HasDefault);
-        Assert.Equal("Hello", text.Resolve(CultureInfo.GetCultureInfo("de-DE")));
+        Assert.Equal("Hola", text.Resolve(CultureInfo.GetCultureInfo("de-DE")));
     }
 
     [Fact]
