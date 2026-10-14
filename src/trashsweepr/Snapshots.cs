@@ -119,7 +119,7 @@ public static class Snapshots
         using var fs = File.OpenRead(filePath);
         using var gz = new GZipStream(fs, CompressionMode.Decompress);
         using var r = new BinaryReader(gz, Encoding.UTF8);
-        if (r.ReadString() != Magic) throw new InvalidDataException("Arquivo de varredura em formato desconhecido.");
+        if (r.ReadString() != Magic) throw new InvalidDataException(Localization.Loc.Get("Disk.SnapshotUnknownFormat"));
         r.ReadString();
         r.ReadInt64();
         return Read(r);
