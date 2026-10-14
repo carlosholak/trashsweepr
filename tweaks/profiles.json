@@ -3,14 +3,26 @@
   "profiles": [
     {
       "id": "light",
-      "name": "Leve",
-      "description": "Apenas ações seguras, que não alteram o comportamento do sistema além de remover excessos.",
+      "name": {
+        "en": "Light",
+        "pt-BR": "Leve"
+      },
+      "description": {
+        "en": "Safe actions only, which do not change how the system behaves beyond removing clutter.",
+        "pt-BR": "Apenas ações seguras, que não alteram o comportamento do sistema além de remover excessos."
+      },
       "maxRisk": "safe"
     },
     {
       "id": "moderate",
-      "name": "Moderado",
-      "description": "Ações seguras e moderadas. Cada ação moderada pede confirmação, e itens opt-in (como remover o Xbox) continuam fora do perfil.",
+      "name": {
+        "en": "Moderate",
+        "pt-BR": "Moderado"
+      },
+      "description": {
+        "en": "Safe and moderate actions. Each moderate action asks for confirmation, and opt-in items (such as removing Xbox) stay out of the profile.",
+        "pt-BR": "Ações seguras e moderadas. Cada ação moderada pede confirmação, e itens opt-in (como remover o Xbox) continuam fora do perfil."
+      },
       "maxRisk": "moderate"
     }
   ]
