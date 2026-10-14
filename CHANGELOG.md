@@ -1,5 +1,33 @@
 # Histórico de versões
 
+## 1.4.0
+
+### Inglês e português
+
+- O app agora segue o idioma do Windows: português quando o Windows está em português, inglês em qualquer outro.
+  Vale para tudo: botões, abas, menus, avisos, mensagens de erro, a descrição de cada pasta recriável, datas
+  ("há 3 dias" / "3 days ago") e os textos de todos os ajustes do catálogo.
+- Plurais em inglês feitos direito ("1 folder", "3 folders"), e números e datas no formato regional do Windows.
+- As abas do painel lateral quebram linha em vez de cortar, e o botão da Lixeira encurta o texto com "…" quando
+  falta espaço.
+- README em inglês ([README.en.md](README.en.md)), com link nos dois sentidos.
+
+### Nomes em inglês no projeto
+
+- Pastas e projetos renomeados: `src/Limpeza` virou `src/Cleanup`, `src/trashsweepr/Limpeza` virou
+  `src/trashsweepr/Cleanup`, e o catálogo usa `privacy.json`, `services.json` e `tasks.json`.
+- Linha de comando em inglês: `--tab recoverable|changes|largest` e `--cleanup`. Os nomes antigos (`--aba`,
+  `--limpeza`) continuam funcionando.
+- A pasta de dados `%ProgramData%\trashsweepr\limpeza` não mudou de nome, para o "Desfazer" seguir achando os
+  backups de versões anteriores.
+
+### Para quem escreve ajustes
+
+- Os textos do catálogo aceitam `{ "en": "...", "pt-BR": "..." }`. Quando falta a língua do Windows, o app usa a
+  mesma língua em outra variante (pt-PT → pt-BR), depois inglês, depois português.
+- `TRASHSWEEPR_LANG=en-US` abre o app em outra língua para testar, e `TRASHSWEEPR_TEST_CULTURE` faz o mesmo nos testes.
+  Os testes rodam em pt-BR por padrão, seja qual for o idioma da máquina.
+
 ## 1.3.1
 
 Versão de acabamento: nada novo na tela, mas bastante coisa corrigida por baixo.
