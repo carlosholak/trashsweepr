@@ -1,5 +1,5 @@
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 
