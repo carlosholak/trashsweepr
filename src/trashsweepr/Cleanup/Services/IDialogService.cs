@@ -1,11 +1,11 @@
-using TrashSweepr.Limpeza.ViewModels;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.ViewModels;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Services;
+namespace TrashSweepr.Cleanup.Services;
 
 public sealed record RiskConfirmationItem(string Name, RiskLevel Risk, string Note);
 
-/// <summary>Diálogos que o LimpezaViewModel precisa. Em testes é substituído por um fake roteirizado.</summary>
+/// <summary>Diálogos que o CleanupViewModel precisa. Em testes é substituído por um fake roteirizado.</summary>
 public interface IDialogService
 {
     /// <summary>Mostra os avisos de risco e retorna true somente se o usuário confirmar explicitamente.</summary>
