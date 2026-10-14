@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Limpeza\Core\Limpeza.Core.csproj" />
-    <ProjectReference Include="..\..\src\Limpeza\Infrastructure\Limpeza.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Cleanup\Core\Cleanup.Core.csproj" />
+    <ProjectReference Include="..\..\src\Cleanup\Infrastructure\Cleanup.Infrastructure.csproj" />
     <ProjectReference Include="..\..\src\TrashSweepr\TrashSweepr.csproj" />
   </ItemGroup>
 
