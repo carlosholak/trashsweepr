@@ -1,6 +1,6 @@
 using System.Text.Json;
 
-namespace TrashSweepr.Limpeza.Core.Abstractions;
+namespace TrashSweepr.Cleanup.Core.Abstractions;
 
 /// <summary>
 /// Uma chamada de PowerShell: script fixo (constante do trashsweepr) + argumentos como dados.
