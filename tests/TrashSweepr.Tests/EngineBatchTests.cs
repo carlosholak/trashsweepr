@@ -1,7 +1,7 @@
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.TestTweaks;
 
@@ -255,12 +255,12 @@ public sealed class TweakStateDetectorTests : IDisposable
     {
         var tweak = Make(
             "test.task",
-            CatalogJson.SchedTask(@"\Limpeza\Test\", "Job", enabled: false),
-            CatalogJson.SchedTask(@"\Limpeza\Test\", "Job", enabled: true));
-        _sys.Tasks.Tasks[@"\Limpeza\Test\Job"] = new TaskState(true, true);
+            CatalogJson.SchedTask(@"\Cleanup\Test\", "Job", enabled: false),
+            CatalogJson.SchedTask(@"\Cleanup\Test\", "Job", enabled: true));
+        _sys.Tasks.Tasks[@"\Cleanup\Test\Job"] = new TaskState(true, true);
         Assert.Equal(TweakAppliedState.NotApplied, await DetectAsync(tweak));
 
-        _sys.Tasks.Tasks[@"\Limpeza\Test\Job"] = new TaskState(true, false);
+        _sys.Tasks.Tasks[@"\Cleanup\Test\Job"] = new TaskState(true, false);
         Assert.Equal(TweakAppliedState.Applied, await DetectAsync(tweak));
     }
 
