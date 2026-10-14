@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TrashSweepr.Limpeza.Core.Models;
+namespace TrashSweepr.Cleanup.Core.Models;
 
 /// <summary>
 /// Ação declarativa de um tweak. O JSON nunca carrega scripts: cada tipo de ação tem campos
@@ -71,7 +71,7 @@ public static class RegistryValueConverter
 
         if (element.ValueKind is JsonValueKind.Undefined or JsonValueKind.Null)
         {
-            error = "O valor ('value') é obrigatório para a operação 'set'.";
+            error = CoreText.Get("Catalog.ValueRequired");
             return false;
         }
 
@@ -85,7 +85,7 @@ public static class RegistryValueConverter
                     return true;
                 }
 
-                error = "Valor DWORD deve ser um inteiro de 32 bits.";
+                error = CoreText.Get("Catalog.DwordRange");
                 return false;
 
             case RegistryValueType.Qword:
@@ -95,7 +95,7 @@ public static class RegistryValueConverter
                     return true;
                 }
 
-                error = "Valor QWORD deve ser um inteiro de 64 bits.";
+                error = CoreText.Get("Catalog.QwordRange");
                 return false;
 
             default:
@@ -105,7 +105,7 @@ public static class RegistryValueConverter
                     return true;
                 }
 
-                error = "Valor sz/expandSz deve ser texto.";
+                error = CoreText.Get("Catalog.StringValue");
                 return false;
         }
     }
@@ -151,7 +151,7 @@ internal sealed class TweakActionConverter : JsonConverter<TweakAction>
             || !root.TryGetProperty("type", out var typeElement)
             || typeElement.ValueKind != JsonValueKind.String)
         {
-            throw new JsonException("Toda ação precisa do campo 'type'.");
+            throw new JsonException(CoreText.Get("Catalog.ActionTypeRequired"));
         }
 
         var type = typeElement.GetString();
@@ -164,10 +164,10 @@ internal sealed class TweakActionConverter : JsonConverter<TweakAction>
             "service" => JsonSerializer.Deserialize<ServiceAction>(raw, options),
             "scheduledTask" => JsonSerializer.Deserialize<ScheduledTaskAction>(raw, options),
             "appx" => JsonSerializer.Deserialize<AppxAction>(raw, options),
-            _ => throw new JsonException($"Tipo de ação desconhecido: '{type}'."),
+            _ => throw new JsonException(CoreText.Format("Catalog.UnknownActionType", type)),
         };
 
-        return action ?? throw new JsonException("Ação inválida.");
+        return action ?? throw new JsonException(CoreText.Get("Catalog.InvalidAction"));
     }
 
     // Os tipos derivados não declaram 'type'; retirá-lo permite rejeitar campos desconhecidos (typos).
@@ -199,7 +199,7 @@ internal sealed class TweakActionConverter : JsonConverter<TweakAction>
             ServiceAction a => ("service", JsonSerializer.SerializeToElement(a, options)),
             ScheduledTaskAction a => ("scheduledTask", JsonSerializer.SerializeToElement(a, options)),
             AppxAction a => ("appx", JsonSerializer.SerializeToElement(a, options)),
-            _ => throw new JsonException($"Tipo de ação não suportado: {value.GetType().Name}."),
+            _ => throw new JsonException(CoreText.Format("Catalog.UnsupportedActionClass", value.GetType().Name)),
         };
 
         writer.WriteStartObject();
