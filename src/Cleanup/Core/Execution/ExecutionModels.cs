@@ -1,8 +1,8 @@
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Operations;
 
-namespace TrashSweepr.Limpeza.Core.Execution;
+namespace TrashSweepr.Cleanup.Core.Execution;
 
 public enum ResultStatus
 {
@@ -66,7 +66,7 @@ public sealed record ExecutionOptions
     /// <summary>Permite continuar quando o ponto de restauração não pôde ser criado (proteção desativada ou falha).</summary>
     public bool ProceedWithoutRestorePoint { get; init; }
 
-    public string RestorePointDescription { get; init; } = "trashsweepr: antes de aplicar ajustes";
+    public string RestorePointDescription { get; init; } = CoreText.Get("RestorePoint.DefaultDescription");
 }
 
 /// <param name="ProtectionEnabled">Resultado da checagem da Proteção do Sistema (null se não houve checagem).</param>
