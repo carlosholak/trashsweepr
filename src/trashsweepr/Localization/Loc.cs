@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Resources;
 using System.Windows.Markup;
 
-namespace TrashSweepr.Limpeza.Services;
+namespace TrashSweepr.Localization;
 
 /// <summary>
 /// Textos da interface. Os arquivos Resources\Strings*.resx são resolvidos pela cultura da interface;
@@ -10,7 +10,7 @@ namespace TrashSweepr.Limpeza.Services;
 /// </summary>
 public static class Loc
 {
-    private static readonly ResourceManager Manager = new("TrashSweepr.Limpeza.Resources.Strings", typeof(Loc).Assembly);
+    private static readonly ResourceManager Manager = new("TrashSweepr.Resources.Strings", typeof(Loc).Assembly);
 
     /// <summary>Cultura usada para buscar textos. Nula = cultura da interface do Windows.</summary>
     public static CultureInfo? Override { get; set; }
