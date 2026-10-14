@@ -1,7 +1,7 @@
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Operations;
+namespace TrashSweepr.Cleanup.Core.Operations;
 
 /// <summary>Operações geradas por uma única ação do catálogo (ex.: um serviço gera "mudar tipo" + "parar").</summary>
 public sealed record OperationGroup(TweakAction Action, IReadOnlyList<PlannedOperation> Operations);
@@ -65,7 +65,7 @@ public static class OperationPlanner
                     : [new AppxReinstallOperation(appx.PackageName)];
 
             default:
-                throw new InvalidOperationException($"Ação não suportada: {action.GetType().Name}.");
+                throw new InvalidOperationException(CoreText.Format("Engine.UnsupportedAction", action.GetType().Name));
         }
     }
 
