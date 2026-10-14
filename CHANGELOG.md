@@ -1,5 +1,29 @@
 # Histórico de versões
 
+## 1.5.0
+
+### Remover o OneDrive e o Edge
+
+- Dois ajustes novos, opcionais (nenhum perfil os marca): **Remover OneDrive** (Moderado) e **Remover o Microsoft
+  Edge** (Avançado). Os dois usam o desinstalador oficial de cada programa: `OneDriveSetup.exe /uninstall`, que vem com
+  o Windows, e o `setup.exe --uninstall` do próprio Edge.
+- O Edge só sai onde a Microsoft libera a remoção completa (Espaço Econômico Europeu). Nas outras regiões o Windows
+  recusa, e o app avisa que nada foi alterado, com o código de saída do `setup.exe`. Nenhum truque de registro para
+  contornar a trava.
+- O WebView2 (usado pelo Teams, pelos Widgets e por muitos apps) e o Edge Update nunca são tocados, e o Edge continua
+  protegido em todas as outras ações (chaves de registro, serviços, tarefas e pacotes).
+- "Desfazer" reinstala só o que estava instalado antes: o OneDrive pelo instalador que vem com o Windows (ou pelo
+  winget, se ele não existir) e o Edge pelo winget, que precisa de internet. Sem winget, o app indica a página de
+  download da Microsoft.
+- A simulação mostra o script exato de cada desinstalação e reinstalação.
+
+### Para quem escreve ajustes
+
+- Novo tipo de ação `"type": "program"`, com `"program": "edge" | "onedrive"` (lista fechada, definida no código) e
+  `"operation": "uninstall" | "reinstall"`. Não há caminho nem comando no JSON: cada par programa/operação usa um
+  script fixo do app. `uninstall` só vale em `apply`, `reinstall` só em `revert`, e todo `uninstall` precisa do
+  `reinstall` do mesmo programa.
+
 ## 1.4.0
 
 ### Inglês e português
