@@ -12,12 +12,12 @@ Projeto de código aberto, sob a [licença MIT](LICENSE), feito com ajuda de int
 
 ## O que ele faz
 
-**Disco.** Mostra o disco como um mapa de blocos, do tamanho de cada pasta e arquivo. A diferença para outros
+**Disco:** Mostra o disco como um mapa de blocos, do tamanho de cada pasta e arquivo. A diferença para outros
 analisadores é que ele entende o que está vendo: reconhece pastas de build e cache (`node_modules`, `target`,
 `bin/obj`, `.venv`...), confere se o projeto está mesmo ali e diz qual comando traz tudo de volta. Também lembra
 das varreduras anteriores, então dá para ver o que cresceu desde a semana passada.
 
-**Limpeza do Windows.** Uma lista de ajustes para tirar apps que vêm de fábrica (inclusive Copilot, OneDrive e
+**Limpeza do Windows:** Uma lista de ajustes para tirar apps que vêm de fábrica (Copilot, OneDrive e
 Edge), desligar telemetria e anúncios. Cada ajuste explica o que faz e qual o risco, e tudo pode ser simulado antes
 e desfeito depois.
 
