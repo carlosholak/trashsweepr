@@ -5,19 +5,19 @@
 A free Windows app that helps with two things: **finding out what's filling up your disk** and **trimming the
 excess out of Windows 11 without breaking anything**.
 
-It's an open source project under the [MIT license](LICENSE), and it was built with the help of artificial
+Open source project under the [MIT license](LICENSE), built with the help of artificial
 intelligence (see [how](#built-with-the-help-of-ai)).
 
 ![Disk section](screenshot-disk-en.png)
 
 ## What it does
 
-**Disk.** Shows your disk as a map of blocks, sized by each folder and file. Unlike other analyzers, it understands
+**Disk:** Shows your disk as a map of blocks, sized by each folder and file. Unlike other analyzers, it understands
 what it's looking at: it recognizes build and cache folders (`node_modules`, `target`, `bin/obj`, `.venv`...), checks
 that the project is really there, and tells you which command brings everything back. It also remembers previous
 scans, so you can see what grew since last week.
 
-**Windows Cleanup.** A list of tweaks for removing apps that ship with Windows (including Copilot, OneDrive and
+**Windows Cleanup:** A list of tweaks for removing apps that ship with Windows (Copilot, OneDrive and
 Edge) and turning off telemetry and ads. Each tweak explains what it does and how risky it is, and everything can be
 simulated first and undone later.
 
@@ -140,7 +140,7 @@ versions are still found).
 
 ## Built with the help of AI
 
-trashsweepr was developed together with Claude, by Anthropic, using Claude Code. In practice: I decided what the app
+trashsweepr was developed with Claude, using Claude Code. In practice: I decided what the app
 should do, how it should behave and what was acceptable to change in Windows; the AI wrote much of the code, the tests
 and the texts, and I reviewed and approved them. No command that changes the system went into Windows Cleanup without
 being explained and approved first.
@@ -151,8 +151,7 @@ simulation before applying, especially for Moderate and Advanced tweaks.
 
 ## Open source
 
-All the code is here, under the [MIT license](LICENSE): you can use, study, modify and redistribute it. Found a
-problem or have an idea? Open an [issue](https://github.com/carlosholak/trashsweepr/issues). Pull requests are welcome
+Found a problem or have an idea? Open an [issue](https://github.com/carlosholak/trashsweepr/issues). Pull requests are welcome
 too.
 
 As with any MIT software, it comes with no warranty: it's a personal project, made with care, but applying the tweaks
