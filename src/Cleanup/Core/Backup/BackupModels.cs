@@ -17,6 +17,7 @@ public enum BackupStatus
 [JsonDerivedType(typeof(ServiceBackup), "service")]
 [JsonDerivedType(typeof(TaskBackup), "task")]
 [JsonDerivedType(typeof(AppxBackup), "appx")]
+[JsonDerivedType(typeof(ProgramBackup), "program")]
 public abstract record BackupItem
 {
     /// <summary>Identifica o alvo; dois itens com a mesma chave guardam o mesmo estado original.</summary>
@@ -51,6 +52,14 @@ public sealed record TaskBackup(string TaskPath, string TaskName, bool Existed, 
 public sealed record AppxBackup(string PackageName, bool InstalledForCurrentUser, IReadOnlyList<AppxPackageFile> Packages) : BackupItem
 {
     public override string Key => $"appx:{PackageName}".ToUpperInvariant();
+}
+
+/// <param name="WasInstalled">O programa estava instalado antes? Só nesse caso o "Desfazer" o reinstala.</param>
+public sealed record ProgramBackup(
+    [property: JsonConverter(typeof(ManagedProgramJsonConverter))] ManagedProgram Program,
+    bool WasInstalled) : BackupItem
+{
+    public override string Key => $"program:{ManagedPrograms.JsonName(Program)}".ToUpperInvariant();
 }
 
 /// <summary>Backup de uma aplicação de tweak: tudo o que é preciso para desfazê-lo.</summary>
