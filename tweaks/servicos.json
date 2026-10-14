@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "tweaks": [
+    {
+      "id": "services.diagtrack",
+      "name": "Desativar serviço de telemetria (DiagTrack)",
+      "description": "Desativa e para o serviço \"Experiências do Usuário Conectado e Telemetria\" (DiagTrack), responsável por coletar e enviar dados de diagnóstico à Microsoft.",
+      "category": "services",
+      "risk": "moderate",
+      "riskNote": "Em PCs gerenciados por uma empresa (Intune, relatórios de conformidade) e no programa Windows Insider, o serviço pode ser necessário. Não afeta o Windows Update nem o Defender.",
+      "revertNote": "Volta o serviço para inicialização Automática (padrão do Windows). Ele volta a iniciar na próxima inicialização do sistema.",
+      "apply": [ { "type": "service", "name": "DiagTrack", "startType": "disabled", "stop": true } ],
+      "revert": [ { "type": "service", "name": "DiagTrack", "startType": "automatic" } ]
+    }
+  ]
+}
