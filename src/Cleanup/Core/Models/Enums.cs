@@ -52,3 +52,19 @@ public enum AppxOperation
     Remove,
     Reinstall,
 }
+
+/// <summary>
+/// Programas que o trashsweepr sabe desinstalar pelo desinstalador oficial de cada um. Lista fechada: o JSON só aceita
+/// "edge" e "onedrive" (veja <see cref="ManagedPrograms"/>), e cada par (programa, operação) tem um script fixo.
+/// </summary>
+public enum ManagedProgram
+{
+    Edge,
+    OneDrive,
+}
+
+public enum ProgramOperation
+{
+    Uninstall,
+    Reinstall,
+}
