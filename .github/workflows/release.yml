@@ -41,7 +41,7 @@ jobs:
         shell: pwsh
         run: |
           Remove-Item publish/*.pdb -ErrorAction SilentlyContinue
-          Copy-Item README.md publish/
+          Copy-Item README.md, README.en.md publish/
           Compress-Archive -Path publish/* -DestinationPath "trashsweepr-$env:VERSION-win-x64.zip"
 
       - name: Notas do release
