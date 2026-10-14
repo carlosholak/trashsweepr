@@ -1,4 +1,4 @@
-<Window x:Class="TrashSweepr.Limpeza.Views.MessageDialog"
+<Window x:Class="TrashSweepr.Cleanup.Views.MessageDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Width="500" SizeToContent="Height" MaxHeight="640"
