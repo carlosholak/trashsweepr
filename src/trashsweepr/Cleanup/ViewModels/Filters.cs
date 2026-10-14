@@ -1,7 +1,7 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.ViewModels;
+namespace TrashSweepr.Cleanup.ViewModels;
 
 /// <summary>Cor semântica de um selo ou aviso; o XAML escolhe as cores do tema a partir dela.</summary>
 public enum Tone
@@ -76,7 +76,7 @@ public sealed class FilterGroup<T> : ObservableObject
         Options = [.. options];
         if (Options.Count == 0)
         {
-            throw new ArgumentException("Um grupo de filtros precisa de ao menos uma opção.", nameof(options));
+            throw new ArgumentException("A filter group needs at least one option.", nameof(options));
         }
 
         foreach (var option in Options)
