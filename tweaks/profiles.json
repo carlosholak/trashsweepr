@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "profiles": [
+    {
+      "id": "light",
+      "name": "Leve",
+      "description": "Apenas ações seguras, que não alteram o comportamento do sistema além de remover excessos.",
+      "maxRisk": "safe"
+    },
+    {
+      "id": "moderate",
+      "name": "Moderado",
+      "description": "Ações seguras e moderadas. Cada ação moderada pede confirmação, e itens opt-in (como remover o Xbox) continuam fora do perfil.",
+      "maxRisk": "moderate"
+    }
+  ]
+}
