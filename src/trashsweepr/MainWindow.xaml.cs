@@ -8,8 +8,9 @@ using System.Windows.Interop;
 using System.Windows.Media;
 using System.Windows.Threading;
 using Microsoft.Win32;
-using TrashSweepr.Limpeza;
-using TrashSweepr.Limpeza.ViewModels;
+using TrashSweepr.Cleanup;
+using TrashSweepr.Cleanup.ViewModels;
+using TrashSweepr.Localization;
 
 namespace TrashSweepr;
 
@@ -47,41 +48,42 @@ public partial class MainWindow : Window
     bool _syncingSelection;
 
     // Seção "Limpeza do Windows": só é montada na primeira vez que o usuário a abre.
-    LimpezaViewModel? _limpeza;
-    IDisposable? _limpezaRuntime;
+    CleanupViewModel? _cleanup;
+    IDisposable? _cleanupRuntime;
 
     /// <summary>Cria a Limpeza do Windows. Os testes trocam isto para não consultar o sistema de verdade.</summary>
-    internal Func<(LimpezaViewModel ViewModel, IDisposable Runtime)> LimpezaFactory { get; set; } = LimpezaComposition.Create;
+    internal Func<(CleanupViewModel ViewModel, IDisposable Runtime)> CleanupFactory { get; set; } = CleanupComposition.Create;
 
     public MainWindow()
     {
         InitializeComponent();
-        StaleButton.Content = $"Só projetos parados há {StaleThresholdDays}+ dias";
+        StaleButton.Content = Loc.Format("Disk.Recover.Stale", StaleThresholdDays);
         LoadDrives();
-        Closed += (_, _) => _limpezaRuntime?.Dispose();
+        Closed += (_, _) => _cleanupRuntime?.Dispose();
         _progressTimer.Tick += (_, _) => ShowProgress();
         Map.HoverChanged += OnMapHover;
         Map.ItemClicked += OnMapClick;
         Map.ItemDoubleClicked += node => Enter(node);
 
         // "trashsweepr.exe <pasta>" já abre varrendo a pasta (também vale arrastar uma pasta sobre o .exe).
-        // "--aba recriavel|mudancas|maiores" abre direto numa aba.
+        // "--tab recoverable|changes|largest" abre direto numa aba. Os nomes antigos em português
+        // ("--aba recriavel|mudancas|maiores", "--limpeza") continuam aceitos.
         var args = Environment.GetCommandLineArgs().Skip(1).ToList();
         var folder = args.FirstOrDefault(a => !a.StartsWith("--") && Directory.Exists(a));
-        int tabIndex = args.IndexOf("--aba");
+        int tabIndex = args.FindIndex(a => a is "--tab" or "--aba");
         string? tab = tabIndex >= 0 && tabIndex + 1 < args.Count ? args[tabIndex + 1] : null;
 
-        // "--limpeza" abre direto na seção Limpeza do Windows (é o que o app usa ao reabrir como administrador).
-        if (args.Contains("--limpeza")) Loaded += (_, _) => CleanupSection.IsChecked = true;
+        // "--cleanup" abre direto na seção de limpeza do Windows (é o que o app usa ao reabrir como administrador).
+        if (args.Contains("--cleanup") || args.Contains("--limpeza")) Loaded += (_, _) => CleanupSection.IsChecked = true;
         if (folder is not null)
             Loaded += async (_, _) =>
             {
                 await ScanRoot(Path.GetFullPath(folder));
                 var radio = tab switch
                 {
-                    "recriavel" => RecoverTab,
-                    "mudancas" => ChangesTab,
-                    "maiores" => TopTab,
+                    "recoverable" or "recriavel" => RecoverTab,
+                    "changes" or "mudancas" => ChangesTab,
+                    "largest" or "maiores" => TopTab,
                     _ => null,
                 };
                 if (radio is not null) radio.IsChecked = true;
@@ -95,24 +97,24 @@ public partial class MainWindow : Window
     void OnSectionChanged(object sender, RoutedEventArgs e)
     {
         // O evento Checked já dispara durante o InitializeComponent, antes dos painéis existirem.
-        if (DiskPane is null || LimpezaPane is null) return;
+        if (DiskPane is null || CleanupPane is null) return;
 
         bool cleanup = CleanupSection.IsChecked == true;
         DiskPane.Visibility = cleanup ? Visibility.Collapsed : Visibility.Visible;
-        LimpezaPane.Visibility = cleanup ? Visibility.Visible : Visibility.Collapsed;
-        if (cleanup) EnsureLimpezaStarted();
+        CleanupPane.Visibility = cleanup ? Visibility.Visible : Visibility.Collapsed;
+        if (cleanup) EnsureCleanupStarted();
     }
 
-    void EnsureLimpezaStarted()
+    void EnsureCleanupStarted()
     {
-        if (_limpeza is not null) return;
+        if (_cleanup is not null) return;
 
-        (_limpeza, _limpezaRuntime) = LimpezaFactory();
-        LimpezaPane.DataContext = _limpeza;
-        _ = InitializeLimpezaAsync(_limpeza);
+        (_cleanup, _cleanupRuntime) = CleanupFactory();
+        CleanupPane.DataContext = _cleanup;
+        _ = InitializeCleanupAsync(_cleanup);
     }
 
-    async Task InitializeLimpezaAsync(LimpezaViewModel viewModel)
+    async Task InitializeCleanupAsync(CleanupViewModel viewModel)
     {
         try
         {
@@ -120,7 +122,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "Limpeza do Windows", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, ex.Message, Loc.Get("App.Section.Cleanup"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 
@@ -143,15 +145,15 @@ public partial class MainWindow : Window
                 if (!d.IsReady) continue;
                 string kind = d.DriveType switch
                 {
-                    DriveType.Fixed => "Local",
-                    DriveType.Removable => "Removível",
-                    DriveType.Network => "Rede",
-                    DriveType.CDRom => "Óptica",
+                    DriveType.Fixed => Loc.Get("Disk.Drive.Fixed"),
+                    DriveType.Removable => Loc.Get("Disk.Drive.Removable"),
+                    DriveType.Network => Loc.Get("Disk.Drive.Network"),
+                    DriveType.CDRom => Loc.Get("Disk.Drive.Optical"),
                     _ => d.DriveType.ToString(),
                 };
                 string label = string.IsNullOrWhiteSpace(d.VolumeLabel) ? kind : $"{d.VolumeLabel} · {kind}";
-                items.Add(new DriveItem(d.RootDirectory.FullName,
-                    $"{d.Name}   {label}   {Format.Bytes(d.AvailableFreeSpace)} livres de {Format.Bytes(d.TotalSize)}"));
+                items.Add(new DriveItem(d.RootDirectory.FullName, $"{d.Name}   {label}   " +
+                    Loc.Format("Disk.Drive.Free", Format.Bytes(d.AvailableFreeSpace), Format.Bytes(d.TotalSize))));
             }
             catch (IOException) { }
             catch (UnauthorizedAccessException) { }
@@ -170,7 +172,7 @@ public partial class MainWindow : Window
 
     void OnPickFolder(object sender, RoutedEventArgs e)
     {
-        var dlg = new OpenFolderDialog { Title = "Escolha a pasta para mapear" };
+        var dlg = new OpenFolderDialog { Title = Loc.Get("Disk.PickFolder.Title") };
         if (dlg.ShowDialog(this) == true) _ = ScanRoot(dlg.FolderName);
     }
 
@@ -182,7 +184,7 @@ public partial class MainWindow : Window
         var startedUtc = DateTime.UtcNow;
         List<SnapshotInfo> previous = [];
         string? saveError = null;
-        var result = await RunScan(path, $"Varrendo {path}", root =>
+        var result = await RunScan(path, Loc.Format("Disk.Scanning", path), root =>
         {
             Recoverables.Mark(root);
             // Lista depois de gravar: a gravação apaga os registros mais antigos, e nenhum apagado pode
@@ -200,7 +202,7 @@ public partial class MainWindow : Window
         _baseline = null;
         _baselineInfo = null;
         Navigate(result);
-        if (saveError is not null) ScanInfo.Text += " · não foi possível gravar ou ler os registros para comparação";
+        if (saveError is not null) ScanInfo.Text += " · " + Loc.Get("Disk.SnapshotSaveError");
 
         _suppressBaselineEvent = true;
         BaselineBox.ItemsSource = previous;
@@ -215,7 +217,7 @@ public partial class MainWindow : Window
     async Task RefreshCurrent()
     {
         if (_current is not { } node || Busy) return;
-        await RunScan(node.FullPath, $"Atualizando {node.FullPath}", applyOnUi: fresh =>
+        await RunScan(node.FullPath, Loc.Format("Disk.Refreshing", node.FullPath), applyOnUi: fresh =>
         {
             Splice(node, fresh);
             Navigate(node);
@@ -274,9 +276,9 @@ public partial class MainWindow : Window
             });
             _stopwatch.Stop();
             string denied = scanner.DeniedFolders > 0
-                ? $" · {Format.Plural(scanner.DeniedFolders, "pasta sem permissão ignorada", "pastas sem permissão ignoradas")}"
+                ? " · " + Format.Plural(scanner.DeniedFolders, "Disk.DeniedFolders")
                 : "";
-            ScanInfo.Text = $"Varredura em {Format.Seconds(_stopwatch.Elapsed)} · {Format.Files(scanner.Files)}{denied}";
+            ScanInfo.Text = Loc.Format("Disk.ScanDone", Format.Seconds(_stopwatch.Elapsed), Format.Files(scanner.Files)) + denied;
             if (applyOnUi is not null)
             {
                 await WaitTreeReaders();
@@ -286,12 +288,12 @@ public partial class MainWindow : Window
         }
         catch (Exception ex) when (Scanner.IsCancellation(ex))
         {
-            ScanInfo.Text = "Varredura cancelada";
+            ScanInfo.Text = Loc.Get("Disk.ScanCancelled");
             return null;
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "Não foi possível varrer a pasta", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, ex.Message, Loc.Get("Disk.ScanError"), MessageBoxButton.OK, MessageBoxImage.Warning);
             return null;
         }
         finally
@@ -320,9 +322,8 @@ public partial class MainWindow : Window
         else if (_current is null)
         {
             // Cancelou sem nada carregado: volta para o estado inicial.
-            OverlayTitle.Text = "Descubra o que está ocupando espaço";
-            OverlayText.Text = "Escolha uma unidade e clique em Varrer unidade, ou abra uma pasta específica. " +
-                               "Pastas de build e cache que dá para recriar podem ir para a Lixeira.";
+            OverlayTitle.Text = Loc.Get("Disk.Overlay.Title");
+            OverlayText.Text = Loc.Get("Disk.Overlay.TextIdle");
             OverlayDetail.Text = "";
         }
         else
@@ -381,7 +382,7 @@ public partial class MainWindow : Window
         if (version != _baselineVersion) return;
         _baseline = snap;
         _baselineInfo = snap is null ? null : info;
-        if (error is not null) ScanInfo.Text = "Não foi possível ler a varredura anterior: " + error;
+        if (error is not null) ScanInfo.Text = Loc.Format("Disk.BaselineError", error);
         if (_current is null) return;
         Map.Redraw(); // os tamanhos de referência mudaram (modo Mudanças)
         RefreshPanels(keepScroll: true);
@@ -424,7 +425,7 @@ public partial class MainWindow : Window
     void RefreshPanels(bool keepScroll)
     {
         var node = _current!;
-        string denied = node.AccessDenied ? " · sem permissão para ler esta pasta" : "";
+        string denied = node.AccessDenied ? " · " + Loc.Get("Disk.FolderDenied") : "";
         CurrentSummary.Text = $"{Format.Bytes(node.Size)} · {Format.Files(node.FileCount)}{denied}";
 
         _contentRows = node.Children!.Where(c => c.Size > 0 || c.IsDirectory).Select(c => new Row(c, node.Size)).ToList();
@@ -520,7 +521,7 @@ public partial class MainWindow : Window
         _analysis = analysis;
         string basePath = node.FullPath;
         _topRows = analysis.Top
-            .Select(f => new Row(f, node.Size, Format.RelativePath(basePath, f.Parent?.FullPath ?? "", "nesta pasta")))
+            .Select(f => new Row(f, node.Size, Format.RelativePath(basePath, f.Parent?.FullPath ?? "", Loc.Get("Disk.InThisFolder"))))
             .ToList();
 
         var previouslyChecked = _recoverRows.Where(r => r.IsChecked).Select(r => r.Node).ToHashSet();
@@ -549,7 +550,7 @@ public partial class MainWindow : Window
         {
             case ColorMode.Idade:
             {
-                LegendTitle.Text = "Por idade (última modificação)";
+                LegendTitle.Text = Loc.Get("Disk.Legend.Age");
                 long total = a.ByAge.Sum();
                 foreach (var b in Coloring.AgeBuckets)
                     if (a.ByAge[(int)b] > 0) rows.Add(new LegendRow(Coloring.Brush(b), Coloring.Label(b), a.ByAge[(int)b], total));
@@ -557,21 +558,21 @@ public partial class MainWindow : Window
             }
             case ColorMode.Recriavel:
             {
-                LegendTitle.Text = "Recriável nesta pasta";
+                LegendTitle.Text = Loc.Get("Disk.Legend.Recoverable");
                 long total = a.Node.Size;
-                rows.Add(new LegendRow(Coloring.Recoverable, "Build e cache recriáveis", a.RecoverableSize, total));
-                rows.Add(new LegendRow(Coloring.Neutral, "Restante", Math.Max(0, total - a.RecoverableSize), total));
+                rows.Add(new LegendRow(Coloring.Recoverable, Loc.Get("Disk.Legend.RecoverableShare"), a.RecoverableSize, total));
+                rows.Add(new LegendRow(Coloring.Neutral, Loc.Get("Disk.Legend.Rest"), Math.Max(0, total - a.RecoverableSize), total));
                 break;
             }
             case ColorMode.Mudancas:
             {
                 if (_baselineInfo is null)
                 {
-                    LegendTitle.Text = "Mudanças";
-                    ShowLegendNote("Ainda não há varredura anterior desta pasta. A comparação aparece a partir da próxima varredura.");
+                    LegendTitle.Text = Loc.Get("Disk.Legend.Changes");
+                    ShowLegendNote(Loc.Get("Disk.Legend.NoBaseline"));
                     break;
                 }
-                LegendTitle.Text = $"Mudanças desde {Format.Date(_baselineInfo.TakenUtc)}";
+                LegendTitle.Text = Loc.Format("Disk.Legend.ChangesSince", Format.Date(_baselineInfo.TakenUtc));
                 long total = Coloring.ChangeKinds.Sum(k => a.ByChange[(int)k]);
                 foreach (var k in Coloring.ChangeKinds)
                     if (a.ByChange[(int)k] > 0) rows.Add(new LegendRow(Coloring.Brush(k), Coloring.Label(k), a.ByChange[(int)k], total));
@@ -579,7 +580,7 @@ public partial class MainWindow : Window
             }
             default:
             {
-                LegendTitle.Text = "Por tipo de arquivo";
+                LegendTitle.Text = Loc.Get("Disk.Legend.Type");
                 long total = a.ByCategory.Sum();
                 rows.AddRange(FileCategories.All
                     .Where(c => a.ByCategory[(int)c] > 0)
@@ -613,26 +614,26 @@ public partial class MainWindow : Window
         if (TopTab.IsChecked == true)
         {
             rows = _topRows;
-            empty = "Nenhum arquivo nesta pasta.";
+            empty = Loc.Get("Disk.Empty.Largest");
         }
         else if (RecoverTab.IsChecked == true)
         {
             rows = _recoverRows;
             empty = _current?.Parent?.RecoverableAncestor() is { } owner
-                ? $"Esta pasta já está dentro de {owner.Name}, que é recriável inteira."
-                : "Nada de build ou cache recriável foi encontrado nesta pasta.";
+                ? Loc.Format("Disk.Empty.InsideRecoverable", owner.Name)
+                : Loc.Get("Disk.Empty.Recoverable");
         }
         else if (ChangesTab.IsChecked == true)
         {
             rows = _changeRows;
             empty = _baselineInfo is null
-                ? "A comparação aparece a partir da segunda varredura desta pasta."
-                : "Nada mudou nesta pasta desde a varredura escolhida.";
+                ? Loc.Get("Disk.Empty.ChangesFirst")
+                : Loc.Get("Disk.Empty.ChangesNone");
         }
         else
         {
             rows = _contentRows;
-            empty = "Pasta vazia.";
+            empty = Loc.Get("Disk.Empty.Folder");
         }
 
         RecoverHeader.Visibility = RecoverTab.IsChecked == true ? Visibility.Visible : Visibility.Collapsed;
@@ -669,17 +670,17 @@ public partial class MainWindow : Window
         if (_baselineInfo is null)
         {
             ChangeSummary.Text = BaselineBox.Items.Count == 0
-                ? "Primeira varredura desta pasta. O registro foi guardado; na próxima varredura dá para ver o que mudou."
-                : "Escolha uma varredura anterior para comparar.";
+                ? Loc.Get("Disk.Changes.First")
+                : Loc.Get("Disk.Changes.Pick");
             return;
         }
         string since = Format.Ago(_baselineInfo.TakenUtc, DateTime.UtcNow);
         ChangeSummary.Text = node.PreviousSize switch
         {
-            DiskNode.Added => $"Esta pasta não existia na varredura de {Format.Date(_baselineInfo.TakenUtc)}.",
+            DiskNode.Added => Loc.Format("Disk.Changes.Added", Format.Date(_baselineInfo.TakenUtc)),
             DiskNode.NoBaseline => "",
-            var prev when prev == node.Size => $"Nada mudou no tamanho desta pasta desde {Format.Date(_baselineInfo.TakenUtc)} ({since}).",
-            var prev => $"{Format.Signed(node.Size - prev)} nesta pasta ({since}): era {Format.Bytes(prev)}, agora {Format.Bytes(node.Size)}.",
+            var prev when prev == node.Size => Loc.Format("Disk.Changes.SameSize", Format.Date(_baselineInfo.TakenUtc), since),
+            var prev => Loc.Format("Disk.Changes.Delta", Format.Signed(node.Size - prev), since, Format.Bytes(prev), Format.Bytes(node.Size)),
         };
     }
 
@@ -740,14 +741,14 @@ public partial class MainWindow : Window
     {
         if (_analysis is not { } a || a.Recoverable.Count == 0)
         {
-            RecoverSummary.Text = "Nenhuma pasta de build ou cache recriável aqui.";
+            RecoverSummary.Text = Loc.Get("Disk.Recover.None");
             return;
         }
         int projects = a.Recoverable.Where(n => n.Recoverable!.IsProject).Select(n => n.Parent).Distinct().Count();
-        string where = projects > 0 ? $" em {Format.Plural(projects, "projeto", "projetos")}" : "";
-        string share = a.Node.Size > 0 ? $" ({Format.Percent((double)a.RecoverableSize / a.Node.Size)} desta pasta)" : "";
-        RecoverSummary.Text = $"{Format.Bytes(a.RecoverableSize)} recriáveis{share}{where}. " +
-                              "Cada pasta volta com o comando indicado; marque as que quer liberar.";
+        string where = projects > 0 ? " " + Format.Plural(projects, "Disk.Recover.InProjects") : "";
+        string share = a.Node.Size > 0 ? $" ({OfThisFolder((double)a.RecoverableSize / a.Node.Size)})" : "";
+        RecoverSummary.Text = Loc.Format("Disk.Recover.Size", Format.Bytes(a.RecoverableSize)) + share + where + ". " +
+                              Loc.Get("Disk.Recover.Hint");
     }
 
     void UpdateRecycleButton()
@@ -755,8 +756,8 @@ public partial class MainWindow : Window
         var marked = _recoverRows.Where(r => r.IsChecked).ToList();
         RecycleButton.IsEnabled = !Busy && marked.Count > 0;
         RecycleButton.Content = marked.Count == 0
-            ? "Mover para a Lixeira"
-            : $"Mover {Format.Plural(marked.Count, "pasta", "pastas")} para a Lixeira · {Format.Bytes(marked.Sum(r => r.Node!.Size))}";
+            ? Loc.Get("Disk.Recycle")
+            : Loc.Format("Disk.RecycleCount", Format.Plural(marked.Count, "Disk.Folders"), Format.Bytes(marked.Sum(r => r.Node!.Size)));
     }
 
     void OnCheckAll(object sender, RoutedEventArgs e)
@@ -781,7 +782,7 @@ public partial class MainWindow : Window
     {
         if (Busy || nodes.Count == 0) return;
         string basePath = _current?.FullPath ?? nodes[0].Parent!.FullPath;
-        if (MessageBox.Show(this, RecycleConfirmation(nodes, basePath), "Mover para a Lixeira", MessageBoxButton.YesNo,
+        if (MessageBox.Show(this, RecycleConfirmation(nodes, basePath), Loc.Get("Disk.Recycle"), MessageBoxButton.YesNo,
                 MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes)
             return;
 
@@ -795,8 +796,8 @@ public partial class MainWindow : Window
             foreach (var n in nodes)
             {
                 string path = n.FullPath;
-                OverlayTitle.Text = "Movendo para a Lixeira";
-                OverlayText.Text = $"{moved + cancelled + failed + tooLong + 1} de {nodes.Count} · {Format.Bytes(n.Size)}";
+                OverlayTitle.Text = Loc.Get("Disk.Recycling");
+                OverlayText.Text = Loc.Format("Disk.RecyclingProgress", Format.Count(moved + cancelled + failed + tooLong + 1), Format.Count(nodes.Count), Format.Bytes(n.Size));
                 OverlayDetail.Text = path;
 
                 // O shell não aceita caminhos longos: nem tenta, e a pasta fica como está.
@@ -836,12 +837,12 @@ public partial class MainWindow : Window
 
         foreach (var r in _recoverRows) r.IsChecked = false;
         var notMoved = new List<string>();
-        if (failed > 0) notMoved.Add($"{failed} em uso ou sem permissão");
-        if (cancelled > 0) notMoved.Add($"{cancelled} canceladas");
-        if (tooLong > 0) notMoved.Add($"{tooLong} com caminho longo demais para a Lixeira");
+        if (failed > 0) notMoved.Add(Loc.Format("Disk.NotMoved.Failed", Format.Count(failed)));
+        if (cancelled > 0) notMoved.Add(Loc.Format("Disk.NotMoved.Cancelled", Format.Count(cancelled)));
+        if (tooLong > 0) notMoved.Add(Loc.Format("Disk.NotMoved.TooLong", Format.Count(tooLong)));
         ScanInfo.Text = notMoved.Count == 0
-            ? $"{Format.Plural(moved, "pasta movida", "pastas movidas")} para a Lixeira · {Format.Bytes(freed)} liberados"
-            : $"{moved} movidas ({Format.Bytes(freed)}) · não foram movidas: {string.Join(", ", notMoved)}";
+            ? Loc.Format("Disk.Recycled", Format.Plural(moved, "Disk.Moved"), Format.Bytes(freed))
+            : Loc.Format("Disk.RecycledPartial", Format.Count(moved), Format.Bytes(freed), string.Join(", ", notMoved));
         LoadDrives();
         if (_current is null) return;
         Map.Redraw(); // a árvore mudou sem trocar a pasta aberta
@@ -854,11 +855,11 @@ public partial class MainWindow : Window
         long total = nodes.Sum(n => n.Size);
         var lines = nodes.Take(ConfirmListMax).Select(n =>
             $"•  {Format.RelativePath(basePath, n.FullPath, n.FullPath)}  ({Format.Bytes(n.Size)}) — {n.Recoverable!.Command}");
-        string more = nodes.Count > ConfirmListMax ? $"\n…e mais {nodes.Count - ConfirmListMax}." : "";
+        string more = nodes.Count > ConfirmListMax ? "\n" + Loc.Format("Disk.Confirm.More", Format.Count(nodes.Count - ConfirmListMax)) : "";
         return
-            $"Mover {Format.Plural(nodes.Count, "pasta", "pastas")} ({Format.Bytes(total)}) para a Lixeira?\n\n" +
+            Loc.Format("Disk.Confirm.Question", Format.Plural(nodes.Count, "Disk.Folders"), Format.Bytes(total)) + "\n\n" +
             string.Join("\n", lines) + more +
-            "\n\nDá para restaurar pela Lixeira do Windows. Se algo não couber nela, o Windows avisa antes de apagar de vez.";
+            "\n\n" + Loc.Get("Disk.Confirm.Footer");
     }
 
     /// <summary>Tira um item da árvore e desconta o tamanho dele de todas as pastas acima.</summary>
@@ -886,20 +887,21 @@ public partial class MainWindow : Window
             HoverInfo.Text = "";
             return;
         }
-        string share = _current is { Size: > 0 } cur ? $" · {Format.Percent((double)node.Size / cur.Size)} desta pasta" : "";
+        string share = _current is { Size: > 0 } cur ? " · " + OfThisFolder((double)node.Size / cur.Size) : "";
         string what = node.IsAggregate ? node.Name : node.FullPath;
         string extra = Mode switch
         {
             ColorMode.Idade when !node.IsAggregate =>
-                $" · modificado {Format.Ago(new DateTime(node.LastWriteTicks, DateTimeKind.Utc), DateTime.UtcNow)}",
+                " · " + Loc.Format("Disk.Hover.Modified", Format.Ago(new DateTime(node.LastWriteTicks, DateTimeKind.Utc), DateTime.UtcNow)),
             ColorMode.Recriavel => node.RecoverableAncestor() is { Recoverable: { } r }
-                ? $" · recriável: {r.Label.ToLowerInvariant()} ({r.Command})"
-                : " · não recriável",
+                ? " · " + Loc.Format("Disk.Hover.Recoverable", r.Label, r.Command)
+                : " · " + Loc.Get("Disk.Hover.NotRecoverable"),
             ColorMode.Mudancas => Coloring.Change(node) switch
             {
-                ChangeKind.Novo => " · novo",
-                ChangeKind.Cresceu or ChangeKind.Diminuiu => $" · {Format.Signed(Coloring.Delta(node))} (era {Format.Bytes(node.PreviousSize)})",
-                ChangeKind.Igual => " · sem mudança",
+                ChangeKind.Novo => " · " + Loc.Get("Disk.Hover.New"),
+                ChangeKind.Cresceu or ChangeKind.Diminuiu =>
+                    " · " + Loc.Format("Disk.Hover.Was", Format.Signed(Coloring.Delta(node)), Format.Bytes(node.PreviousSize)),
+                ChangeKind.Igual => " · " + Loc.Get("Disk.NoChange"),
                 _ => "",
             },
             _ => node.IsDirectory ? $" · {Format.Files(node.FileCount)}" : "",
@@ -921,18 +923,21 @@ public partial class MainWindow : Window
 
         var menu = new ContextMenu { PlacementTarget = target };
         if (EnterTarget(node) is not null)
-            menu.Items.Add(Item(node.IsDirectory ? "Entrar na pasta" : "Entrar na pasta do arquivo", () => Enter(node)));
-        menu.Items.Add(Item("Mostrar no Explorer", () => ShowInExplorer(node)));
-        menu.Items.Add(Item("Copiar caminho", () => CopyPath(node)));
+            menu.Items.Add(Item(Loc.Get(node.IsDirectory ? "Disk.Menu.Enter" : "Disk.Menu.EnterParent"), () => Enter(node)));
+        menu.Items.Add(Item(Loc.Get("Disk.Menu.ShowInExplorer"), () => ShowInExplorer(node)));
+        menu.Items.Add(Item(Loc.Get("Disk.Menu.CopyPath"), () => CopyPath(node)));
 
         // Só pastas reconhecidas como recriáveis podem ir para a Lixeira por aqui.
         if (node.RecoverableAncestor() is { Parent: not null } rec && !Busy)
         {
             menu.Items.Add(new Separator());
-            menu.Items.Add(Item($"Mover {rec.Name} para a Lixeira… ({Format.Bytes(rec.Size)}, recriável)", () => _ = Recycle([rec])));
+            menu.Items.Add(Item(Loc.Format("Disk.Menu.Recycle", rec.Name, Format.Bytes(rec.Size)), () => _ = Recycle([rec])));
         }
         menu.IsOpen = true;
     }
+
+    /// <summary>"12% desta pasta".</summary>
+    static string OfThisFolder(double fraction) => Loc.Format("Disk.OfThisFolder", Format.Percent(fraction));
 
     static MenuItem Item(string header, Action action)
     {
@@ -947,7 +952,7 @@ public partial class MainWindow : Window
         try { Clipboard.SetText(node.FullPath); }
         catch (System.Runtime.InteropServices.COMException ex)
         {
-            MessageBox.Show(this, ex.Message, "Não foi possível copiar o caminho", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, ex.Message, Loc.Get("Disk.CopyPathError"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 
@@ -961,7 +966,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            MessageBox.Show(this, ex.Message, "Não foi possível abrir o Explorer", MessageBoxButton.OK, MessageBoxImage.Warning);
+            MessageBox.Show(this, ex.Message, Loc.Get("Disk.ExplorerError"), MessageBoxButton.OK, MessageBoxImage.Warning);
         }
     }
 }
