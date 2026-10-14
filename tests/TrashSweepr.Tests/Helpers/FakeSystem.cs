@@ -1,9 +1,9 @@
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Backup;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Logging;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Backup;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Logging;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Core.Operations;
 
 namespace TrashSweepr.Tests.Helpers;
 
