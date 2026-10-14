@@ -1,6 +1,6 @@
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Catalog;
+namespace TrashSweepr.Cleanup.Core.Catalog;
 
 public enum CompatibilityStatus
 {
