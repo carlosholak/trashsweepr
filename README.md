@@ -137,7 +137,7 @@ Tudo fica registrado em `%ProgramData%\trashsweepr\limpeza\logs`, e os backups e
 
 ## Feito com ajuda de IA
 
-O trashsweepr foi desenvolvido em parceria com o Claude, da Anthropic, usando o Claude Code. Na prática: eu decidi
+O trashsweepr foi desenvolvido com o Claude, usando o Claude Code. Na prática: eu decidi
 o que o app deveria fazer, como deveria se comportar e o que era aceitável mexer no Windows; a IA escreveu boa parte do
 código, dos testes e dos textos, e eu revisei e aprovei. Nenhum comando que altera o sistema entrou na Limpeza sem ser
 explicado e aprovado antes.
@@ -148,8 +148,7 @@ Mesmo assim, use a simulação antes de aplicar, principalmente nos ajustes Mode
 
 ## Código aberto
 
-O código está todo aqui, sob a [licença MIT](LICENSE): dá para usar, estudar, modificar e redistribuir. Encontrou um
-problema ou tem uma ideia? Abra uma [issue](https://github.com/carlosholak/trashsweepr/issues). Pull requests também
+Encontrou um problema ou tem uma ideia? Abra uma [issue](https://github.com/carlosholak/trashsweepr/issues). Pull requests também
 são bem-vindos.
 
 Como em qualquer software MIT, ele vem sem garantia: é um projeto pessoal, feito com cuidado, mas a responsabilidade
