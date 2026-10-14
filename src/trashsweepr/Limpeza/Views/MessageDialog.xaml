@@ -1,0 +1,24 @@
+<Window x:Class="TrashSweepr.Limpeza.Views.MessageDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Width="500" SizeToContent="Height" MaxHeight="640"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize" ShowInTaskbar="False" UseLayoutRounding="True"
+        Background="{StaticResource Bg}" Foreground="{StaticResource Text}" FontFamily="Segoe UI" FontSize="13">
+    <Grid Margin="22">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock x:Name="TitleText" FontSize="15" FontWeight="SemiBold" TextWrapping="Wrap"/>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,12,0,20">
+            <TextBlock x:Name="MessageText" TextWrapping="Wrap" LineHeight="19"/>
+        </ScrollViewer>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="CancelButton" Style="{StaticResource Btn}" IsCancel="True" Margin="0,0,8,0" MinWidth="90" Padding="12,6" Click="OnCancel"/>
+            <Button x:Name="ConfirmButton" MinWidth="120" Padding="12,6" Click="OnConfirm"/>
+        </StackPanel>
+    </Grid>
+</Window>
