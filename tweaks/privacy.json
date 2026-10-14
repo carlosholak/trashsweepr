@@ -3,11 +3,20 @@
   "tweaks": [
     {
       "id": "privacy.telemetry-basic",
-      "name": "Reduzir telemetria ao mínimo",
-      "description": "Define o nível de dados de diagnóstico como \"Necessário\" (política AllowTelemetry = 0). Nas edições Home e Pro o Windows ainda envia o mínimo obrigatório; só nas edições Enterprise/Education o envio é totalmente desligado.",
+      "name": {
+        "en": "Reduce telemetry to the minimum",
+        "pt-BR": "Reduzir telemetria ao mínimo"
+      },
+      "description": {
+        "en": "Sets the diagnostic data level to \"Required\" (AllowTelemetry = 0 policy). On Home and Pro editions Windows still sends the required minimum; only on Enterprise/Education editions is sending turned off completely.",
+        "pt-BR": "Define o nível de dados de diagnóstico como \"Necessário\" (política AllowTelemetry = 0). Nas edições Home e Pro o Windows ainda envia o mínimo obrigatório; só nas edições Enterprise/Education o envio é totalmente desligado."
+      },
       "category": "privacy",
       "risk": "safe",
-      "revertNote": "Remove a política, devolvendo o controle ao Windows (Configurações > Privacidade e segurança > Diagnóstico).",
+      "revertNote": {
+        "en": "Removes the policy, handing control back to Windows (Settings > Privacy & security > Diagnostics & feedback).",
+        "pt-BR": "Remove a política, devolvendo o controle ao Windows (Configurações > Privacidade e segurança > Diagnóstico)."
+      },
       "apply": [
         { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection", "name": "AllowTelemetry", "kind": "dword", "value": 0 }
       ],
@@ -17,11 +26,20 @@
     },
     {
       "id": "privacy.advertising-id",
-      "name": "Desativar ID de publicidade",
-      "description": "Impede que os aplicativos usem o seu ID de publicidade para exibir anúncios personalizados.",
+      "name": {
+        "en": "Turn off advertising ID",
+        "pt-BR": "Desativar ID de publicidade"
+      },
+      "description": {
+        "en": "Stops apps from using your advertising ID to show personalized ads.",
+        "pt-BR": "Impede que os aplicativos usem o seu ID de publicidade para exibir anúncios personalizados."
+      },
       "category": "privacy",
       "risk": "safe",
-      "revertNote": "Reativa o ID de publicidade para o seu usuário.",
+      "revertNote": {
+        "en": "Turns the advertising ID back on for your user account.",
+        "pt-BR": "Reativa o ID de publicidade para o seu usuário."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo", "name": "Enabled", "kind": "dword", "value": 0 }
       ],
@@ -31,11 +49,20 @@
     },
     {
       "id": "privacy.tips-ads",
-      "name": "Desativar dicas, sugestões e anúncios do Windows",
-      "description": "Desliga as dicas e sugestões do Windows, o conteúdo sugerido em Configurações, as notificações de \"concluir a configuração\" e os avisos de provedores de sincronização (propagandas) no Explorador de Arquivos.",
+      "name": {
+        "en": "Turn off Windows tips, suggestions and ads",
+        "pt-BR": "Desativar dicas, sugestões e anúncios do Windows"
+      },
+      "description": {
+        "en": "Turns off Windows tips and suggestions, suggested content in Settings, \"finish setting up\" notifications and sync provider notifications (ads) in File Explorer.",
+        "pt-BR": "Desliga as dicas e sugestões do Windows, o conteúdo sugerido em Configurações, as notificações de \"concluir a configuração\" e os avisos de provedores de sincronização (propagandas) no Explorador de Arquivos."
+      },
       "category": "privacy",
       "risk": "safe",
-      "revertNote": "Restaura os valores padrão do Windows para o seu usuário.",
+      "revertNote": {
+        "en": "Restores the Windows default values for your user account.",
+        "pt-BR": "Restaura os valores padrão do Windows para o seu usuário."
+      },
       "apply": [
         { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338389Enabled", "kind": "dword", "value": 0 },
         { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-310093Enabled", "kind": "dword", "value": 0 },
