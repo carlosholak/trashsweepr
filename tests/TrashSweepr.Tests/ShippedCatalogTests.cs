@@ -1,6 +1,8 @@
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
+using System.Globalization;
+using System.Text.Json;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
 using TrashSweepr.Tests.Helpers;
 
 namespace TrashSweepr.Tests;
@@ -65,6 +67,75 @@ public class ShippedCatalogTests
         {
             Assert.True(tweak.Description.HasDefault, tweak.Id);
             Assert.True(tweak.RevertNote?.HasDefault == true, $"{tweak.Id} sem revertNote");
+        }
+    }
+
+    [Fact]
+    public void Every_text_in_the_shipped_files_has_english_and_brazilian_portuguese()
+    {
+        string[] textFields = ["name", "description", "riskNote", "revertNote"];
+        var checkedTexts = 0;
+
+        foreach (var file in Directory.EnumerateFiles(RepoPaths.TweaksDirectory, "*.json").Where(f => !f.EndsWith(".schema.json", StringComparison.Ordinal)))
+        {
+            using var document = JsonDocument.Parse(File.ReadAllText(file));
+            foreach (var section in new[] { "tweaks", "profiles" })
+            {
+                if (!document.RootElement.TryGetProperty(section, out var items))
+                {
+                    continue;
+                }
+
+                foreach (var item in items.EnumerateArray())
+                {
+                    var id = item.GetProperty("id").GetString();
+                    foreach (var field in textFields)
+                    {
+                        if (!item.TryGetProperty(field, out var text))
+                        {
+                            continue;
+                        }
+
+                        var where = $"{Path.GetFileName(file)} {id} {field}";
+                        Assert.True(text.ValueKind == JsonValueKind.Object, $"{where}: precisa ser {{ \"en\", \"pt-BR\" }}");
+                        Assert.False(string.IsNullOrWhiteSpace(text.TryGetProperty("en", out var en) ? en.GetString() : null), $"{where}: sem \"en\"");
+                        Assert.False(string.IsNullOrWhiteSpace(text.TryGetProperty("pt-BR", out var pt) ? pt.GetString() : null), $"{where}: sem \"pt-BR\"");
+                        checkedTexts++;
+                    }
+                }
+            }
+        }
+
+        Assert.True(checkedTexts > 50, $"só {checkedTexts} textos conferidos");
+    }
+
+    [Fact]
+    public void Every_tweak_and_profile_reads_differently_in_english_and_portuguese()
+    {
+        var en = CultureInfo.GetCultureInfo("en-US");
+        var pt = CultureInfo.GetCultureInfo("pt-BR");
+
+        var texts = Catalog.Tweaks.SelectMany(t => new (string, LocalizedText?)[]
+            {
+                ($"{t.Id} name", t.Name), ($"{t.Id} description", t.Description),
+                ($"{t.Id} riskNote", t.RiskNote), ($"{t.Id} revertNote", t.RevertNote),
+            })
+            .Concat(Catalog.Profiles.SelectMany(p => new (string, LocalizedText?)[] { ($"{p.Id} name", p.Name), ($"{p.Id} description", p.Description) }));
+
+        foreach (var (where, text) in texts)
+        {
+            if (text is null)
+            {
+                continue;
+            }
+
+            var english = text.Resolve(en);
+            var portuguese = text.Resolve(pt);
+            Assert.False(string.IsNullOrWhiteSpace(english), where);
+            Assert.False(string.IsNullOrWhiteSpace(portuguese), where);
+            Assert.True(english != portuguese, $"{where}: mesmo texto nas duas línguas");
+            Assert.Equal(english, text.Resolve(CultureInfo.GetCultureInfo("de-DE")));
+            Assert.Equal(portuguese, text.Resolve(CultureInfo.GetCultureInfo("pt-PT")));
         }
     }
 
