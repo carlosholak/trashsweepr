@@ -12,10 +12,18 @@
   "additionalProperties": false,
   "$defs": {
     "text": {
-      "description": "Texto em pt-BR ou objeto { cultura: texto } (ex.: pt-BR, en-US).",
+      "description": "Objeto { cultura: texto }, ex.: { \"en\": \"...\", \"pt-BR\": \"...\" }. O app segue a língua da interface do Windows e escolhe, nesta ordem: a cultura exata, outra variante da mesma língua (pt-PT usa pt-BR, en-GB usa en), \"en\", \"pt-BR\" e, por fim, qualquer texto presente. Uma string simples ainda é aceita (catálogos antigos) e vale como pt-BR. O carregador exige texto em \"en\" ou \"pt-BR\"; o catálogo distribuído com o app precisa dos dois (conferido pelos testes).",
       "oneOf": [
         { "type": "string", "minLength": 1 },
-        { "type": "object", "additionalProperties": { "type": "string" }, "minProperties": 1 }
+        {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "minProperties": 1,
+          "anyOf": [
+            { "required": ["en"] },
+            { "required": ["pt-BR"] }
+          ]
+        }
       ]
     },
     "tweak": {
