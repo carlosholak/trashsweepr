@@ -1,11 +1,11 @@
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 
 namespace TrashSweepr.Tests.Helpers;
 
 internal static class TestTweaks
 {
-    public const string Key = @"Software\Limpeza\Test";
+    public const string Key = @"Software\Cleanup\Test";
 
     public static CancellationToken Ct => CancellationToken.None;
 
