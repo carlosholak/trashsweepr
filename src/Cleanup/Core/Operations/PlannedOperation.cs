@@ -16,6 +16,8 @@ public enum OperationKind
     TaskSetEnabled,
     AppxRemove,
     AppxReinstall,
+    ProgramUninstall,
+    ProgramReinstall,
 }
 
 /// <summary>
@@ -144,4 +146,24 @@ public sealed record AppxReinstallOperation(string PackageName, bool OnlyIfMissi
     public override string Target => $"appx:{PackageName}";
 
     public override string Command => PowerShellCalls.ReinstallAppx(PackageName).ToDisplayString();
+}
+
+/// <summary>Desinstala o programa pelo desinstalador oficial (script fixo de <see cref="PowerShellCalls.UninstallProgram"/>).</summary>
+public sealed record ProgramUninstallOperation(ManagedProgram Program) : PlannedOperation
+{
+    public override OperationKind Kind => OperationKind.ProgramUninstall;
+
+    public override string Target => $"program:{ManagedPrograms.JsonName(Program)}";
+
+    public override string Command => PowerShellCalls.UninstallProgram(Program).ToDisplayString();
+}
+
+/// <param name="OnlyIfMissing">Só reinstala se o programa não estiver instalado (usado ao restaurar backups).</param>
+public sealed record ProgramReinstallOperation(ManagedProgram Program, bool OnlyIfMissing = false) : PlannedOperation
+{
+    public override OperationKind Kind => OperationKind.ProgramReinstall;
+
+    public override string Target => $"program:{ManagedPrograms.JsonName(Program)}";
+
+    public override string Command => PowerShellCalls.ReinstallProgram(Program).ToDisplayString();
 }
