@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "tweaks": [
+    {
+      "id": "privacy.telemetry-basic",
+      "name": "Reduzir telemetria ao mínimo",
+      "description": "Define o nível de dados de diagnóstico como \"Necessário\" (política AllowTelemetry = 0). Nas edições Home e Pro o Windows ainda envia o mínimo obrigatório; só nas edições Enterprise/Education o envio é totalmente desligado.",
+      "category": "privacy",
+      "risk": "safe",
+      "revertNote": "Remove a política, devolvendo o controle ao Windows (Configurações > Privacidade e segurança > Diagnóstico).",
+      "apply": [
+        { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection", "name": "AllowTelemetry", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "operation": "deleteValue", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\DataCollection", "name": "AllowTelemetry" }
+      ]
+    },
+    {
+      "id": "privacy.advertising-id",
+      "name": "Desativar ID de publicidade",
+      "description": "Impede que os aplicativos usem o seu ID de publicidade para exibir anúncios personalizados.",
+      "category": "privacy",
+      "risk": "safe",
+      "revertNote": "Reativa o ID de publicidade para o seu usuário.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo", "name": "Enabled", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\AdvertisingInfo", "name": "Enabled", "kind": "dword", "value": 1 }
+      ]
+    },
+    {
+      "id": "privacy.tips-ads",
+      "name": "Desativar dicas, sugestões e anúncios do Windows",
+      "description": "Desliga as dicas e sugestões do Windows, o conteúdo sugerido em Configurações, as notificações de \"concluir a configuração\" e os avisos de provedores de sincronização (propagandas) no Explorador de Arquivos.",
+      "category": "privacy",
+      "risk": "safe",
+      "revertNote": "Restaura os valores padrão do Windows para o seu usuário.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338389Enabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-310093Enabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338393Enabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-353694Enabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-353696Enabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SoftLandingEnabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement", "name": "ScoobeSystemSettingEnabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "ShowSyncProviderNotifications", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338389Enabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-310093Enabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338393Enabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-353694Enabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-353696Enabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SoftLandingEnabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\UserProfileEngagement", "name": "ScoobeSystemSettingEnabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "ShowSyncProviderNotifications", "kind": "dword", "value": 1 }
+      ]
+    }
+  ]
+}
