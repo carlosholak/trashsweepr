@@ -61,7 +61,13 @@ public sealed class CleanupRuntime : IDisposable
         paths ??= AppPaths.Default;
 
         var runner = new PowerShellRunner();
-        var system = new SystemServices(new RegistryService(), new ServiceManager(runner), new TaskSchedulerService(runner), new AppxService(runner));
+        var installRunner = new PowerShellRunner(ProgramService.InstallTimeout);
+        var system = new SystemServices(
+            new RegistryService(),
+            new ServiceManager(runner),
+            new TaskSchedulerService(runner),
+            new AppxService(runner),
+            new ProgramService(runner, installRunner));
         var windows = new WindowsInfo();
         var backups = new BackupStore(paths.BackupDirectory);
         var log = new FileOperationLog(paths.LogDirectory);
