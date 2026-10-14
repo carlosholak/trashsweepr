@@ -1,4 +1,4 @@
-using TrashSweepr.Limpeza.Services;
+using TrashSweepr.Cleanup.Services;
 
 namespace TrashSweepr.Tests.Helpers;
 
