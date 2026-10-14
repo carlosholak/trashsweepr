@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using System.Text;
-using TrashSweepr.Limpeza.Core.Abstractions;
+using TrashSweepr.Cleanup.Core;
+using TrashSweepr.Cleanup.Core.Abstractions;
 
-namespace TrashSweepr.Limpeza.Infrastructure;
+namespace TrashSweepr.Cleanup.Infrastructure;
 
 /// <summary>
 /// Executa um script fixo no Windows PowerShell 5.1. Os argumentos viajam como JSON em Base64 numa variável
@@ -96,7 +97,7 @@ public sealed class PowerShellRunner(TimeSpan? timeout = null, string? executabl
                 throw;
             }
 
-            throw new TimeoutException($"O PowerShell não terminou em {_timeout.TotalSeconds:0} s e foi encerrado.");
+            throw new TimeoutException(CoreText.Format("PowerShell.Timeout", _timeout.TotalSeconds));
         }
     }
 
