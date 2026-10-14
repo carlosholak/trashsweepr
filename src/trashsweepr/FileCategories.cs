@@ -1,5 +1,6 @@
 using System.IO;
 using System.Windows.Media;
+using TrashSweepr.Localization;
 
 namespace TrashSweepr;
 
@@ -52,13 +53,13 @@ public static class FileCategories
 
     public static string Label(Category c) => c switch
     {
-        Category.Video => "Vídeo",
-        Category.Imagem => "Imagem",
-        Category.Audio => "Áudio",
-        Category.Documento => "Documento",
-        Category.Codigo => "Código e build",
-        Category.Compactado => "Compactado e imagem de disco",
-        Category.Programa => "Programa e biblioteca",
-        _ => "Outros",
+        Category.Video => Loc.Get("Disk.Category.Video"),
+        Category.Imagem => Loc.Get("Disk.Category.Image"),
+        Category.Audio => Loc.Get("Disk.Category.Audio"),
+        Category.Documento => Loc.Get("Disk.Category.Document"),
+        Category.Codigo => Loc.Get("Disk.Category.Code"),
+        Category.Compactado => Loc.Get("Disk.Category.Archive"),
+        Category.Programa => Loc.Get("Disk.Category.Program"),
+        _ => Loc.Get("Disk.Category.Other"),
     };
 }
