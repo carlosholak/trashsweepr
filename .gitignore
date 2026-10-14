@@ -1,0 +1,12 @@
+# Saídas de build e de teste
+bin/
+obj/
+publish/
+artifacts/
+TestResults/
+
+# IDE
+.vs/
+.idea/
+*.user
+*.suo
