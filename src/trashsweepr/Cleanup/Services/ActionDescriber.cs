@@ -16,6 +16,9 @@ public static class ActionDescriber
             Loc.Get($"StartType.{s.StartType}")),
         ScheduledTaskAction t => Loc.Format(t.Enabled ? "Action.TaskEnable" : "Action.TaskDisable", t.TaskPath + t.TaskName),
         AppxAction a => Loc.Format(a.Operation == AppxOperation.Remove ? "Action.AppxRemove" : "Action.AppxReinstall", a.PackageName),
+        ProgramAction p => Loc.Format(
+            p.Operation == ProgramOperation.Uninstall ? "Action.ProgramUninstall" : "Action.ProgramReinstall",
+            Loc.Get($"Program.{p.Program}")),
         _ => action.GetType().Name,
     };
 
