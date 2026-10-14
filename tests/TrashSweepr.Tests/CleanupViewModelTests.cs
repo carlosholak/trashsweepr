@@ -1,23 +1,23 @@
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.ViewModels;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.ViewModels;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 using static TrashSweepr.Tests.Helpers.TestTweaks;
 
 namespace TrashSweepr.Tests;
 
-public sealed class LimpezaViewModelTests : IDisposable
+public sealed class CleanupViewModelTests : IDisposable
 {
     private readonly FakeSystem _sys = new();
     private readonly FakeDialogs _dialogs = new();
     private readonly FakeRelauncher _relauncher = new();
     private readonly FakeGate _gate = new();
 
-    public LimpezaViewModelTests()
+    public CleanupViewModelTests()
     {
         _sys.Services.Services["FooSvc"] = new ServiceState(true, ServiceStartType.Automatic, true);
         _sys.Appx.Install("Contoso.B");
@@ -41,17 +41,17 @@ public sealed class LimpezaViewModelTests : IDisposable
         ("profiles.json", ProfileFile(Profile("light", "safe", "Leve"), Profile("moderate", "moderate", "Moderado"))),
     ]);
 
-    private LimpezaViewModel CreateViewModel(CatalogLoadResult? catalog = null)
+    private CleanupViewModel CreateViewModel(CatalogLoadResult? catalog = null)
     {
         catalog ??= BuildCatalog();
         Assert.False(catalog.HasErrors, string.Join(Environment.NewLine, catalog.Issues));
-        return new LimpezaViewModel(
+        return new CleanupViewModel(
             catalog.Catalog, catalog.Issues.Count, _sys.Engine, _sys.Detector, _sys.Windows, _sys.RestorePoints, _sys.Backups, _dialogs, _relauncher, _gate, "logs");
     }
 
-    private static TweakItemViewModel Item(LimpezaViewModel vm, string id) => vm.AllTweaks.First(t => t.Id == id);
+    private static TweakItemViewModel Item(CleanupViewModel vm, string id) => vm.AllTweaks.First(t => t.Id == id);
 
-    private async Task<LimpezaViewModel> InitializedAsync(CatalogLoadResult? catalog = null)
+    private async Task<CleanupViewModel> InitializedAsync(CatalogLoadResult? catalog = null)
     {
         var vm = CreateViewModel(catalog);
         await vm.InitializeAsync();
@@ -95,7 +95,7 @@ public sealed class LimpezaViewModelTests : IDisposable
         Assert.Equal("Moderado", service.RiskText);
         Assert.Equal(Tone.Warning, service.RiskTone);
         Assert.Equal("Pode afetar relatórios.", service.RiskNote);
-        Assert.Contains("Serviço FooSvc: inicialização Desativada e para o serviço", service.ApplyDescriptions);
+        Assert.Contains("Serviço FooSvc: inicialização Desativada, e o serviço é parado", service.ApplyDescriptions);
         Assert.Contains("Serviço FooSvc: inicialização Automática", service.RevertDescriptions);
 
         Assert.Contains($@"Registro: define HKCU\{Key}\A = 0 (DWORD)", Item(vm, "test.safe-a").ApplyDescriptions);
@@ -676,7 +676,7 @@ public sealed class LimpezaViewModelTests : IDisposable
             ("ok.json", TweakFile(Tweak(id: "test.ok"))),
             ("bad.json", TweakFile(Tweak(id: "Bad Id"), Tweak(id: "test.alsobad", risk: "moderate"))),
         ]);
-        var vm = new LimpezaViewModel(
+        var vm = new CleanupViewModel(
             broken.Catalog, broken.Issues.Count, _sys.Engine, _sys.Detector, _sys.Windows, _sys.RestorePoints, _sys.Backups, _dialogs, _relauncher, _gate, "logs");
 
         await vm.InitializeAsync();
@@ -688,7 +688,7 @@ public sealed class LimpezaViewModelTests : IDisposable
     [Fact]
     public async Task An_empty_catalog_shows_a_clear_error_banner()
     {
-        var vm = new LimpezaViewModel(
+        var vm = new CleanupViewModel(
             TweakCatalog.Empty, 0, _sys.Engine, _sys.Detector, _sys.Windows, _sys.RestorePoints, _sys.Backups, _dialogs, _relauncher, _gate, "logs");
 
         await vm.InitializeAsync();
@@ -711,10 +711,10 @@ public sealed class LimpezaViewModelTests : IDisposable
 
     // ---------- Utilitários ----------
 
-    private static void SelectProfile(LimpezaViewModel vm, string name) =>
+    private static void SelectProfile(CleanupViewModel vm, string name) =>
         vm.ProfileFilter.Options.Single(o => o.Label == name).IsSelected = true;
 
-    private static string[] Selected(LimpezaViewModel vm) =>
+    private static string[] Selected(CleanupViewModel vm) =>
         [.. vm.AllTweaks.Where(t => t.IsSelected).Select(t => t.Id).Order()];
 
 }
