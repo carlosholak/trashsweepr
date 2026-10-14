@@ -22,6 +22,7 @@ public sealed class SystemStateReader(SystemServices system)
 {
     private readonly Dictionary<string, Task<ServiceState>> _services = new(StringComparer.OrdinalIgnoreCase);
     private readonly Dictionary<string, Task<TaskState>> _tasks = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<ManagedProgram, Task<bool>> _programs = [];
     private Task<IReadOnlySet<string>>? _installedApps;
 
     public Task<ServiceState> GetServiceAsync(string name, CancellationToken ct) =>
@@ -32,6 +33,17 @@ public sealed class SystemStateReader(SystemServices system)
 
     public Task<IReadOnlySet<string>> GetInstalledAppsAsync(CancellationToken ct) =>
         _installedApps ??= system.Appx.ListInstalledNamesAsync(ct);
+
+    public Task<bool> IsProgramInstalledAsync(ManagedProgram program, CancellationToken ct)
+    {
+        if (!_programs.TryGetValue(program, out var task))
+        {
+            task = system.Programs.IsInstalledAsync(program, ct);
+            _programs[program] = task;
+        }
+
+        return task;
+    }
 
     public async Task<OperationState> CheckAsync(PlannedOperation operation, CancellationToken ct)
     {
@@ -52,6 +64,12 @@ public sealed class SystemStateReader(SystemServices system)
                     ? OperationState.NotSatisfied
                     : OperationState.Satisfied,
                 AppxReinstallOperation add => (await GetInstalledAppsAsync(ct).ConfigureAwait(false)).Contains(add.PackageName)
+                    ? OperationState.Satisfied
+                    : OperationState.NotSatisfied,
+                ProgramUninstallOperation uninstall => await IsProgramInstalledAsync(uninstall.Program, ct).ConfigureAwait(false)
+                    ? OperationState.NotSatisfied
+                    : OperationState.Satisfied,
+                ProgramReinstallOperation reinstall => await IsProgramInstalledAsync(reinstall.Program, ct).ConfigureAwait(false)
                     ? OperationState.Satisfied
                     : OperationState.NotSatisfied,
                 _ => OperationState.NotApplicable,
@@ -125,4 +143,5 @@ public sealed record SystemServices(
     IRegistryService Registry,
     IServiceManager Services,
     ITaskScheduler Tasks,
-    IAppxService Appx);
+    IAppxService Appx,
+    IProgramService Programs);
