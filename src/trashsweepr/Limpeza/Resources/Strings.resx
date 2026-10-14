@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value></resheader>
+
+  <!-- Aplicativo -->
+
+  <!-- Perfis, filtros e busca -->
+  <data name="Profile.Custom" xml:space="preserve"><value>Personalizado</value></data>
+  <data name="Filter.Categories" xml:space="preserve"><value>Categoria</value></data>
+  <data name="Filter.AllCategories" xml:space="preserve"><value>Todas</value></data>
+  <data name="Filter.Risk" xml:space="preserve"><value>Risco</value></data>
+  <data name="Filter.AllRisks" xml:space="preserve"><value>Todos</value></data>
+  <data name="Filter.State" xml:space="preserve"><value>Estado</value></data>
+  <data name="Filter.AllStates" xml:space="preserve"><value>Todos</value></data>
+  <data name="Filter.StatePending" xml:space="preserve"><value>Pendentes</value></data>
+  <data name="Filter.StateApplied" xml:space="preserve"><value>Aplicados</value></data>
+  <data name="Search.Placeholder" xml:space="preserve"><value>Buscar nesta lista…</value></data>
+
+  <!-- Categorias, riscos e estados -->
+  <data name="Category.Apps" xml:space="preserve"><value>Apps pré-instalados</value></data>
+  <data name="Category.Privacy" xml:space="preserve"><value>Telemetria e Privacidade</value></data>
+  <data name="Category.Services" xml:space="preserve"><value>Serviços</value></data>
+  <data name="Category.Tasks" xml:space="preserve"><value>Tarefas agendadas</value></data>
+  <data name="Category.Interface" xml:space="preserve"><value>Interface</value></data>
+  <data name="Category.Performance" xml:space="preserve"><value>Desempenho</value></data>
+  <data name="Risk.Safe" xml:space="preserve"><value>Seguro</value></data>
+  <data name="Risk.Moderate" xml:space="preserve"><value>Moderado</value></data>
+  <data name="Risk.Advanced" xml:space="preserve"><value>Avançado</value></data>
+  <data name="State.NotApplied" xml:space="preserve"><value>Não aplicado</value></data>
+  <data name="State.Applied" xml:space="preserve"><value>Aplicado</value></data>
+  <data name="State.Partial" xml:space="preserve"><value>Parcial</value></data>
+  <data name="State.NotApplicable" xml:space="preserve"><value>Não se aplica</value></data>
+  <data name="State.Unknown" xml:space="preserve"><value>Desconhecido</value></data>
+  <data name="State.Incompatible" xml:space="preserve"><value>Incompatível</value></data>
+  <data name="State.Checking" xml:space="preserve"><value>Verificando…</value></data>
+  <data name="Compat.NotWindows11" xml:space="preserve"><value>Requer o Windows 11 (build {0} ou superior).</value></data>
+  <data name="Compat.BuildTooOld" xml:space="preserve"><value>Requer o Windows 11 build {0} ou superior; esta máquina está na build {1}.</value></data>
+  <data name="Compat.BuildTooNew" xml:space="preserve"><value>Não é compatível com builds acima de {0}; esta máquina está na build {1}.</value></data>
+  <data name="Badge.OptIn" xml:space="preserve"><value>opcional</value></data>
+
+  <!-- Lista -->
+  <data name="List.SelectAllVisible" xml:space="preserve"><value>Selecionar todos os visíveis</value></data>
+  <data name="List.Count" xml:space="preserve"><value>{0} de {1} tweaks</value></data>
+  <data name="List.Empty" xml:space="preserve"><value>Nenhum tweak corresponde aos filtros.</value></data>
+  <data name="Mode.DryRun" xml:space="preserve"><value>Modo simulação</value></data>
+  <data name="Mode.DryRunHint" xml:space="preserve"><value>Mostra exatamente o que seria feito, sem alterar nada no computador.</value></data>
+
+  <!-- Painel de detalhes -->
+  <data name="Details.Title" xml:space="preserve"><value>Detalhes</value></data>
+  <data name="Details.Results" xml:space="preserve"><value>Resultado</value></data>
+  <data name="Details.NothingSelected" xml:space="preserve"><value>Clique em um tweak na lista para ver o que ele faz e como reverter.</value></data>
+  <data name="Details.WhatItDoes" xml:space="preserve"><value>O que será feito</value></data>
+  <data name="Details.RiskWarning" xml:space="preserve"><value>Aviso de risco</value></data>
+  <data name="Details.HowToRevert" xml:space="preserve"><value>Como reverter</value></data>
+  <data name="Details.RevertWithBackup" xml:space="preserve"><value>Se o trashsweepr aplicou este tweak, o valor anterior foi salvo e é restaurado exatamente. Se ele já estava aplicado antes, usa-se o padrão do Windows listado abaixo.</value></data>
+  <data name="Details.RevertActions" xml:space="preserve"><value>Padrão do Windows</value></data>
+  <data name="Details.RequiresReboot" xml:space="preserve"><value>Requer reiniciar o Windows (ou o Explorador de Arquivos) para ter efeito.</value></data>
+  <data name="Details.OptInNote" xml:space="preserve"><value>Opcional: nunca entra nos perfis automáticos. Marque manualmente se quiser.</value></data>
+  <data name="Details.UndoButton" xml:space="preserve"><value>Desfazer este tweak</value></data>
+
+  <!-- Descrição das ações -->
+  <data name="Action.RegistrySet" xml:space="preserve"><value>Registro: define {0} = {1} ({2})</value></data>
+  <data name="Action.RegistryDeleteValue" xml:space="preserve"><value>Registro: remove o valor {0}</value></data>
+  <data name="Action.RegistryDeleteKey" xml:space="preserve"><value>Registro: apaga a chave {0} (criada pelo trashsweepr)</value></data>
+  <data name="Action.ServiceStartType" xml:space="preserve"><value>Serviço {0}: inicialização {1}</value></data>
+  <data name="Action.ServiceStartTypeAndStop" xml:space="preserve"><value>Serviço {0}: inicialização {1} e para o serviço</value></data>
+  <data name="Action.TaskDisable" xml:space="preserve"><value>Tarefa agendada {0}: desativa (não apaga)</value></data>
+  <data name="Action.TaskEnable" xml:space="preserve"><value>Tarefa agendada {0}: ativa</value></data>
+  <data name="Action.AppxRemove" xml:space="preserve"><value>App {0}: remove, somente para o seu usuário</value></data>
+  <data name="Action.AppxReinstall" xml:space="preserve"><value>App {0}: reinstala</value></data>
+  <data name="StartType.Automatic" xml:space="preserve"><value>Automática</value></data>
+  <data name="StartType.AutomaticDelayed" xml:space="preserve"><value>Automática (atrasada)</value></data>
+  <data name="StartType.Manual" xml:space="preserve"><value>Manual</value></data>
+  <data name="StartType.Disabled" xml:space="preserve"><value>Desativada</value></data>
+  <data name="RegType.Dword" xml:space="preserve"><value>DWORD</value></data>
+  <data name="RegType.Qword" xml:space="preserve"><value>QWORD</value></data>
+  <data name="RegType.Sz" xml:space="preserve"><value>texto</value></data>
+  <data name="RegType.ExpandSz" xml:space="preserve"><value>texto expansível</value></data>
+
+  <!-- Barra de ações e status -->
+  <data name="Run.Simulate" xml:space="preserve"><value>Simular {0} selecionado(s)</value></data>
+  <data name="Run.Apply" xml:space="preserve"><value>Aplicar {0} selecionado(s)</value></data>
+  <data name="Run.RevertAll" xml:space="preserve"><value>Reverter tudo</value></data>
+  <data name="Run.Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Run.Refresh" xml:space="preserve"><value>Atualizar estados</value></data>
+  <data name="Status.Loading" xml:space="preserve"><value>Carregando o catálogo…</value></data>
+  <data name="Status.Detecting" xml:space="preserve"><value>Verificando o estado atual de cada tweak…</value></data>
+  <data name="Status.Running" xml:space="preserve"><value>Executando {0} ({1} de {2})…</value></data>
+  <data name="Status.Cancelling" xml:space="preserve"><value>Cancelando…</value></data>
+
+  <!-- Avisos -->
+  <data name="Banner.NotElevated" xml:space="preserve"><value>Sem o modo administrador dá para ver e simular tudo, mas aplicar ou desfazer alterações exige reabrir como administrador.</value></data>
+  <data name="Banner.NoProtection" xml:space="preserve"><value>A Proteção do Sistema está desativada: o trashsweepr não conseguirá criar um ponto de restauração antes de aplicar tweaks.</value></data>
+  <data name="Banner.ProtectionUnknown" xml:space="preserve"><value>Não foi possível verificar a Proteção do Sistema (isso exige o modo administrador).</value></data>
+  <data name="Banner.CatalogIssues" xml:space="preserve"><value>{0} problema(s) no catálogo de tweaks; os itens afetados foram ignorados. Detalhes no log.</value></data>
+  <data name="Banner.CatalogMissing" xml:space="preserve"><value>O catálogo de tweaks não foi encontrado ou está vazio. Reinstale o trashsweepr.</value></data>
+  <data name="Banner.Reboot" xml:space="preserve"><value>Algumas alterações só terão efeito depois de reiniciar o Windows (ou o Explorador de Arquivos).</value></data>
+
+  <!-- Resultados -->
+  <data name="Result.Success" xml:space="preserve"><value>Sucesso</value></data>
+  <data name="Result.Failed" xml:space="preserve"><value>Falhou</value></data>
+  <data name="Result.Skipped" xml:space="preserve"><value>Ignorado</value></data>
+  <data name="Result.DryRun" xml:space="preserve"><value>Simulado</value></data>
+  <data name="Skip.AlreadyApplied" xml:space="preserve"><value>Já estava aplicado.</value></data>
+  <data name="Skip.NotApplied" xml:space="preserve"><value>Não estava aplicado.</value></data>
+  <data name="Skip.NotApplicable" xml:space="preserve"><value>Não se aplica a este computador (o item não existe aqui).</value></data>
+  <data name="Skip.Incompatible" xml:space="preserve"><value>Incompatível com esta versão do Windows.</value></data>
+  <data name="Skip.NotConfirmed" xml:space="preserve"><value>Não foi confirmado pelo usuário.</value></data>
+  <data name="Skip.NoRestorePoint" xml:space="preserve"><value>Cancelado: não foi possível criar o ponto de restauração.</value></data>
+  <data name="Skip.None" xml:space="preserve"><value></value></data>
+  <data name="Result.RolledBack" xml:space="preserve"><value>As alterações já feitas foram desfeitas automaticamente.</value></data>
+  <data name="Result.UsedBackup" xml:space="preserve"><value>Restaurado a partir do backup do valor anterior.</value></data>
+  <data name="Result.Reboot" xml:space="preserve"><value>Reinicialização necessária.</value></data>
+  <data name="Result.ShowCommands" xml:space="preserve"><value>Ver comandos</value></data>
+  <data name="Result.HideCommands" xml:space="preserve"><value>Ocultar comandos</value></data>
+  <data name="Result.Summary" xml:space="preserve"><value>{0} com sucesso, {1} ignorado(s), {2} falha(s).</value></data>
+  <data name="Result.SummaryDryRun" xml:space="preserve"><value>Simulação: {0} tweak(s) seriam alterados, {1} ignorado(s), {2} falha(s). Nada foi modificado.</value></data>
+  <data name="Result.None" xml:space="preserve"><value>Ainda não há resultados. Marque tweaks e use Simular ou Aplicar.</value></data>
+  <data name="Result.RestorePointCreated" xml:space="preserve"><value>Ponto de restauração criado antes das alterações.</value></data>
+  <data name="Result.RestorePointThrottled" xml:space="preserve"><value>Já existe um ponto de restauração recente (o Windows permite um a cada 24 horas).</value></data>
+  <data name="Result.RestorePointSkipped" xml:space="preserve"><value>Sem ponto de restauração: {0}</value></data>
+
+  <!-- Diálogos -->
+  <data name="Dialog.RiskTitle" xml:space="preserve"><value>Confirmar tweaks com risco</value></data>
+  <data name="Dialog.RiskIntro" xml:space="preserve"><value>Os tweaks abaixo podem ter efeitos colaterais. Leia o aviso de cada um antes de continuar.</value></data>
+  <data name="Dialog.RiskCheckbox" xml:space="preserve"><value>Li os avisos e entendo os riscos.</value></data>
+  <data name="Dialog.RiskContinue" xml:space="preserve"><value>Continuar</value></data>
+  <data name="Dialog.Cancel" xml:space="preserve"><value>Cancelar</value></data>
+  <data name="Dialog.Ok" xml:space="preserve"><value>OK</value></data>
+  <data name="Dialog.NoRestoreTitle" xml:space="preserve"><value>Sem ponto de restauração</value></data>
+  <data name="Dialog.NoRestoreMessage" xml:space="preserve"><value>Não foi possível criar um ponto de restauração ({0}).
+
+Se algo der errado você ainda poderá usar "Desfazer" (o trashsweepr guarda o valor anterior de cada item), mas não terá o ponto de restauração do Windows como segunda proteção.
+
+Continuar mesmo assim?</value></data>
+  <data name="Dialog.NoRestoreContinue" xml:space="preserve"><value>Continuar sem ponto de restauração</value></data>
+  <data name="Dialog.RevertAllTitle" xml:space="preserve"><value>Reverter tudo</value></data>
+  <data name="Dialog.RevertAllMessage" xml:space="preserve"><value>Isso desfaz todos os tweaks aplicados pelo trashsweepr, restaurando o valor anterior de cada um ({0} backup(s) ativo(s)).
+
+Continuar?</value></data>
+  <data name="Dialog.RevertAllNone" xml:space="preserve"><value>Não há nenhum tweak aplicado pelo trashsweepr para reverter.</value></data>
+  <data name="Dialog.RevertAllConfirm" xml:space="preserve"><value>Reverter tudo</value></data>
+  <data name="Dialog.RevertOneTitle" xml:space="preserve"><value>Desfazer tweak</value></data>
+  <data name="Dialog.RevertOneMessage" xml:space="preserve"><value>Desfazer "{0}"?</value></data>
+  <data name="Dialog.RevertOneConfirm" xml:space="preserve"><value>Desfazer</value></data>
+  <data name="Dialog.NeedAdminTitle" xml:space="preserve"><value>Modo administrador necessário</value></data>
+  <data name="Dialog.NeedAdminMessage" xml:space="preserve"><value>Aplicar ou desfazer alterações exige o modo administrador. O trashsweepr pode ser reaberto agora, já nesta seção, e a simulação e o mapa do disco continuam funcionando sem isso.</value></data>
+  <data name="Dialog.UnexpectedTitle" xml:space="preserve"><value>Erro inesperado</value></data>
+  <data name="Dialog.UnexpectedMessage" xml:space="preserve"><value>Ocorreu um erro inesperado: {0}
+
+O trashsweepr continua aberto e nada foi alterado além do que já aparece nos resultados. O detalhe foi gravado no log, em {1}.</value></data>
+  <data name="Profile.Label" xml:space="preserve"><value>Perfil</value></data>
+  <data name="Banner.ElevateAction" xml:space="preserve"><value>Reabrir como administrador</value></data>
+  <data name="Dialog.NeedAdminConfirm" xml:space="preserve"><value>Reabrir como administrador</value></data>
+  <data name="Dialog.NeedAdminDeclined" xml:space="preserve"><value>O pedido de permissão do Windows foi recusado, então o trashsweepr não foi reaberto como administrador. Nada foi alterado.</value></data>
+  <data name="Dialog.NeedAdminUnavailable" xml:space="preserve"><value>Não foi possível reabrir o trashsweepr como administrador. Feche o app e abra de novo com "Executar como administrador". Nada foi alterado.</value></data>
+  <data name="Dialog.AnotherRunTitle" xml:space="preserve"><value>Outra janela está em execução</value></data>
+  <data name="Dialog.AnotherRunMessage" xml:space="preserve"><value>Outra janela do trashsweepr está aplicando ou desfazendo ajustes neste momento. Espere terminar para não misturar os backups.</value></data>
+</root>
