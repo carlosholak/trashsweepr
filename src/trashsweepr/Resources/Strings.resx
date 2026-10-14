@@ -92,6 +92,10 @@
   <data name="Action.TaskEnable" xml:space="preserve"><value>Scheduled task {0}: enables it</value></data>
   <data name="Action.AppxRemove" xml:space="preserve"><value>App {0}: removes it, for your user only</value></data>
   <data name="Action.AppxReinstall" xml:space="preserve"><value>App {0}: reinstalls it</value></data>
+  <data name="Action.ProgramUninstall" xml:space="preserve"><value>Program {0}: uninstalls it with its own uninstaller</value></data>
+  <data name="Action.ProgramReinstall" xml:space="preserve"><value>Program {0}: reinstalls it (needs internet)</value></data>
+  <data name="Program.Edge" xml:space="preserve"><value>Microsoft Edge</value></data>
+  <data name="Program.OneDrive" xml:space="preserve"><value>OneDrive</value></data>
   <data name="StartType.Automatic" xml:space="preserve"><value>Automatic</value></data>
   <data name="StartType.AutomaticDelayed" xml:space="preserve"><value>Automatic (delayed)</value></data>
   <data name="StartType.Manual" xml:space="preserve"><value>Manual</value></data>
