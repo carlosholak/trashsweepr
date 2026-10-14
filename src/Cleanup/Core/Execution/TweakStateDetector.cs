@@ -1,9 +1,9 @@
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Core.Operations;
 
-namespace TrashSweepr.Limpeza.Core.Execution;
+namespace TrashSweepr.Cleanup.Core.Execution;
 
 /// <summary>Descobre, só lendo, se cada tweak já está aplicado neste computador.</summary>
 public sealed class TweakStateDetector(SystemServices system, IWindowsInfo windows)
