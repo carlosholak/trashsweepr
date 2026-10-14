@@ -1,8 +1,8 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Catalog;
+namespace TrashSweepr.Cleanup.Core.Catalog;
 
 /// <summary>
 /// Valida tweaks e perfis antes de qualquer execução. Os campos que viram argumentos de
@@ -45,7 +45,7 @@ public static partial class TweakValidator
     {
         if (tweak is null)
         {
-            return ["Tweak vazio."];
+            return [CoreText.Get("Catalog.EmptyTweak")];
         }
 
         // Um campo "null" no JSON passa pelo desserializador mesmo sendo obrigatório: barra aqui,
@@ -65,52 +65,45 @@ public static partial class TweakValidator
 
         if (!TweakIdRegex().IsMatch(tweak.Id))
         {
-            errors.Add("Id inválido: use minúsculas, números e hífens separados por pontos (ex.: privacy.advertising-id).");
+            errors.Add(CoreText.Get("Validator.InvalidTweakId"));
         }
 
-        if (!tweak.Name.HasDefault)
-        {
-            errors.Add($"'name' precisa ter texto em {LocalizedText.DefaultCulture}.");
-        }
-
-        if (!tweak.Description.HasDefault)
-        {
-            errors.Add($"'description' precisa ter texto em {LocalizedText.DefaultCulture}.");
-        }
+        RequireText(tweak.Name, "name", errors);
+        RequireText(tweak.Description, "description", errors);
 
         if (!Enum.IsDefined(tweak.Category))
         {
-            errors.Add("Categoria inválida.");
+            errors.Add(CoreText.Get("Validator.InvalidCategory"));
         }
 
         if (!Enum.IsDefined(tweak.Risk))
         {
-            errors.Add("Nível de risco inválido.");
+            errors.Add(CoreText.Get("Validator.InvalidRisk"));
         }
 
-        if (tweak.Risk >= RiskLevel.Moderate && tweak.RiskNote is not { HasDefault: true })
+        if (tweak.Risk >= RiskLevel.Moderate && tweak.RiskNote?.HasSupportedText != true)
         {
-            errors.Add("Tweaks Moderados/Avançados exigem 'riskNote' explicando o risco.");
+            errors.Add(CoreText.Get("Validator.RiskNoteRequired"));
         }
 
         if (tweak.MinBuild is < Windows11MinBuild)
         {
-            errors.Add($"'minBuild' não pode ser menor que {Windows11MinBuild} (Windows 11).");
+            errors.Add(CoreText.Format("Validator.MinBuild", Windows11MinBuild));
         }
 
         if (tweak.MinBuild is { } min && tweak.MaxBuild is { } max && max < min)
         {
-            errors.Add("'maxBuild' não pode ser menor que 'minBuild'.");
+            errors.Add(CoreText.Get("Validator.MaxBuild"));
         }
 
         if (tweak.Apply.Count == 0)
         {
-            errors.Add("'apply' precisa ter ao menos uma ação.");
+            errors.Add(CoreText.Get("Validator.ApplyEmpty"));
         }
 
         if (tweak.Revert.Count == 0)
         {
-            errors.Add("'revert' precisa ter ao menos uma ação: todo tweak deve ser reversível.");
+            errors.Add(CoreText.Get("Validator.RevertEmpty"));
         }
 
         ValidateActions(tweak.Apply, "apply", errors);
@@ -124,7 +117,7 @@ public static partial class TweakValidator
     {
         if (profile is null)
         {
-            return ["Perfil vazio."];
+            return [CoreText.Get("Catalog.EmptyProfile")];
         }
 
         var missing = MissingFields(
@@ -140,22 +133,15 @@ public static partial class TweakValidator
 
         if (!ProfileIdRegex().IsMatch(profile.Id))
         {
-            errors.Add("Id de perfil inválido: use minúsculas, números e hífens.");
+            errors.Add(CoreText.Get("Validator.InvalidProfileId"));
         }
 
-        if (!profile.Name.HasDefault)
-        {
-            errors.Add($"'name' precisa ter texto em {LocalizedText.DefaultCulture}.");
-        }
-
-        if (!profile.Description.HasDefault)
-        {
-            errors.Add($"'description' precisa ter texto em {LocalizedText.DefaultCulture}.");
-        }
+        RequireText(profile.Name, "name", errors);
+        RequireText(profile.Description, "description", errors);
 
         if (!Enum.IsDefined(profile.MaxRisk) || profile.MaxRisk >= RiskLevel.Advanced)
         {
-            errors.Add("Perfis pré-definidos não podem incluir tweaks Avançados ('maxRisk' deve ser safe ou moderate).");
+            errors.Add(CoreText.Get("Validator.ProfileMaxRisk"));
         }
 
         return errors;
@@ -168,7 +154,7 @@ public static partial class TweakValidator
     public static IReadOnlyList<string> ValidateAction(TweakAction action, bool allowDeleteKey)
     {
         var errors = new List<string>();
-        ValidateOne(action, "ação", allowDeleteKey, errors);
+        ValidateOne(action, CoreText.Get("Validator.ActionLabel"), allowDeleteKey, errors);
         return errors;
     }
 
@@ -181,7 +167,19 @@ public static partial class TweakValidator
         || path.StartsWith(root + "\\", StringComparison.OrdinalIgnoreCase);
 
     private static List<string> MissingFields(params (string Field, object? Value)[] fields) =>
-        [.. fields.Where(f => f.Value is null).Select(f => $"'{f.Field}' é obrigatório e não pode ser null.")];
+        [.. fields.Where(f => f.Value is null).Select(f => CoreText.Format("Validator.FieldRequired", f.Field))];
+
+    /// <summary>
+    /// Textos do catálogo precisam existir em ao menos uma das línguas do app (en ou pt-BR; string simples conta
+    /// como pt-BR). O catálogo distribuído em /tweaks exige as duas: isso é conferido pelos testes do repositório.
+    /// </summary>
+    private static void RequireText(LocalizedText text, string field, List<string> errors)
+    {
+        if (!text.HasSupportedText)
+        {
+            errors.Add(CoreText.Format("Validator.NeedsText", field));
+        }
+    }
 
     private static void ValidateActions(IReadOnlyList<TweakAction> actions, string section, List<string> errors)
     {
@@ -212,7 +210,7 @@ public static partial class TweakValidator
 
             if (!created.Any(a => a.Hive == deleteKey.Hive && IsSameOrUnderKey(a.Path, path)))
             {
-                errors.Add($"revert[{i}]: 'deleteKey' só pode apagar uma chave criada pelo 'apply' do mesmo tweak (mesmo hive e caminho).");
+                errors.Add(CoreText.Format("Validator.DeleteKeyNotCreated", i));
             }
         }
     }
@@ -222,7 +220,7 @@ public static partial class TweakValidator
         switch (action)
         {
             case null:
-                errors.Add($"{where}: ação vazia (null).");
+                errors.Add(CoreText.Format("Validator.NullAction", where));
                 break;
             case RegistryAction registry:
                 ValidateRegistry(registry, where, allowDeleteKey, errors);
@@ -237,7 +235,7 @@ public static partial class TweakValidator
                 ValidateAppx(appx, where, errors);
                 break;
             default:
-                errors.Add($"{where}: tipo de ação não suportado.");
+                errors.Add(CoreText.Format("Validator.UnsupportedActionType", where));
                 break;
         }
     }
@@ -248,26 +246,26 @@ public static partial class TweakValidator
 
         if (path is null)
         {
-            errors.Add($"{where}: 'path' é obrigatório.");
+            errors.Add(CoreText.Format("Validator.PathRequired", where));
             return;
         }
 
         if (!Enum.IsDefined(action.Hive) || !Enum.IsDefined(action.Operation) || !Enum.IsDefined(action.Kind))
         {
-            errors.Add($"{where}: hive, operação ou tipo de valor inválido.");
+            errors.Add(CoreText.Format("Validator.InvalidRegistryEnums", where));
             return;
         }
 
         if (!RegistryPathRegex().IsMatch(path)
             || path.Split('\\').Any(segment => segment.Trim() is "." or ".." || segment.Trim().Length == 0))
         {
-            errors.Add($"{where}: caminho de registro inválido '{path}'.");
+            errors.Add(CoreText.Format("Validator.InvalidRegistryPath", where, path));
             return;
         }
 
         if (CriticalComponents.IsProtectedRegistryPath(path))
         {
-            errors.Add($"{where}: o caminho '{path}' pertence a um componente crítico protegido.");
+            errors.Add(CoreText.Format("Validator.ProtectedRegistryPath", where, path));
             return;
         }
 
@@ -275,24 +273,24 @@ public static partial class TweakValidator
         if (action.Operation != RegistryOperation.Set
             && (action.Value.ValueKind != JsonValueKind.Undefined || action.HasExplicitKind))
         {
-            errors.Add($"{where}: '{(action.Operation == RegistryOperation.DeleteKey ? "deleteKey" : "deleteValue")}' não aceita 'value' nem 'kind'.");
+            errors.Add(CoreText.Format("Validator.DeleteTakesNoValue", where, action.Operation == RegistryOperation.DeleteKey ? "deleteKey" : "deleteValue"));
         }
 
         if (action.Operation == RegistryOperation.DeleteKey)
         {
             if (!allowDeleteKey)
             {
-                errors.Add($"{where}: 'deleteKey' só é permitido em 'revert' (não há como fazer backup de uma chave apagada).");
+                errors.Add(CoreText.Format("Validator.DeleteKeyOnlyInRevert", where));
             }
 
             if (action.Hive != RegistryHive.Hkcu || !DeletableKeyRegex().IsMatch(path))
             {
-                errors.Add($"{where}: 'deleteKey' só é permitido em HKCU\\Software\\Classes\\CLSID\\{{GUID}}.");
+                errors.Add(CoreText.Format("Validator.DeleteKeyOnlyClsid", where));
             }
 
             if (!string.IsNullOrEmpty(action.Name))
             {
-                errors.Add($"{where}: 'deleteKey' não aceita 'name'.");
+                errors.Add(CoreText.Format("Validator.DeleteKeyTakesNoName", where));
             }
 
             return;
@@ -300,13 +298,13 @@ public static partial class TweakValidator
 
         if (action.Name is null)
         {
-            errors.Add($"{where}: 'name' é obrigatório (use \"\" para o valor padrão da chave).");
+            errors.Add(CoreText.Format("Validator.ValueNameRequired", where));
             return;
         }
 
         if (action.Name.Length > MaxNameLength || action.Name.Any(c => char.IsControl(c) || c == '\\'))
         {
-            errors.Add($"{where}: nome de valor inválido.");
+            errors.Add(CoreText.Format("Validator.InvalidValueName", where));
         }
 
         if (action.Operation != RegistryOperation.Set)
@@ -321,12 +319,12 @@ public static partial class TweakValidator
         else if (value is string text
                  && (text.Length > MaxStringValueLength || text.Any(c => char.IsControl(c))))
         {
-            errors.Add($"{where}: valor de texto inválido (muito longo ou com caracteres de controle).");
+            errors.Add(CoreText.Format("Validator.InvalidStringValue", where));
         }
         else if (value is string { Length: > 0 } && CriticalComponents.IsCommandRegistryPath(path))
         {
             // Texto nestas chaves vira um executável ou DLL que o Windows carrega.
-            errors.Add($"{where}: '{path}' registra um comando, servidor COM ou DLL; só é aceito texto vazio (componente protegido).");
+            errors.Add(CoreText.Format("Validator.CommandPath", where, path));
         }
     }
 
@@ -334,20 +332,20 @@ public static partial class TweakValidator
     {
         if (!Enum.IsDefined(action.StartType))
         {
-            errors.Add($"{where}: tipo de inicialização inválido.");
+            errors.Add(CoreText.Format("Validator.InvalidStartType", where));
         }
 
         if (action.Name is null)
         {
-            errors.Add($"{where}: 'name' do serviço é obrigatório.");
+            errors.Add(CoreText.Format("Validator.ServiceNameRequired", where));
         }
         else if (!ServiceNameRegex().IsMatch(action.Name))
         {
-            errors.Add($"{where}: nome de serviço inválido '{action.Name}'.");
+            errors.Add(CoreText.Format("Validator.InvalidServiceName", where, action.Name));
         }
         else if (CriticalComponents.IsProtectedService(action.Name))
         {
-            errors.Add($"{where}: o serviço '{action.Name}' é crítico e protegido.");
+            errors.Add(CoreText.Format("Validator.ProtectedService", where, action.Name));
         }
     }
 
@@ -355,7 +353,7 @@ public static partial class TweakValidator
     {
         if (action.TaskPath is null || action.TaskName is null)
         {
-            errors.Add($"{where}: 'taskPath' e 'taskName' são obrigatórios.");
+            errors.Add(CoreText.Format("Validator.TaskFieldsRequired", where));
             return;
         }
 
@@ -364,19 +362,19 @@ public static partial class TweakValidator
         if (!TaskPathRegex().IsMatch(action.TaskPath)
             || action.TaskPath.Split('\\').Any(segment => segment.Trim() is "." or ".."))
         {
-            errors.Add($"{where}: 'taskPath' inválido (ex.: \\Microsoft\\Windows\\Pasta\\).");
+            errors.Add(CoreText.Format("Validator.InvalidTaskPath", where));
             valid = false;
         }
 
         if (!TaskNameRegex().IsMatch(action.TaskName))
         {
-            errors.Add($"{where}: 'taskName' inválido.");
+            errors.Add(CoreText.Format("Validator.InvalidTaskName", where));
             valid = false;
         }
 
         if (valid && CriticalComponents.IsProtectedTask(action.TaskPath, action.TaskName))
         {
-            errors.Add($"{where}: a tarefa '{action.TaskPath}{action.TaskName}' é crítica e protegida.");
+            errors.Add(CoreText.Format("Validator.ProtectedTask", where, action.TaskPath + action.TaskName));
         }
     }
 
@@ -384,20 +382,20 @@ public static partial class TweakValidator
     {
         if (!Enum.IsDefined(action.Operation))
         {
-            errors.Add($"{where}: operação inválida.");
+            errors.Add(CoreText.Format("Validator.InvalidAppxOperation", where));
         }
 
         if (action.PackageName is null)
         {
-            errors.Add($"{where}: 'packageName' é obrigatório.");
+            errors.Add(CoreText.Format("Validator.PackageNameRequired", where));
         }
         else if (!PackageNameRegex().IsMatch(action.PackageName))
         {
-            errors.Add($"{where}: nome de pacote inválido '{action.PackageName}' (curingas não são permitidos).");
+            errors.Add(CoreText.Format("Validator.InvalidPackageName", where, action.PackageName));
         }
         else if (CriticalComponents.IsProtectedPackage(action.PackageName))
         {
-            errors.Add($"{where}: o pacote '{action.PackageName}' é um componente crítico protegido.");
+            errors.Add(CoreText.Format("Validator.ProtectedPackage", where, action.PackageName));
         }
     }
 }
