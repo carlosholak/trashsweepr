@@ -1,4 +1,4 @@
-namespace TrashSweepr.Limpeza.Core.Catalog;
+namespace TrashSweepr.Cleanup.Core.Catalog;
 
 public enum IssueSeverity
 {
