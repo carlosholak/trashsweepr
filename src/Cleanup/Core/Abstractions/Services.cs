@@ -1,6 +1,6 @@
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Abstractions;
+namespace TrashSweepr.Cleanup.Core.Abstractions;
 
 /// <summary>Valor de registro lido. <see cref="UnsupportedKind"/> indica tipos que o trashsweepr não sabe salvar (ex.: binário).</summary>
 public sealed record RegistryValueSnapshot(bool Exists, RegistryValueType? Type, object? Value, string? UnsupportedKind = null)
