@@ -1,8 +1,8 @@
 using System.Globalization;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Operations;
+namespace TrashSweepr.Cleanup.Core.Operations;
 
 public enum OperationKind
 {
