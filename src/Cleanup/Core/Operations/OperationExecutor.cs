@@ -1,6 +1,6 @@
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Operations;
+namespace TrashSweepr.Cleanup.Core.Operations;
 
 /// <summary>Executa operações já planejadas e validadas. É o único ponto que altera o sistema.</summary>
 public sealed class OperationExecutor(SystemServices system)
@@ -57,7 +57,7 @@ public sealed class OperationExecutor(SystemServices system)
                 break;
 
             default:
-                throw new InvalidOperationException($"Operação não suportada: {operation.GetType().Name}.");
+                throw new InvalidOperationException(CoreText.Format("Engine.UnsupportedOperation", operation.GetType().Name));
         }
     }
 
