@@ -1,10 +1,11 @@
 using System.Runtime.Versioning;
 using Microsoft.Win32;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Models;
-using RegistryHive = TrashSweepr.Limpeza.Core.Models.RegistryHive;
+using TrashSweepr.Cleanup.Core;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Models;
+using RegistryHive = TrashSweepr.Cleanup.Core.Models.RegistryHive;
 
-namespace TrashSweepr.Limpeza.Infrastructure;
+namespace TrashSweepr.Cleanup.Infrastructure;
 
 /// <summary>
 /// Acesso direto ao registro via Microsoft.Win32 (sem PowerShell). Sempre usa a visão de 64 bits.
@@ -50,7 +51,7 @@ public sealed class RegistryService : IRegistryService
     {
         using var root = OpenRoot(hive);
         using var key = root.CreateSubKey(RequirePath(path), writable: true)
-            ?? throw new IOException($"Não foi possível criar ou abrir {hive}\\{path}.");
+            ?? throw new IOException(CoreText.Format("Registry.CannotOpenKey", $"{hive}\\{path}"));
 
         var kind = type switch
         {
@@ -114,5 +115,5 @@ public sealed class RegistryService : IRegistryService
         RegistryView.Registry64);
 
     private static string RequirePath(string path) =>
-        string.IsNullOrWhiteSpace(path) ? throw new ArgumentException("Caminho de registro vazio.", nameof(path)) : path;
+        string.IsNullOrWhiteSpace(path) ? throw new ArgumentException(CoreText.Get("Registry.EmptyPath"), nameof(path)) : path;
 }
