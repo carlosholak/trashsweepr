@@ -1,6 +1,6 @@
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Abstractions;
+namespace TrashSweepr.Cleanup.Core.Abstractions;
 
 /// <summary>
 /// Todos os scripts PowerShell do trashsweepr. São constantes: o que varia (nome do serviço, pacote...) entra
@@ -31,11 +31,11 @@ public static class PowerShellCalls
             'AutomaticDelayed' { 'delayed-auto' }
             'Manual' { 'demand' }
             'Disabled' { 'disabled' }
-            default { throw 'Tipo de inicialização inválido.' }
+            default { throw 'Invalid startup type.' }
         }
         # sc.exe escreve o motivo da falha na saída padrão; sem 2>&1, que no PS 5.1 com 'Stop' viraria exceção.
         $out = [string](& sc.exe config $a.name start= $mode | Out-String)
-        if ($LASTEXITCODE -ne 0) { throw "sc.exe config falhou (código $LASTEXITCODE): $($out.Trim())" }
+        if ($LASTEXITCODE -ne 0) { throw "sc.exe config failed (exit code $LASTEXITCODE): $($out.Trim())" }
         """,
         ("name", name),
         ("startType", startType.ToString()));
@@ -70,6 +70,12 @@ public static class PowerShellCalls
 
     // ---------- Apps (Appx) ----------
 
+    /// <summary>
+    /// Mensagem exata do <c>throw</c> de <see cref="ReinstallAppx"/> quando o pacote sumiu do sistema. Os scripts são
+    /// constantes e só falam inglês; quem executa troca esta mensagem pela versão traduzida.
+    /// </summary>
+    public const string PackageNotFoundError = "Package not found on this system.";
+
     public static PowerShellCall ListAppx() => Call(
         "ConvertTo-Json -Compress -InputObject @(Get-AppxPackage | ForEach-Object { $_.Name })");
 
@@ -90,10 +96,10 @@ public static class PowerShellCalls
     public static PowerShellCall ReinstallAppx(string packageName) => Call(
         """
         $pkgs = @(Get-AppxPackage -AllUsers -Name $a.name)
-        if ($pkgs.Count -eq 0) { throw 'Pacote não encontrado no sistema. Reinstale pela Microsoft Store.' }
+        if ($pkgs.Count -eq 0) { throw 'Package not found on this system.' }
         foreach ($p in $pkgs) {
             $manifest = Join-Path $p.InstallLocation 'AppxManifest.xml'
-            if (-not (Test-Path -LiteralPath $manifest)) { throw "Manifesto não encontrado: $manifest" }
+            if (-not (Test-Path -LiteralPath $manifest)) { throw "Manifest not found: $manifest" }
             Add-AppxPackage -DisableDevelopmentMode -Register $manifest
         }
         """,
