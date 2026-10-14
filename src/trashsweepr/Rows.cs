@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Windows.Media;
+using TrashSweepr.Localization;
 
 namespace TrashSweepr;
 
@@ -36,9 +37,9 @@ public sealed class Row : INodeRow
         {
             Glyph = node.IsLink ? Glyphs.Link : Glyphs.Folder;
             GlyphBrush = node.Recoverable is not null ? Coloring.Recoverable : Glyphs.FolderBrush;
-            Detail = detail ?? (node.IsLink ? "Atalho de pasta (não seguido)"
-                : node.AccessDenied ? "Sem permissão de leitura"
-                : node.Recoverable is { } r ? $"{Format.Files(node.FileCount)} · recriável ({r.Command})"
+            Detail = detail ?? (node.IsLink ? Loc.Get("Disk.Row.Link")
+                : node.AccessDenied ? Loc.Get("Disk.Row.Denied")
+                : node.Recoverable is { } r ? Loc.Format("Disk.Row.Recoverable", Format.Files(node.FileCount), r.Command)
                 : Format.Files(node.FileCount));
         }
         else
@@ -76,7 +77,8 @@ public sealed class RecoverRow : INodeRow, INotifyPropertyChanged
         if (rule.IsProject && node.ProjectActivityTicks > 0)
         {
             StaleDays = TimeSpan.FromTicks(nowTicks - node.ProjectActivityTicks).TotalDays;
-            Detail += $" · projeto mexido {Format.Ago(new DateTime(node.ProjectActivityTicks, DateTimeKind.Utc), new DateTime(nowTicks, DateTimeKind.Utc))}";
+            Detail += " · " + Loc.Format("Disk.Row.ProjectTouched",
+                Format.Ago(new DateTime(node.ProjectActivityTicks, DateTimeKind.Utc), new DateTime(nowTicks, DateTimeKind.Utc)));
         }
     }
 
@@ -114,8 +116,8 @@ public sealed class ChangeRow : INodeRow
         Name = node.Name;
         Delta = Coloring.Delta(node);
         Detail = node.PreviousSize == DiskNode.Added
-            ? $"novo · {Format.Bytes(node.Size)}"
-            : $"era {Format.Bytes(node.PreviousSize)}, agora {Format.Bytes(node.Size)}";
+            ? Loc.Format("Disk.Row.New", Format.Bytes(node.Size))
+            : Loc.Format("Disk.Row.WasNow", Format.Bytes(node.PreviousSize), Format.Bytes(node.Size));
         Glyph = node.IsDirectory ? Glyphs.Folder : Glyphs.File;
         GlyphBrush = node.IsDirectory ? Glyphs.FolderBrush : FileCategories.Brush(node.Category);
     }
@@ -124,7 +126,7 @@ public sealed class ChangeRow : INodeRow
     {
         Name = removedName;
         Delta = -size;
-        Detail = $"removido · era {Format.Bytes(size)}";
+        Detail = Loc.Format("Disk.Row.Removed", Format.Bytes(size));
         Glyph = isDirectory ? Glyphs.Folder : Glyphs.File;
         GlyphBrush = Glyphs.FolderBrush;
     }
