@@ -1,3 +1,5 @@
+using TrashSweepr.Cleanup.Core.Models;
+
 namespace TrashSweepr.Cleanup.Core.Catalog;
 
 /// <summary>
@@ -95,6 +97,7 @@ public static class CriticalComponents
         ["SOFTWARE", "Policies", "Microsoft", "Edge"],
         ["SOFTWARE", "Microsoft", "Edge"],
         ["SOFTWARE", "Microsoft", "EdgeUpdate"],
+        ["SOFTWARE", "Microsoft", "EdgeWebView"],
         ["SOFTWARE", "Policies", "Microsoft", "EdgeUpdate"],
         ["SOFTWARE", "Policies", "Microsoft", "WindowsStore"],
         ["SOFTWARE", "Microsoft", "Windows NT", "CurrentVersion", "Winlogon"],
@@ -102,6 +105,19 @@ public static class CriticalComponents
         ["SYSTEM", "CurrentControlSet", "Control", "SecurityProviders"],
         ["SYSTEM", "CurrentControlSet", "Control", "Lsa"],
     ];
+
+    // O Edge continua protegido em TODAS as outras ações: chaves de registro (SOFTWARE\Microsoft\Edge, EdgeUpdate,
+    // EdgeWebView e as políticas), serviços (edgeupdate, edgeupdatem, MicrosoftEdgeElevationService), tarefas do
+    // Edge Update e pacotes Appx (Microsoft.MicrosoftEdge*, Microsoft.Edge*). A ÚNICA exceção é a ação 'program' com
+    // program=edge, que roda o desinstalador do próprio Edge (setup.exe --uninstall) sem nenhum truque de registro
+    // para contornar a trava regional, e nunca toca no WebView2 (Microsoft\EdgeWebView) nem no Edge Update.
+    private static readonly HashSet<ManagedProgram> ProgramsWithOfficialUninstaller = [ManagedProgram.Edge, ManagedProgram.OneDrive];
+
+    /// <summary>
+    /// O programa pode ser alvo da ação 'program' (desinstalação pelo desinstalador oficial). Não libera o programa
+    /// para nenhum outro tipo de ação.
+    /// </summary>
+    public static bool IsRemovableProgram(ManagedProgram program) => ProgramsWithOfficialUninstaller.Contains(program);
 
     public static bool IsProtectedService(string name) => ProtectedServices.Contains(name);
 
