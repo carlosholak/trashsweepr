@@ -1,11 +1,12 @@
 using System.Globalization;
 using CommunityToolkit.Mvvm.ComponentModel;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Localization;
 
-namespace TrashSweepr.Limpeza.ViewModels;
+namespace TrashSweepr.Cleanup.ViewModels;
 
 /// <summary>Um tweak na lista: texto já traduzido, estado detectado e seleção.</summary>
 public sealed partial class TweakItemViewModel : ObservableObject
