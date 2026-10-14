@@ -1,8 +1,9 @@
 using CommunityToolkit.Mvvm.ComponentModel;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Localization;
 
-namespace TrashSweepr.Limpeza.ViewModels;
+namespace TrashSweepr.Cleanup.ViewModels;
 
 public sealed record RiskConfirmationRow(string Name, string RiskText, Tone Tone, string Note);
 
