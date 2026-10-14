@@ -1,7 +1,8 @@
 using System.Windows;
-using TrashSweepr.Limpeza.Services;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Localization;
 
-namespace TrashSweepr.Limpeza.Views;
+namespace TrashSweepr.Cleanup.Views;
 
 /// <summary>Diálogo simples: título, mensagem e um ou dois botões.</summary>
 public partial class MessageDialog : Window
