@@ -62,8 +62,8 @@ solto no meio dos seus documentos não entra.
 
 Os caches globais do npm, Yarn, pnpm, pip, NuGet, Cargo e Gradle também aparecem.
 
-Nada é apagado de verdade: o que você escolher vai para a Lixeira do Windows, depois de uma confirmação, e dá para
-restaurar de lá. Se algo for grande demais para a Lixeira, o próprio Windows avisa antes. E o app só oferece
+Nada é apagado de verdade: o que você escolher vai para a Lixeira do Windows (depois de uma confirmação) e dá para
+restaurar de lá. Se algo for grande demais para a Lixeira, o próprio Windows avisa antes, o app só oferece
 remover pastas que ele reconheceu como recriáveis; não existe um "apagar qualquer coisa".
 
 ### Como ele lembra das varreduras
@@ -111,25 +111,9 @@ na hora de aplicar ou desfazer, ele oferece **Reabrir como administrador** e vol
 pacote costumam continuar no disco, e o "Desfazer" registra o app de novo. Se o Windows já tiver apagado esses arquivos,
 o app avisa e o caminho é reinstalar pela Microsoft Store.
 
-### Escrevendo seus próprios ajustes
+## Para compilar:
 
-Os ajustes moram em `tweaks\*.json`, e o `tweak.schema.json` dá autocompletar no editor. Cada um precisa de `id`,
-`name`, `description`, `category`, `risk`, `apply` e `revert`; `riskNote` é obrigatório para Moderado e Avançado,
-e há ainda `revertNote`, `requiresReboot`, `optIn`, `minBuild` e `maxBuild`. As ações possíveis:
-
-| `type` | Campos principais |
-|---|---|
-| `registry` | `hive` (`hkcu`/`hklm`), `path`, `name`, `kind` (`dword`/`qword`/`sz`/`expandSz`), `value` e `operation`: `set` (padrão), `deleteValue` ou `deleteKey` (este só no `revert` e só em `HKCU\Software\Classes\CLSID\{GUID}`) |
-| `service` | `name`, `startType` (`automatic`/`automaticDelayed`/`manual`/`disabled`), `stop` |
-| `scheduledTask` | `taskPath`, `taskName`, `enabled` |
-| `appx` | `operation` (`remove`/`reinstall`), `packageName` (nome exato, sem curingas) |
-
-Um ajuste com erro, sem `revert` ou que tente tocar algo protegido é ignorado na carga (o motivo vai para o log)
-e o resto do catálogo continua funcionando.
-
-## Para quem quer compilar
-
-Precisa do SDK do .NET 8.
+(Precisa do SDK do .NET 8)
 
 ```bash
 dotnet build trashsweepr.sln
@@ -155,9 +139,3 @@ gera o `.zip` e cria o release.
 - `src/Limpeza/Infrastructure`: o que fala com o Windows de verdade (registro, PowerShell, serviços, tarefas, apps, ponto de restauração).
 - `tweaks`: o catálogo em JSON, os perfis e o esquema.
 - `tests`: testes do motor, da interface e da integração com o sistema falso.
-
----
-
-Antes o app se chamava **Mapa de Disco**, e a parte de limpeza era um projeto separado, o `sweepr`. Se você usava
-o nome antigo, as varreduras guardadas em `%LOCALAPPDATA%\MapaDeDisco\snapshots` são copiadas na primeira vez que o
-trashsweepr abre (a pasta antiga fica como está).
