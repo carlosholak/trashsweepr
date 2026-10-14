@@ -132,4 +132,17 @@
   <data name="Validator.PackageNameRequired" xml:space="preserve"><value>{0}: 'packageName' é obrigatório.</value></data>
   <data name="Validator.InvalidPackageName" xml:space="preserve"><value>{0}: nome de pacote inválido '{1}' (curingas não são permitidos).</value></data>
   <data name="Validator.ProtectedPackage" xml:space="preserve"><value>{0}: o pacote '{1}' é um componente crítico protegido.</value></data>
+  <data name="Query.Program" xml:space="preserve"><value>o programa {0}</value></data>
+  <data name="Catalog.UnknownProgram" xml:space="preserve"><value>Programa desconhecido: '{0}'. Só são aceitos "edge" e "onedrive".</value></data>
+  <data name="Validator.InvalidProgram" xml:space="preserve"><value>{0}: programa não permitido.</value></data>
+  <data name="Validator.InvalidProgramOperation" xml:space="preserve"><value>{0}: operação de programa inválida.</value></data>
+  <data name="Validator.ProgramUninstallOnlyInApply" xml:space="preserve"><value>{0}: o 'uninstall' de um programa só é permitido em 'apply' (o estado anterior é salvo antes).</value></data>
+  <data name="Validator.ProgramReinstallOnlyInRevert" xml:space="preserve"><value>{0}: o 'reinstall' de um programa só é permitido em 'revert'.</value></data>
+  <data name="Validator.ProgramWithoutReinstall" xml:space="preserve"><value>apply[{0}]: desinstalar '{1}' exige um 'reinstall' do mesmo programa em 'revert'.</value></data>
+  <data name="Program.UninstallerNotFound" xml:space="preserve"><value>O desinstalador do {0} não foi encontrado neste computador. Nada foi alterado.</value></data>
+  <data name="Program.UninstallFailed" xml:space="preserve"><value>O desinstalador do {0} terminou com o código {1}.</value></data>
+  <data name="Program.EdgeRemovalRefused" xml:space="preserve"><value>O Windows não permitiu remover o Edge neste computador (a Microsoft só libera a remoção completa em algumas regiões). Nada foi alterado. Detalhes: código de saída do setup.exe {0}.</value></data>
+  <data name="Program.ReinstallFailed" xml:space="preserve"><value>O instalador do {0} terminou com o código {1}.</value></data>
+  <data name="Program.OneDriveInstallerUnavailable" xml:space="preserve"><value>O instalador do OneDrive que vem com o Windows não está neste computador e o winget não está disponível. Baixe o OneDrive em https://www.microsoft.com/microsoft-365/onedrive/download</value></data>
+  <data name="Program.EdgeInstallerUnavailable" xml:space="preserve"><value>O winget não está disponível neste computador, então o Edge não pôde ser reinstalado. Baixe o Edge em https://www.microsoft.com/edge</value></data>
 </root>
