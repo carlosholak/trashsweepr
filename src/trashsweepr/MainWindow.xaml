@@ -1,0 +1,276 @@
+<Window x:Class="TrashSweepr.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:TrashSweepr"
+        xmlns:limpeza="clr-namespace:TrashSweepr.Limpeza.Views"
+        Title="trashsweepr" Width="1320" Height="820" MinWidth="920" MinHeight="560"
+        WindowStartupLocation="CenterScreen" UseLayoutRounding="True"
+        Background="{StaticResource Bg}" Foreground="{StaticResource Text}"
+        FontFamily="Segoe UI" FontSize="13" PreviewKeyDown="OnPreviewKeyDown">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- Seções do app -->
+        <Border Grid.Row="0" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="14,0">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Text="trashsweepr" FontSize="15" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,26,0"/>
+                <RadioButton x:Name="DiskSection" Style="{StaticResource Tab}" Content="Disco" IsChecked="True" Checked="OnSectionChanged"/>
+                <RadioButton x:Name="CleanupSection" Style="{StaticResource Tab}" Content="Limpeza do Windows" Checked="OnSectionChanged"/>
+            </StackPanel>
+        </Border>
+
+        <limpeza:LimpezaView x:Name="LimpezaPane" Grid.Row="1" Visibility="Collapsed"/>
+
+        <Grid x:Name="DiskPane" Grid.Row="1">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Barra de ferramentas -->
+        <Border Grid.Row="0" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="14,10">
+            <DockPanel LastChildFill="False">
+                <ComboBox x:Name="DriveBox" Width="340" VerticalAlignment="Center" Padding="8,5"/>
+                <Button x:Name="ScanButton" Content="Varrer unidade" Style="{StaticResource PrimaryBtn}" Margin="8,0,0,0" Click="OnScanDrive"/>
+                <Button x:Name="FolderButton" Content="Escolher pasta…" Style="{StaticResource Btn}" Margin="8,0,0,0" Click="OnPickFolder"/>
+                <Button x:Name="CancelButton" Content="Cancelar" Style="{StaticResource Btn}" Margin="8,0,0,0" Click="OnCancel" Visibility="Collapsed"/>
+                <Button x:Name="RefreshButton" DockPanel.Dock="Right" Style="{StaticResource Btn}" Click="OnRefresh" IsEnabled="False"
+                        ToolTip="Varre de novo só a pasta aberta (F5)">
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="&#xE72C;" FontFamily="{StaticResource Icons}" FontSize="12" VerticalAlignment="Center" Margin="0,0,7,0"/>
+                        <TextBlock Text="Atualizar pasta"/>
+                    </StackPanel>
+                </Button>
+            </DockPanel>
+        </Border>
+
+        <!-- Caminho atual -->
+        <Border Grid.Row="1" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="14,6">
+            <DockPanel>
+                <Button x:Name="UpButton" DockPanel.Dock="Left" Style="{StaticResource Btn}" Padding="8,3" Margin="0,0,10,0"
+                        Click="OnUp" IsEnabled="False" ToolTip="Pasta acima (Backspace)">
+                    <TextBlock Text="&#xE74A;" FontFamily="{StaticResource Icons}" FontSize="12"/>
+                </Button>
+                <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock x:Name="CurrentSummary" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,18,0"/>
+                    <TextBlock Text="Cores" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                    <ComboBox x:Name="ModeBox" Width="170" Padding="8,4" SelectionChanged="OnModeChanged">
+                        <ComboBoxItem Content="Tipo de arquivo" IsSelected="True"/>
+                        <ComboBoxItem Content="Idade"/>
+                        <ComboBoxItem Content="Recriável"/>
+                        <ComboBoxItem Content="Mudanças"/>
+                    </ComboBox>
+                </StackPanel>
+                <ItemsControl x:Name="Crumbs" VerticalAlignment="Center">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate DataType="local:Crumb">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="›" Foreground="{StaticResource Muted}" Margin="2,0" VerticalAlignment="Center"
+                                           Visibility="{Binding ShowSeparator, Converter={StaticResource BoolToVis}}"/>
+                                <Button Style="{StaticResource Crumb}" Content="{Binding Label}" Tag="{Binding Node}" Click="OnCrumb"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </DockPanel>
+        </Border>
+
+        <!-- Conteúdo -->
+        <Grid Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" MinWidth="360"/>
+                <ColumnDefinition Width="6"/>
+                <ColumnDefinition Width="400" MinWidth="300"/>
+            </Grid.ColumnDefinitions>
+
+            <Border Grid.Column="0" Margin="14,14,0,14" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="1">
+                <Grid>
+                    <local:TreemapControl x:Name="Map" Margin="1" MouseRightButtonUp="OnMapRightClick"/>
+                    <Border x:Name="Overlay" Background="#F7FFFFFF">
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="560">
+                            <TextBlock x:Name="OverlayTitle" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center"
+                                       Text="Descubra o que está ocupando espaço"/>
+                            <TextBlock x:Name="OverlayText" Foreground="{StaticResource Muted}" HorizontalAlignment="Center" TextAlignment="Center"
+                                       TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="20"
+                                       Text="Escolha uma unidade e clique em Varrer unidade, ou abra uma pasta específica. O app só lê o disco: nada é movido ou apagado."/>
+                            <ProgressBar x:Name="OverlayProgress" IsIndeterminate="True" Height="3" Width="260" Margin="0,16,0,0"
+                                         Foreground="{StaticResource Accent}" Background="{StaticResource Track}" BorderThickness="0" Visibility="Collapsed"/>
+                            <TextBlock x:Name="OverlayDetail" Foreground="{StaticResource Muted}" FontSize="11.5" HorizontalAlignment="Center"
+                                       TextTrimming="CharacterEllipsis" Margin="0,10,0,0" MaxWidth="540"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch" Background="Transparent"/>
+
+            <Border Grid.Column="2" Margin="0,14,14,14" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="1">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="12,0">
+                        <StackPanel Orientation="Horizontal">
+                            <RadioButton x:Name="ContentTab" Style="{StaticResource Tab}" Content="Pasta" IsChecked="True" Checked="OnTabChanged"/>
+                            <RadioButton x:Name="TopTab" Style="{StaticResource Tab}" Content="Maiores" Checked="OnTabChanged"/>
+                            <RadioButton x:Name="RecoverTab" Style="{StaticResource Tab}" Content="Recriável" Checked="OnTabChanged"/>
+                            <RadioButton x:Name="ChangesTab" Style="{StaticResource Tab}" Content="Mudanças" Checked="OnTabChanged"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Cabeçalho da aba Recriável -->
+                    <Border x:Name="RecoverHeader" Grid.Row="1" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1"
+                            Padding="14,10,14,12" Visibility="Collapsed">
+                        <StackPanel>
+                            <TextBlock x:Name="RecoverSummary" TextWrapping="Wrap" LineHeight="19"/>
+                            <WrapPanel Margin="0,8,0,0">
+                                <Button Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Content="Marcar todas" Click="OnCheckAll"/>
+                                <Button x:Name="StaleButton" Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Click="OnCheckStale"/>
+                                <Button Style="{StaticResource Btn}" Padding="9,3" Margin="0,0,6,6" Content="Desmarcar" Click="OnUncheckAll"/>
+                            </WrapPanel>
+                            <Button x:Name="RecycleButton" Style="{StaticResource PrimaryBtn}" Margin="0,2,0,0" Padding="12,6"
+                                    Content="Mover para a Lixeira" IsEnabled="False" Click="OnRecycleChecked"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Cabeçalho da aba Mudanças -->
+                    <Border x:Name="ChangesHeader" Grid.Row="1" BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1"
+                            Padding="14,10,14,12" Visibility="Collapsed">
+                        <StackPanel>
+                            <DockPanel>
+                                <TextBlock Text="Comparar com" Foreground="{StaticResource Muted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                                <ComboBox x:Name="BaselineBox" Padding="8,4" SelectionChanged="OnBaselineChanged"/>
+                            </DockPanel>
+                            <TextBlock x:Name="ChangeSummary" TextWrapping="Wrap" Margin="0,8,0,0" LineHeight="19"/>
+                        </StackPanel>
+                    </Border>
+
+                    <Grid Grid.Row="2">
+                        <ListBox x:Name="ItemsList" BorderThickness="0" Background="Transparent"
+                                 ItemContainerStyle="{StaticResource Row}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                                 VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+                                 SelectionChanged="OnListSelection" MouseDoubleClick="OnListDoubleClick" MouseRightButtonUp="OnListRightClick">
+                            <ListBox.Resources>
+                                <DataTemplate DataType="{x:Type local:Row}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="24"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="70"/>
+                                            <ColumnDefinition Width="58"/>
+                                            <ColumnDefinition Width="44"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Glyph}" FontFamily="{StaticResource Icons}" FontSize="14" Foreground="{Binding GlyphBrush}"
+                                                   VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}"/>
+                                            <TextBlock Text="{Binding Detail}" Foreground="{StaticResource Muted}" FontSize="11" TextTrimming="CharacterEllipsis"
+                                                       ToolTip="{Binding Detail}" Visibility="{Binding HasDetail, Converter={StaticResource BoolToVis}}"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding SizeText}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                        <Border Grid.Column="3" Background="{StaticResource Track}" Height="5" Width="46" CornerRadius="2"
+                                                HorizontalAlignment="Right" VerticalAlignment="Center">
+                                            <Rectangle Fill="{StaticResource Accent}" Width="{Binding BarWidth}" HorizontalAlignment="Left" RadiusX="2" RadiusY="2"/>
+                                        </Border>
+                                        <TextBlock Grid.Column="4" Text="{Binding PercentText}" Foreground="{StaticResource Muted}" FontSize="12"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type local:RecoverRow}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="72"/>
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}"/>
+                                            <TextBlock Text="{Binding Detail}" Foreground="{StaticResource Muted}" FontSize="11" TextWrapping="Wrap"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding SizeText}" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+
+                                <DataTemplate DataType="{x:Type local:ChangeRow}">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="24"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding Glyph}" FontFamily="{StaticResource Icons}" FontSize="14" Foreground="{Binding GlyphBrush}"
+                                                   VerticalAlignment="Center"/>
+                                        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,8,0">
+                                            <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" ToolTip="{Binding Name}"/>
+                                            <TextBlock Text="{Binding Detail}" Foreground="{StaticResource Muted}" FontSize="11" TextTrimming="CharacterEllipsis"/>
+                                        </StackPanel>
+                                        <TextBlock Grid.Column="2" Text="{Binding DeltaText}" Foreground="{Binding DeltaBrush}" FontWeight="SemiBold"
+                                                   HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                                    </Grid>
+                                </DataTemplate>
+                            </ListBox.Resources>
+                        </ListBox>
+                        <TextBlock x:Name="EmptyText" Foreground="{StaticResource Muted}" TextWrapping="Wrap" TextAlignment="Center"
+                                   Margin="28" VerticalAlignment="Center" IsHitTestVisible="False" Visibility="Collapsed" LineHeight="19"/>
+                    </Grid>
+
+                    <Border Grid.Row="3" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="14,12,14,10">
+                        <StackPanel>
+                            <TextBlock x:Name="LegendTitle" Text="Por tipo de arquivo" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <ItemsControl x:Name="Legend">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="local:LegendRow">
+                                        <Grid Margin="0,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="18"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="70"/>
+                                                <ColumnDefinition Width="102"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Rectangle Width="10" Height="10" Fill="{Binding Swatch}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Label}" TextTrimming="CharacterEllipsis"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding SizeText}" HorizontalAlignment="Right"/>
+                                            <Border Grid.Column="3" Background="{StaticResource Track}" Height="5" Width="90" CornerRadius="2"
+                                                    HorizontalAlignment="Right" VerticalAlignment="Center">
+                                                <Rectangle Fill="{Binding Swatch}" Width="{Binding BarWidth}" HorizontalAlignment="Left" RadiusX="2" RadiusY="2"/>
+                                            </Border>
+                                        </Grid>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock x:Name="LegendNote" Foreground="{StaticResource Muted}" FontSize="12" TextWrapping="Wrap" Margin="0,4,0,0"
+                                       Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Barra de status -->
+        <Border Grid.Row="3" Background="{StaticResource Panel}" BorderBrush="{StaticResource Line}" BorderThickness="0,1,0,0" Padding="14,5">
+            <DockPanel>
+                <TextBlock x:Name="ScanInfo" DockPanel.Dock="Right" Foreground="{StaticResource Muted}" Margin="16,0,0,0"/>
+                <TextBlock x:Name="HoverInfo" Foreground="{StaticResource Muted}" TextTrimming="CharacterEllipsis"
+                           Text="Clique duas vezes numa pasta do mapa para entrar nela. Botão direito mostra no Explorer ou manda pastas recriáveis para a Lixeira."/>
+            </DockPanel>
+        </Border>
+        </Grid>
+    </Grid>
+</Window>
