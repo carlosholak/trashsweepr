@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace TrashSweepr.Limpeza.Core.Catalog;
+namespace TrashSweepr.Cleanup.Core.Catalog;
 
 public static class TweakJson
 {
