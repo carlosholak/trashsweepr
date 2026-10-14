@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.RegularExpressions;
 
-namespace TrashSweepr.Limpeza.Core.Backup;
+namespace TrashSweepr.Cleanup.Core.Backup;
 
 public sealed record BackupLoadResult(IReadOnlyList<BackupRecord> Records, IReadOnlyList<string> CorruptFiles);
 
@@ -24,7 +24,7 @@ public sealed partial class BackupStore(string directory) : IDisposable
     {
         if (!SafeIdRegex().IsMatch(record.TweakId) || !SafeIdRegex().IsMatch(record.Id))
         {
-            throw new ArgumentException("Id de tweak ou de backup inválido para uso em nome de arquivo.", nameof(record));
+            throw new ArgumentException(CoreText.Get("Backup.InvalidFileId"), nameof(record));
         }
 
         await _gate.WaitAsync(ct).ConfigureAwait(false);
