@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <AssemblyName>TrashSweepr.Limpeza.Infrastructure</AssemblyName>
+    <RootNamespace>TrashSweepr.Limpeza.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Limpeza.Core.csproj" />
+  </ItemGroup>
+
+</Project>
