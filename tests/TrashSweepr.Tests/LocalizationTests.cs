@@ -50,6 +50,7 @@ public partial class LocalizationTests
         missing.AddRange(Enum.GetNames<RiskLevel>().Select(n => $"Risk.{n}"));
         missing.AddRange(Enum.GetNames<ServiceStartType>().Select(n => $"StartType.{n}"));
         missing.AddRange(Enum.GetNames<RegistryValueType>().Select(n => $"RegType.{n}"));
+        missing.AddRange(Enum.GetNames<ManagedProgram>().Select(n => $"Program.{n}"));
         missing.AddRange(Enum.GetNames<SkipReason>().Select(n => $"Skip.{n}"));
         missing.AddRange(Enum.GetNames<TweakAppliedState>().Select(n => $"State.{n}"));
 
