@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "tweaks": [
+    {
+      "id": "tasks.compat-appraiser",
+      "name": "Desativar tarefa Microsoft Compatibility Appraiser",
+      "description": "Desativa a tarefa agendada que analisa os programas instalados e envia dados de compatibilidade à Microsoft. A tarefa não é apagada, apenas desativada.",
+      "category": "tasks",
+      "risk": "moderate",
+      "riskNote": "O Appraiser também alimenta a verificação de compatibilidade das atualizações de recurso do Windows. Com a tarefa desativada, uma atualização de versão pode demorar a ser oferecida ou ser bloqueada por falta de dados.",
+      "revertNote": "Reativa a tarefa agendada.",
+      "apply": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Application Experience\\", "taskName": "Microsoft Compatibility Appraiser", "enabled": false } ],
+      "revert": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Application Experience\\", "taskName": "Microsoft Compatibility Appraiser", "enabled": true } ]
+    },
+    {
+      "id": "tasks.ceip-consolidator",
+      "name": "Desativar tarefa Consolidator (CEIP)",
+      "description": "Desativa a tarefa do Programa de Melhoria da Experiência do Usuário que consolida e envia dados de uso à Microsoft. A tarefa não é apagada, apenas desativada.",
+      "category": "tasks",
+      "risk": "safe",
+      "revertNote": "Reativa a tarefa agendada.",
+      "apply": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Customer Experience Improvement Program\\", "taskName": "Consolidator", "enabled": false } ],
+      "revert": [ { "type": "scheduledTask", "taskPath": "\\Microsoft\\Windows\\Customer Experience Improvement Program\\", "taskName": "Consolidator", "enabled": true } ]
+    }
+  ]
+}
