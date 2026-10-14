@@ -1,5 +1,15 @@
 # Histórico de versões
 
+## 1.6.0
+
+### Remover o Copilot
+
+- Ajuste novo, **Remover Copilot** (Seguro, entra no perfil Leve): remove o app Copilot da Microsoft Store
+  (`Microsoft.Copilot`) só para o seu usuário, como os outros apps pré-instalados. O "Desfazer" registra o app de novo
+  a partir dos arquivos que o Windows mantém no disco; se eles não existirem mais, é só instalar pela Store.
+- O componente do Copilot que faz parte do Windows não é removido. Para desligá-lo continua valendo o
+  **Desativar Copilot**, que agora aponta para o ajuste novo na descrição.
+
 ## 1.5.0
 
 ### Remover o OneDrive e o Edge
