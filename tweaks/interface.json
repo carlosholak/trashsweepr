@@ -87,8 +87,8 @@
         "pt-BR": "Desativar Copilot"
       },
       "description": {
-        "en": "Turns off Copilot in Windows through policies (user and machine) and hides its taskbar button. On newer versions, the Copilot app from the Store is separate and is not affected.",
-        "pt-BR": "Desativa o Copilot integrado ao Windows por política (usuário e máquina) e esconde o botão da barra de tarefas. Em versões mais novas, o app Copilot da Store é separado e não é afetado."
+        "en": "Turns off Copilot in Windows through policies (user and machine) and hides its taskbar button. On newer versions, the Copilot app from the Store is separate and is not affected (to remove it, use \"Remove Copilot\").",
+        "pt-BR": "Desativa o Copilot integrado ao Windows por política (usuário e máquina) e esconde o botão da barra de tarefas. Em versões mais novas, o app Copilot da Store é separado e não é afetado (para removê-lo, use \"Remover Copilot\")."
       },
       "category": "interface",
       "risk": "safe",
