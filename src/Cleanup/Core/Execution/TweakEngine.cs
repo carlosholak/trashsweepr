@@ -1,11 +1,11 @@
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Backup;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Logging;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Backup;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Logging;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Core.Operations;
 
-namespace TrashSweepr.Limpeza.Core.Execution;
+namespace TrashSweepr.Cleanup.Core.Execution;
 
 /// <summary>
 /// Aplica e reverte tweaks. Ordem de segurança de cada aplicação:
@@ -61,7 +61,7 @@ public sealed class TweakEngine(
         var plan = OperationPlanner.Plan(tweak.Apply, allowDeleteKey: false);
         if (!plan.IsValid)
         {
-            var error = "Ações inválidas: " + string.Join(" ", plan.Errors);
+            var error = CoreText.Format("Engine.InvalidActions", string.Join(" ", plan.Errors));
             Write(LogSeverity.Error, tweak.Id, "apply", null, "failed", error);
             return Failed(tweak.Id, error);
         }
@@ -92,7 +92,7 @@ public sealed class TweakEngine(
         }
         catch (Exception ex) when (ex is BackupNotPossibleException or IOException or UnauthorizedAccessException)
         {
-            var error = $"Backup não realizado; nada foi alterado. {ex.Message}";
+            var error = CoreText.Format("Engine.BackupFailed", ex.Message);
             Write(LogSeverity.Error, tweak.Id, "backup", null, "failed", ex.Message);
             return Failed(tweak.Id, error);
         }
@@ -112,7 +112,7 @@ public sealed class TweakEngine(
             }
             catch (Exception ex) when (ex is not OutOfMemoryException)
             {
-                var message = ex is OperationCanceledException ? "Cancelado pelo usuário." : ex.Message;
+                var message = ex is OperationCanceledException ? CoreText.Get("Engine.Cancelled") : ex.Message;
                 results.Add(new OperationResult(operation, ResultStatus.Failed, message));
                 Write(LogSeverity.Error, tweak.Id, "apply", operation.Command, "failed", message);
 
@@ -124,7 +124,7 @@ public sealed class TweakEngine(
                     Operations = results,
                     Error = rollbackError is null
                         ? message
-                        : $"{message} A restauração automática também falhou ({rollbackError}); use Desfazer para tentar de novo.",
+                        : CoreText.Format("Engine.RollbackFailed", message, rollbackError),
                     RolledBack = rollbackError is null,
                     RequiresReboot = false,
                 };
@@ -170,7 +170,7 @@ public sealed class TweakEngine(
         var state = await new SystemStateReader(system).CheckAsync(operation, ct).ConfigureAwait(false);
         if (state == OperationState.NotSatisfied)
         {
-            throw new InvalidOperationException("A verificação após a execução falhou: o sistema não ficou no estado esperado.");
+            throw new InvalidOperationException(CoreText.Get("Engine.VerificationFailed"));
         }
     }
 
@@ -233,7 +233,7 @@ public sealed class TweakEngine(
             var plan = RestorePlanner.Plan(record);
             if (!plan.IsValid)
             {
-                var error = "Backup inválido, nada foi alterado: " + string.Join(" ", plan.Errors);
+                var error = CoreText.Format("Engine.InvalidBackup", string.Join(" ", plan.Errors));
                 Write(LogSeverity.Error, record.TweakId, "revert", null, "failed", error);
                 return Failed(record.TweakId, error);
             }
@@ -309,7 +309,7 @@ public sealed class TweakEngine(
         var revertPlan = OperationPlanner.Plan(tweak.Revert, allowDeleteKey: true);
         if (!applyPlan.IsValid || !revertPlan.IsValid)
         {
-            var error = "Ações inválidas: " + string.Join(" ", applyPlan.Errors.Concat(revertPlan.Errors));
+            var error = CoreText.Format("Engine.InvalidActions", string.Join(" ", applyPlan.Errors.Concat(revertPlan.Errors)));
             Write(LogSeverity.Error, tweak.Id, "revert", null, "failed", error);
             return Failed(tweak.Id, error);
         }
@@ -447,7 +447,7 @@ public sealed class TweakEngine(
             }
             else
             {
-                Write(LogSeverity.Info, requested.TweakId, "revert", null, $"skipped:{SkipReason.NotApplied}", $"backup {requested.Id} não está mais ativo");
+                Write(LogSeverity.Info, requested.TweakId, "revert", null, $"skipped:{SkipReason.NotApplied}", CoreText.Format("Engine.BackupNoLongerActive", requested.Id));
                 result = Skipped(requested.TweakId, SkipReason.NotApplied);
             }
 
