@@ -41,6 +41,8 @@ public sealed class UiRenderingTests
             sys.Appx.Install(package);
         }
 
+        sys.Programs.Install(ManagedProgram.Edge, ManagedProgram.OneDrive);
+
         foreach (var removed in new[] { "Clipchamp.Clipchamp", "Microsoft.SkypeApp", "Microsoft.BingNews" })
         {
             sys.Appx.Packages[removed] = sys.Appx.Packages[removed] with { InstalledForCurrentUser = false };
