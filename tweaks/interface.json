@@ -1,0 +1,124 @@
+{
+  "schemaVersion": 1,
+  "tweaks": [
+    {
+      "id": "interface.start-suggestions",
+      "name": "Desativar sugestões no menu Iniciar",
+      "description": "Remove sugestões de apps, \"recomendações\" de conteúdo e notificações da conta Microsoft do menu Iniciar.",
+      "category": "interface",
+      "risk": "safe",
+      "revertNote": "Restaura os valores padrão do Windows para o seu usuário.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SystemPaneSuggestionsEnabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338388Enabled", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "Start_IrisRecommendations", "kind": "dword", "value": 0 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "Start_AccountNotifications", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SystemPaneSuggestionsEnabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\ContentDeliveryManager", "name": "SubscribedContent-338388Enabled", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "Start_IrisRecommendations", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "Start_AccountNotifications", "kind": "dword", "value": 1 }
+      ]
+    },
+    {
+      "id": "interface.start-bing-search",
+      "name": "Desativar pesquisa com Bing no menu Iniciar",
+      "description": "Faz a pesquisa do menu Iniciar buscar somente no PC, sem enviar o que você digita ao Bing nem mostrar resultados da web.",
+      "category": "interface",
+      "risk": "safe",
+      "requiresReboot": true,
+      "revertNote": "Remove a política e reativa a pesquisa na web no menu Iniciar. Pode ser necessário sair e entrar novamente na conta.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\Explorer", "name": "DisableSearchBoxSuggestions", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Search", "name": "BingSearchEnabled", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "operation": "deleteValue", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\Explorer", "name": "DisableSearchBoxSuggestions" },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Search", "name": "BingSearchEnabled", "kind": "dword", "value": 1 }
+      ]
+    },
+    {
+      "id": "interface.widgets",
+      "name": "Desativar Widgets",
+      "description": "Desativa o painel de Widgets (notícias, clima e feed MSN) por política do sistema, para todos os usuários.",
+      "category": "interface",
+      "risk": "safe",
+      "requiresReboot": true,
+      "revertNote": "Remove a política. O painel de Widgets volta após reiniciar o Explorador de Arquivos ou o PC.",
+      "apply": [
+        { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Dsh", "name": "AllowNewsAndInterests", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "operation": "deleteValue", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Dsh", "name": "AllowNewsAndInterests" }
+      ]
+    },
+    {
+      "id": "interface.copilot",
+      "name": "Desativar Copilot",
+      "description": "Desativa o Copilot integrado ao Windows por política (usuário e máquina) e esconde o botão da barra de tarefas. Em versões mais novas, o app Copilot da Store é separado e não é afetado.",
+      "category": "interface",
+      "risk": "safe",
+      "requiresReboot": true,
+      "minBuild": 22621,
+      "revertNote": "Remove as políticas e mostra o botão do Copilot novamente.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\WindowsCopilot", "name": "TurnOffWindowsCopilot", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsCopilot", "name": "TurnOffWindowsCopilot", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "ShowCopilotButton", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "operation": "deleteValue", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\WindowsCopilot", "name": "TurnOffWindowsCopilot" },
+        { "type": "registry", "operation": "deleteValue", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsCopilot", "name": "TurnOffWindowsCopilot" },
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "ShowCopilotButton", "kind": "dword", "value": 1 }
+      ]
+    },
+    {
+      "id": "interface.recall",
+      "name": "Desativar Recall (instantâneos de IA)",
+      "description": "Bloqueia por política a captura periódica de instantâneos da tela feita pelo Recall. Só existe em PCs Copilot+ com Windows 11 24H2 ou superior.",
+      "category": "interface",
+      "risk": "safe",
+      "requiresReboot": true,
+      "minBuild": 26100,
+      "revertNote": "Remove as políticas, devolvendo a decisão às configurações do Windows.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\WindowsAI", "name": "DisableAIDataAnalysis", "kind": "dword", "value": 1 },
+        { "type": "registry", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI", "name": "DisableAIDataAnalysis", "kind": "dword", "value": 1 }
+      ],
+      "revert": [
+        { "type": "registry", "operation": "deleteValue", "hive": "hkcu", "path": "Software\\Policies\\Microsoft\\Windows\\WindowsAI", "name": "DisableAIDataAnalysis" },
+        { "type": "registry", "operation": "deleteValue", "hive": "hklm", "path": "SOFTWARE\\Policies\\Microsoft\\Windows\\WindowsAI", "name": "DisableAIDataAnalysis" }
+      ]
+    },
+    {
+      "id": "interface.classic-context-menu",
+      "name": "Restaurar menu de contexto clássico",
+      "description": "Faz o clique direito mostrar o menu completo do Windows 10 diretamente, sem o passo extra \"Mostrar mais opções\".",
+      "category": "interface",
+      "risk": "safe",
+      "requiresReboot": true,
+      "revertNote": "Apaga a chave criada pelo trashsweepr (HKCU\\Software\\Classes\\CLSID\\{86ca1aa0-...}). Reinicie o Explorador de Arquivos para ver a mudança.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}\\InprocServer32", "name": "", "kind": "sz", "value": "" }
+      ],
+      "revert": [
+        { "type": "registry", "operation": "deleteKey", "hive": "hkcu", "path": "Software\\Classes\\CLSID\\{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}" }
+      ]
+    },
+    {
+      "id": "interface.show-file-extensions",
+      "name": "Mostrar extensões de arquivos",
+      "description": "Mostra a extensão (.pdf, .exe, .docx) no nome dos arquivos no Explorador, ajudando a identificar arquivos disfarçados.",
+      "category": "interface",
+      "risk": "safe",
+      "revertNote": "Volta a ocultar as extensões de tipos de arquivo conhecidos.",
+      "apply": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "HideFileExt", "kind": "dword", "value": 0 }
+      ],
+      "revert": [
+        { "type": "registry", "hive": "hkcu", "path": "Software\\Microsoft\\Windows\\CurrentVersion\\Explorer\\Advanced", "name": "HideFileExt", "kind": "dword", "value": 1 }
+      ]
+    }
+  ]
+}
