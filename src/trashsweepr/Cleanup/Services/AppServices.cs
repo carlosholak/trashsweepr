@@ -2,7 +2,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Windows;
 
-namespace TrashSweepr.Limpeza.Services;
+namespace TrashSweepr.Cleanup.Services;
 
 /// <summary>Reabre o app com permissão de administrador (o trashsweepr só pede isso quando a Limpeza vai alterar o sistema).</summary>
 public interface IAppRelauncher
@@ -44,7 +44,7 @@ public sealed class ElevatedRelauncher : IAppRelauncher
         try
         {
             // "runas" mostra o pedido de permissão do Windows (UAC); a seção da Limpeza abre direto.
-            Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true, Verb = "runas", Arguments = "--limpeza" })?.Dispose();
+            Process.Start(new ProcessStartInfo(exe) { UseShellExecute = true, Verb = "runas", Arguments = "--cleanup" })?.Dispose();
         }
         catch (Win32Exception ex) when (ex.NativeErrorCode == ErrorCancelled)
         {
@@ -63,7 +63,7 @@ public sealed class ElevatedRelauncher : IAppRelauncher
 /// <summary>Semáforo nomeado da máquina (e não Mutex, que exige liberar na mesma thread que o pegou).</summary>
 public sealed class SystemRunGate : IRunGate
 {
-    private const string Name = @"Global\TrashSweepr.Limpeza.Execucao";
+    private const string Name = @"Global\TrashSweepr.Cleanup.Run";
 
     public IDisposable? TryEnter()
     {
