@@ -1,9 +1,10 @@
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using TrashSweepr.Limpeza.Services;
-using TrashSweepr.Limpeza.Core.Execution;
+using TrashSweepr.Cleanup.Services;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Localization;
 
-namespace TrashSweepr.Limpeza.ViewModels;
+namespace TrashSweepr.Cleanup.ViewModels;
 
 /// <summary>Resultado de um tweak na lista de resultados (sucesso, falha, ignorado ou simulado).</summary>
 public sealed partial class ResultItemViewModel : ObservableObject
