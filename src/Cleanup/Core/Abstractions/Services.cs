@@ -88,6 +88,20 @@ public interface IAppxService
     Task ReinstallAsync(string packageName, CancellationToken cancellationToken);
 }
 
+/// <summary>
+/// Programas da lista fechada <see cref="ManagedProgram"/>, desinstalados e reinstalados pelos instaladores oficiais.
+/// Uma falha (ex.: o Windows recusar a remoção do Edge) é lançada com a mensagem já traduzida.
+/// </summary>
+public interface IProgramService
+{
+    Task<bool> IsInstalledAsync(ManagedProgram program, CancellationToken cancellationToken);
+
+    Task UninstallAsync(ManagedProgram program, CancellationToken cancellationToken);
+
+    /// <summary>Pode baixar o programa da internet (winget), então leva mais tempo que as outras operações.</summary>
+    Task ReinstallAsync(ManagedProgram program, CancellationToken cancellationToken);
+}
+
 public interface IRestorePointService
 {
     /// <summary>Verifica se a Proteção do Sistema está ativa (sem criar nada).</summary>
