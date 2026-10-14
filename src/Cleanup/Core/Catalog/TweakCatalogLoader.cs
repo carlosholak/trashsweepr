@@ -1,7 +1,7 @@
 using System.Text.Json;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
 
-namespace TrashSweepr.Limpeza.Core.Catalog;
+namespace TrashSweepr.Cleanup.Core.Catalog;
 
 public sealed record CatalogLoadResult(TweakCatalog Catalog, IReadOnlyList<ValidationIssue> Issues)
 {
@@ -28,7 +28,7 @@ public static class TweakCatalogLoader
         {
             return new CatalogLoadResult(
                 TweakCatalog.Empty,
-                [new ValidationIssue(IssueSeverity.Error, directory, null, "Pasta de tweaks não encontrada.")]);
+                [new ValidationIssue(IssueSeverity.Error, directory, null, CoreText.Get("Catalog.DirectoryNotFound"))]);
         }
 
         var issues = new List<ValidationIssue>();
@@ -46,7 +46,7 @@ public static class TweakCatalogLoader
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
-                issues.Add(new ValidationIssue(IssueSeverity.Error, Path.GetFileName(file), null, $"Não foi possível ler o arquivo: {ex.Message}"));
+                issues.Add(new ValidationIssue(IssueSeverity.Error, Path.GetFileName(file), null, CoreText.Format("Catalog.CannotReadFile", ex.Message)));
             }
         }
 
@@ -72,7 +72,7 @@ public static class TweakCatalogLoader
             }
             catch (JsonException ex)
             {
-                issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, $"JSON inválido: {ex.Message}"));
+                issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, CoreText.Format("Catalog.InvalidJson", ex.Message)));
                 continue;
             }
 
@@ -81,7 +81,7 @@ public static class TweakCatalogLoader
                 var root = document.RootElement;
                 if (root.ValueKind != JsonValueKind.Object)
                 {
-                    issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, "A raiz do arquivo deve ser um objeto."));
+                    issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, CoreText.Get("Catalog.RootNotObject")));
                     continue;
                 }
 
@@ -90,7 +90,7 @@ public static class TweakCatalogLoader
                     || !version.TryGetInt32(out var versionNumber)
                     || versionNumber != SupportedSchemaVersion)
                 {
-                    issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, $"'schemaVersion' deve ser {SupportedSchemaVersion}."));
+                    issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, CoreText.Format("Catalog.SchemaVersion", SupportedSchemaVersion)));
                     continue;
                 }
 
@@ -116,7 +116,7 @@ public static class TweakCatalogLoader
 
                 if (!hasContent)
                 {
-                    issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, "O arquivo não contém 'tweaks' nem 'profiles'."));
+                    issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, CoreText.Get("Catalog.NoContent")));
                 }
             }
         }
@@ -148,7 +148,7 @@ public static class TweakCatalogLoader
 
         if (tweak is null)
         {
-            issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, "Tweak vazio."));
+            issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, CoreText.Get("Catalog.EmptyTweak")));
             return;
         }
 
@@ -160,7 +160,7 @@ public static class TweakCatalogLoader
         catch (Exception ex) when (ex is ArgumentException or NullReferenceException)
         {
             // Rede de segurança: um campo inesperado (ex.: null) descarta o tweak em vez de derrubar o carregamento.
-            issues.Add(new ValidationIssue(IssueSeverity.Error, source, tweak.Id, $"Tweak inválido: {ex.Message}"));
+            issues.Add(new ValidationIssue(IssueSeverity.Error, source, tweak.Id, CoreText.Format("Catalog.InvalidTweak", ex.Message)));
             return;
         }
 
@@ -172,7 +172,7 @@ public static class TweakCatalogLoader
 
         if (origin.TryGetValue(tweak.Id, out var firstSource))
         {
-            issues.Add(new ValidationIssue(IssueSeverity.Error, source, tweak.Id, $"Id duplicado (já definido em {firstSource})."));
+            issues.Add(new ValidationIssue(IssueSeverity.Error, source, tweak.Id, CoreText.Format("Catalog.DuplicateId", firstSource)));
             return;
         }
 
@@ -194,13 +194,13 @@ public static class TweakCatalogLoader
         }
         catch (JsonException ex)
         {
-            issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, $"Perfil inválido: {ex.Message}"));
+            issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, CoreText.Format("Catalog.InvalidProfile", ex.Message)));
             return;
         }
 
         if (profile is null)
         {
-            issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, "Perfil vazio."));
+            issues.Add(new ValidationIssue(IssueSeverity.Error, source, null, CoreText.Get("Catalog.EmptyProfile")));
             return;
         }
 
@@ -211,19 +211,19 @@ public static class TweakCatalogLoader
         }
         catch (Exception ex) when (ex is ArgumentException or NullReferenceException)
         {
-            issues.Add(new ValidationIssue(IssueSeverity.Error, source, profile.Id, $"Perfil inválido: {ex.Message}"));
+            issues.Add(new ValidationIssue(IssueSeverity.Error, source, profile.Id, CoreText.Format("Catalog.InvalidProfile", ex.Message)));
             return;
         }
 
         if (errors.Count > 0)
         {
-            issues.AddRange(errors.Select(e => new ValidationIssue(IssueSeverity.Error, source, profile.Id, $"Perfil: {e}")));
+            issues.AddRange(errors.Select(e => new ValidationIssue(IssueSeverity.Error, source, profile.Id, CoreText.Format("Catalog.ProfileProblem", e))));
             return;
         }
 
         if (!ids.Add(profile.Id))
         {
-            issues.Add(new ValidationIssue(IssueSeverity.Error, source, profile.Id, "Id de perfil duplicado."));
+            issues.Add(new ValidationIssue(IssueSeverity.Error, source, profile.Id, CoreText.Get("Catalog.DuplicateProfileId")));
             return;
         }
 
