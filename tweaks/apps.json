@@ -3,23 +3,44 @@
   "tweaks": [
     {
       "id": "apps.clipchamp",
-      "name": "Remover Clipchamp",
-      "description": "Remove o editor de vídeo Clipchamp que vem pré-instalado, apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Clipchamp",
+        "pt-BR": "Remover Clipchamp"
+      },
+      "description": {
+        "en": "Removes the preinstalled Clipchamp video editor, for your user account only.",
+        "pt-BR": "Remove o editor de vídeo Clipchamp que vem pré-instalado, apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Clipchamp.Clipchamp" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Clipchamp.Clipchamp" } ]
     },
     {
       "id": "apps.xbox",
-      "name": "Remover apps do Xbox",
-      "description": "Remove o app Xbox, a Barra de Jogos (Game Bar) e os componentes de identidade e sobreposição do Xbox, apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Xbox apps",
+        "pt-BR": "Remover apps do Xbox"
+      },
+      "description": {
+        "en": "Removes the Xbox app, Game Bar and the Xbox identity and overlay components, for your user account only.",
+        "pt-BR": "Remove o app Xbox, a Barra de Jogos (Game Bar) e os componentes de identidade e sobreposição do Xbox, apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "moderate",
       "optIn": true,
-      "riskNote": "Jogos que usam login Xbox (Minecraft, Game Pass, jogos da Microsoft Store) podem deixar de entrar na conta, e a Barra de Jogos (Win+G) deixará de funcionar. Não use se você joga com a conta Microsoft.",
-      "revertNote": "Reinstala os pacotes a partir dos arquivos mantidos pelo Windows. Se eles não existirem mais, instale pela Microsoft Store.",
+      "riskNote": {
+        "en": "Games that sign in with Xbox (Minecraft, Game Pass, Microsoft Store games) may no longer be able to sign in, and Game Bar (Win+G) will stop working. Do not use this if you play games with your Microsoft account.",
+        "pt-BR": "Jogos que usam login Xbox (Minecraft, Game Pass, jogos da Microsoft Store) podem deixar de entrar na conta, e a Barra de Jogos (Win+G) deixará de funcionar. Não use se você joga com a conta Microsoft."
+      },
+      "revertNote": {
+        "en": "Reinstalls the packages from the files Windows keeps on disk. If they are no longer there, install them from the Microsoft Store.",
+        "pt-BR": "Reinstala os pacotes a partir dos arquivos mantidos pelo Windows. Se eles não existirem mais, instale pela Microsoft Store."
+      },
       "apply": [
         { "type": "appx", "operation": "remove", "packageName": "Microsoft.GamingApp" },
         { "type": "appx", "operation": "remove", "packageName": "Microsoft.XboxGamingOverlay" },
@@ -37,23 +58,44 @@
     },
     {
       "id": "apps.solitaire",
-      "name": "Remover Microsoft Solitaire Collection",
-      "description": "Remove o pacote de jogos de cartas Solitaire, apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Microsoft Solitaire Collection",
+        "pt-BR": "Remover Microsoft Solitaire Collection"
+      },
+      "description": {
+        "en": "Removes the Solitaire card games collection, for your user account only.",
+        "pt-BR": "Remove o pacote de jogos de cartas Solitaire, apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.MicrosoftSolitaireCollection" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.MicrosoftSolitaireCollection" } ]
     },
     {
       "id": "apps.teams-personal",
-      "name": "Remover Microsoft Teams (pessoal / Chat)",
-      "description": "Remove o Teams integrado ao Windows 11 (o ícone de Chat da barra de tarefas), apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Microsoft Teams (personal / Chat)",
+        "pt-BR": "Remover Microsoft Teams (pessoal / Chat)"
+      },
+      "description": {
+        "en": "Removes the Teams app built into Windows 11 (the Chat icon on the taskbar), for your user account only.",
+        "pt-BR": "Remove o Teams integrado ao Windows 11 (o ícone de Chat da barra de tarefas), apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "moderate",
       "optIn": true,
-      "riskNote": "Em builds recentes o Teams integrado usa o mesmo pacote (MSTeams) do Teams de trabalho/escola. Se você usa o Teams da empresa instalado pela Store, ele também será removido. Em PCs corporativos, confirme com a TI antes.",
-      "revertNote": "Reinstala os pacotes a partir dos arquivos mantidos pelo Windows. Se eles não existirem mais, reinstale o Teams pela Microsoft Store ou pelo portal da empresa.",
+      "riskNote": {
+        "en": "On recent builds the built-in Teams uses the same package (MSTeams) as Teams for work or school. If you use your company's Teams installed from the Store, it will be removed too. On corporate PCs, check with your IT department first.",
+        "pt-BR": "Em builds recentes o Teams integrado usa o mesmo pacote (MSTeams) do Teams de trabalho/escola. Se você usa o Teams da empresa instalado pela Store, ele também será removido. Em PCs corporativos, confirme com a TI antes."
+      },
+      "revertNote": {
+        "en": "Reinstalls the packages from the files Windows keeps on disk. If they are no longer there, reinstall Teams from the Microsoft Store or your company portal.",
+        "pt-BR": "Reinstala os pacotes a partir dos arquivos mantidos pelo Windows. Se eles não existirem mais, reinstale o Teams pela Microsoft Store ou pelo portal da empresa."
+      },
       "apply": [
         { "type": "appx", "operation": "remove", "packageName": "MicrosoftTeams" },
         { "type": "appx", "operation": "remove", "packageName": "MSTeams" }
@@ -65,71 +107,134 @@
     },
     {
       "id": "apps.news",
-      "name": "Remover Notícias (Microsoft News)",
-      "description": "Remove o app de notícias da Microsoft (Bing News), apenas para o seu usuário.",
+      "name": {
+        "en": "Remove News (Microsoft News)",
+        "pt-BR": "Remover Notícias (Microsoft News)"
+      },
+      "description": {
+        "en": "Removes the Microsoft News app (Bing News), for your user account only.",
+        "pt-BR": "Remove o app de notícias da Microsoft (Bing News), apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.BingNews" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.BingNews" } ]
     },
     {
       "id": "apps.weather",
-      "name": "Remover Clima (MSN Weather)",
-      "description": "Remove o app Clima, apenas para o seu usuário. O widget de clima da barra de tarefas é um recurso separado (veja Widgets).",
+      "name": {
+        "en": "Remove Weather (MSN Weather)",
+        "pt-BR": "Remover Clima (MSN Weather)"
+      },
+      "description": {
+        "en": "Removes the Weather app, for your user account only. The weather widget on the taskbar is a separate feature (see Widgets).",
+        "pt-BR": "Remove o app Clima, apenas para o seu usuário. O widget de clima da barra de tarefas é um recurso separado (veja Widgets)."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.BingWeather" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.BingWeather" } ]
     },
     {
       "id": "apps.tips",
-      "name": "Remover Dicas (Microsoft Tips)",
-      "description": "Remove o app Dicas (\"Introdução\"), apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Tips (Microsoft Tips)",
+        "pt-BR": "Remover Dicas (Microsoft Tips)"
+      },
+      "description": {
+        "en": "Removes the Tips app (\"Get Started\"), for your user account only.",
+        "pt-BR": "Remove o app Dicas (\"Introdução\"), apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.Getstarted" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.Getstarted" } ]
     },
     {
       "id": "apps.feedback-hub",
-      "name": "Remover Central de Comentários (Feedback Hub)",
-      "description": "Remove o app usado para enviar comentários e sugestões à Microsoft, apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Feedback Hub",
+        "pt-BR": "Remover Central de Comentários (Feedback Hub)"
+      },
+      "description": {
+        "en": "Removes the app used to send feedback and suggestions to Microsoft, for your user account only.",
+        "pt-BR": "Remove o app usado para enviar comentários e sugestões à Microsoft, apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.WindowsFeedbackHub" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.WindowsFeedbackHub" } ]
     },
     {
       "id": "apps.maps",
-      "name": "Remover Mapas",
-      "description": "Remove o app Mapas do Windows, apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Maps",
+        "pt-BR": "Remover Mapas"
+      },
+      "description": {
+        "en": "Removes the Windows Maps app, for your user account only.",
+        "pt-BR": "Remove o app Mapas do Windows, apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.WindowsMaps" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.WindowsMaps" } ]
     },
     {
       "id": "apps.office-hub",
-      "name": "Remover Microsoft 365 (Office Hub)",
-      "description": "Remove o app \"Microsoft 365 (Office)\", que é apenas um atalho/portal. Não desinstala o Word, Excel ou outros aplicativos do Office.",
+      "name": {
+        "en": "Remove Microsoft 365 (Office Hub)",
+        "pt-BR": "Remover Microsoft 365 (Office Hub)"
+      },
+      "description": {
+        "en": "Removes the \"Microsoft 365 (Office)\" app, which is only a shortcut/portal. It does not uninstall Word, Excel or other Office apps.",
+        "pt-BR": "Remove o app \"Microsoft 365 (Office)\", que é apenas um atalho/portal. Não desinstala o Word, Excel ou outros aplicativos do Office."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.MicrosoftOfficeHub" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.MicrosoftOfficeHub" } ]
     },
     {
       "id": "apps.skype",
-      "name": "Remover Skype",
-      "description": "Remove o app Skype pré-instalado, apenas para o seu usuário.",
+      "name": {
+        "en": "Remove Skype",
+        "pt-BR": "Remover Skype"
+      },
+      "description": {
+        "en": "Removes the preinstalled Skype app, for your user account only.",
+        "pt-BR": "Remove o app Skype pré-instalado, apenas para o seu usuário."
+      },
       "category": "apps",
       "risk": "safe",
-      "revertNote": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store.",
+      "revertNote": {
+        "en": "Reinstalls the package from the files Windows keeps on disk. If they are no longer there, install the app from the Microsoft Store.",
+        "pt-BR": "Reinstala o pacote a partir dos arquivos que o Windows mantém no disco. Se eles não existirem mais, instale o app pela Microsoft Store."
+      },
       "apply": [ { "type": "appx", "operation": "remove", "packageName": "Microsoft.SkypeApp" } ],
       "revert": [ { "type": "appx", "operation": "reinstall", "packageName": "Microsoft.SkypeApp" } ]
     }
