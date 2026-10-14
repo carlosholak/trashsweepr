@@ -47,4 +47,4 @@ Versão de acabamento: nada novo na tela, mas bastante coisa corrigida por baixo
 
 ## 1.3.0
 
-Primeira versão como trashsweepr: o Mapa de Disco e o sweepr viraram um app só, com as seções Disco e Limpeza do Windows.
+Primeira versão aberta
