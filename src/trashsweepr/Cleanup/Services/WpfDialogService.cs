@@ -1,7 +1,8 @@
 using System.Windows;
-using TrashSweepr.Limpeza.Views;
+using TrashSweepr.Cleanup.Views;
+using TrashSweepr.Localization;
 
-namespace TrashSweepr.Limpeza.Services;
+namespace TrashSweepr.Cleanup.Services;
 
 /// <summary>Implementação real dos diálogos: janelas modais sobre a janela principal.</summary>
 public sealed class WpfDialogService : IDialogService
