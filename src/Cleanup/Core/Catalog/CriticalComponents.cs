@@ -1,4 +1,4 @@
-namespace TrashSweepr.Limpeza.Core.Catalog;
+namespace TrashSweepr.Cleanup.Core.Catalog;
 
 /// <summary>
 /// Deny-list de componentes críticos. Vive no código (e não no JSON) de propósito:
