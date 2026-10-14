@@ -38,6 +38,9 @@ internal static class TestTweaks
     public static Tweak AppTweak(string id = "test.app", string package = "Contoso.Sample") =>
         Make(id, Appx(package, "remove"), Appx(package, "reinstall"));
 
+    public static Tweak ProgramTweak(string program = "onedrive", string id = "test.program") =>
+        Make(id, CatalogJson.Program(program, "uninstall"), CatalogJson.Program(program, "reinstall"), "moderate", "Aviso de risco.");
+
     /// <summary>Tweak montado direto no código, sem passar pelo loader, para testar a defesa em profundidade.</summary>
     public static Tweak Unvalidated(params TweakAction[] apply) => new()
     {
