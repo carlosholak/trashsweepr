@@ -109,6 +109,7 @@ public static partial class TweakValidator
         ValidateActions(tweak.Apply, "apply", errors);
         ValidateActions(tweak.Revert, "revert", errors);
         ValidateDeleteKeyTargets(tweak, errors);
+        ValidateProgramPairs(tweak, errors);
 
         return errors;
     }
@@ -150,6 +151,8 @@ public static partial class TweakValidator
     /// <summary>
     /// Valida uma única ação. O engine chama isto antes de executar qualquer ação, mesmo que ela
     /// tenha vindo de um catálogo já validado (defesa em profundidade).
+    /// <paramref name="allowDeleteKey"/> é verdadeiro exatamente quando a ação vem de 'revert' ou de um backup: é
+    /// onde 'deleteKey' e o 'reinstall' de programas são aceitos (e onde o 'uninstall' de programas não é).
     /// </summary>
     public static IReadOnlyList<string> ValidateAction(TweakAction action, bool allowDeleteKey)
     {
@@ -215,6 +218,27 @@ public static partial class TweakValidator
         }
     }
 
+    /// <summary>
+    /// Todo 'uninstall' de programa no 'apply' precisa do 'reinstall' do mesmo programa no 'revert': sem isso, o
+    /// "Desfazer" pelo catálogo não teria como devolver o programa.
+    /// </summary>
+    private static void ValidateProgramPairs(Tweak tweak, List<string> errors)
+    {
+        for (var i = 0; i < tweak.Apply.Count; i++)
+        {
+            if (tweak.Apply[i] is not ProgramAction { Operation: ProgramOperation.Uninstall } uninstall
+                || !Enum.IsDefined(uninstall.Program))
+            {
+                continue;
+            }
+
+            if (!tweak.Revert.Any(r => r is ProgramAction { Operation: ProgramOperation.Reinstall } reinstall && reinstall.Program == uninstall.Program))
+            {
+                errors.Add(CoreText.Format("Validator.ProgramWithoutReinstall", i, ManagedPrograms.JsonName(uninstall.Program)));
+            }
+        }
+    }
+
     private static void ValidateOne(TweakAction? action, string where, bool allowDeleteKey, List<string> errors)
     {
         switch (action)
@@ -233,6 +257,9 @@ public static partial class TweakValidator
                 break;
             case AppxAction appx:
                 ValidateAppx(appx, where, errors);
+                break;
+            case ProgramAction program:
+                ValidateProgram(program, where, isRevert: allowDeleteKey, errors);
                 break;
             default:
                 errors.Add(CoreText.Format("Validator.UnsupportedActionType", where));
@@ -396,6 +423,32 @@ public static partial class TweakValidator
         else if (CriticalComponents.IsProtectedPackage(action.PackageName))
         {
             errors.Add(CoreText.Format("Validator.ProtectedPackage", where, action.PackageName));
+        }
+    }
+
+    private static void ValidateProgram(ProgramAction action, string where, bool isRevert, List<string> errors)
+    {
+        // A lista fechada vive no código: nenhum JSON acrescenta programas.
+        if (!Enum.IsDefined(action.Program) || !CriticalComponents.IsRemovableProgram(action.Program))
+        {
+            errors.Add(CoreText.Format("Validator.InvalidProgram", where));
+            return;
+        }
+
+        if (!Enum.IsDefined(action.Operation))
+        {
+            errors.Add(CoreText.Format("Validator.InvalidProgramOperation", where));
+            return;
+        }
+
+        // Desinstalar só no 'apply' (com backup antes); reinstalar só no 'revert' (ou ao restaurar um backup).
+        if (action.Operation == ProgramOperation.Uninstall && isRevert)
+        {
+            errors.Add(CoreText.Format("Validator.ProgramUninstallOnlyInApply", where));
+        }
+        else if (action.Operation == ProgramOperation.Reinstall && !isRevert)
+        {
+            errors.Add(CoreText.Format("Validator.ProgramReinstallOnlyInRevert", where));
         }
     }
 }
