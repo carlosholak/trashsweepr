@@ -1,3 +1,4 @@
+using TrashSweepr.Cleanup.Core;
 using TrashSweepr.Cleanup.Core.Abstractions;
 using TrashSweepr.Cleanup.Core.Backup;
 using TrashSweepr.Cleanup.Core.Execution;
@@ -227,6 +228,58 @@ internal sealed class FakeAppxService(List<string> mutations) : IAppxService
     }
 }
 
+/// <summary>Programas (Edge, OneDrive) em memória, com injeção de falhas iguais às do serviço real.</summary>
+internal sealed class FakeProgramService(List<string> mutations) : IProgramService
+{
+    public HashSet<ManagedProgram> Installed { get; } = [];
+
+    /// <summary>O desinstalador recusa (para o Edge: a trava regional da Microsoft). Nada muda.</summary>
+    public HashSet<ManagedProgram> FailRemove { get; } = [];
+
+    /// <summary>O instalador falha (ex.: sem winget e sem internet). Nada muda.</summary>
+    public HashSet<ManagedProgram> FailReinstall { get; } = [];
+
+    public int UninstallCalls { get; private set; }
+
+    public int ReinstallCalls { get; private set; }
+
+    public void Install(params ManagedProgram[] programs) => Installed.UnionWith(programs);
+
+    public Task<bool> IsInstalledAsync(ManagedProgram program, CancellationToken cancellationToken) =>
+        Task.FromResult(Installed.Contains(program));
+
+    public Task UninstallAsync(ManagedProgram program, CancellationToken cancellationToken)
+    {
+        UninstallCalls++;
+        if (FailRemove.Contains(program))
+        {
+            // Mesmas mensagens do ProgramService real.
+            throw new InvalidOperationException(program == ManagedProgram.Edge
+                ? CoreText.Format("Program.EdgeRemovalRefused", 93)
+                : CoreText.Format("Program.UninstallFailed", ManagedPrograms.DisplayName(program), 1));
+        }
+
+        mutations.Add($"program uninstall {ManagedPrograms.JsonName(program)}");
+        Installed.Remove(program);
+        return Task.CompletedTask;
+    }
+
+    public Task ReinstallAsync(ManagedProgram program, CancellationToken cancellationToken)
+    {
+        ReinstallCalls++;
+        if (FailReinstall.Contains(program))
+        {
+            throw new InvalidOperationException(program == ManagedProgram.Edge
+                ? CoreText.Get("Program.EdgeInstallerUnavailable")
+                : CoreText.Get("Program.OneDriveInstallerUnavailable"));
+        }
+
+        mutations.Add($"program reinstall {ManagedPrograms.JsonName(program)}");
+        Installed.Add(program);
+        return Task.CompletedTask;
+    }
+}
+
 internal sealed class FakeRestorePoints : IRestorePointService
 {
     public bool ProtectionEnabled { get; set; } = true;
@@ -283,6 +336,7 @@ internal sealed class FakeSystem : IDisposable
         Services = new FakeServiceManager(Mutations);
         Tasks = new FakeTaskScheduler(Mutations);
         Appx = new FakeAppxService(Mutations);
+        Programs = new FakeProgramService(Mutations);
         BackupDirectory = Path.Combine(Path.GetTempPath(), "trashsweepr-tests-" + Guid.NewGuid().ToString("N"));
         Backups = new BackupStore(BackupDirectory);
         Engine = new TweakEngine(Bundle, RestorePoints, Windows, Backups, Log, Time);
@@ -298,6 +352,8 @@ internal sealed class FakeSystem : IDisposable
     public FakeTaskScheduler Tasks { get; }
 
     public FakeAppxService Appx { get; }
+
+    public FakeProgramService Programs { get; }
 
     public FakeRestorePoints RestorePoints { get; } = new();
 
@@ -315,7 +371,7 @@ internal sealed class FakeSystem : IDisposable
 
     public TweakStateDetector Detector { get; }
 
-    public SystemServices Bundle => new(Registry, Services, Tasks, Appx);
+    public SystemServices Bundle => new(Registry, Services, Tasks, Appx, Programs);
 
     public static ExecutionOptions Real { get; } = new();
 
