@@ -7,11 +7,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CCF871F0-9B1
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrashSweepr", "src\trashsweepr\trashsweepr.csproj", "{D14D1369-71FD-427F-A95A-DDEF0659C748}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Limpeza", "Limpeza", "{E4C7878A-9D60-4D6D-B1F2-6AAB9352F67A}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Cleanup", "Cleanup", "{E4C7878A-9D60-4D6D-B1F2-6AAB9352F67A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limpeza.Core", "src\Limpeza\Core\Limpeza.Core.csproj", "{C1068844-230B-4964-A189-EC2BF48D0C94}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cleanup.Core", "src\Cleanup\Core\Cleanup.Core.csproj", "{C1068844-230B-4964-A189-EC2BF48D0C94}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Limpeza.Infrastructure", "src\Limpeza\Infrastructure\Limpeza.Infrastructure.csproj", "{6D3CE4E4-E269-426F-9CA8-046CA4EBE1DD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cleanup.Infrastructure", "src\Cleanup\Infrastructure\Cleanup.Infrastructure.csproj", "{6D3CE4E4-E269-426F-9CA8-046CA4EBE1DD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{443F7123-00DC-4EC9-8784-15050C773791}"
 EndProject
