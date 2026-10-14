@@ -1,7 +1,8 @@
 using System.Globalization;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Localization;
 
-namespace TrashSweepr.Limpeza.Services;
+namespace TrashSweepr.Cleanup.Services;
 
 /// <summary>Descreve em português, em uma linha, o que uma ação do catálogo faz.</summary>
 public static class ActionDescriber
