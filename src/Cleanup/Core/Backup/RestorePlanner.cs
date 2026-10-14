@@ -85,6 +85,14 @@ public static class RestorePlanner
                         ? new Built([new AppxReinstallOperation(appx.PackageName, OnlyIfMissing: true)])
                         : new Built([]));
 
+            case ProgramBackup program:
+                // Só reinstala o que estava instalado antes do tweak; se já tiver voltado (ex.: Windows Update), não faz nada.
+                return (
+                    new ProgramAction { Program = program.Program, Operation = ProgramOperation.Reinstall },
+                    () => program.WasInstalled
+                        ? new Built([new ProgramReinstallOperation(program.Program, OnlyIfMissing: true)])
+                        : new Built([]));
+
             default:
                 return (null, () => new Built([]));
         }
