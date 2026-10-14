@@ -1,5 +1,5 @@
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Models;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Models;
 using TrashSweepr.Tests.Helpers;
 using static TrashSweepr.Tests.Helpers.CatalogJson;
 
@@ -37,6 +37,34 @@ public class TweakValidationTests
         AssertRejected(Load(Tweak(id: id)), "Id inválido");
     }
 
+    [Fact]
+    public void Texts_need_english_or_brazilian_portuguese()
+    {
+        var english = Tweak().Replace("\"name\": \"Teste\"", "\"name\": { \"en\": \"Test\" }", StringComparison.Ordinal);
+        var spanish = Tweak().Replace("\"name\": \"Teste\"", "\"name\": { \"es\": \"Prueba\" }", StringComparison.Ordinal);
+
+        Assert.Single(Load(english).Catalog.Tweaks);
+        using (TestCulture.Use("pt-BR"))
+        {
+            AssertRejected(Load(spanish), "'name' precisa ter texto em en ou pt-BR");
+        }
+
+        using (TestCulture.Use("en-US"))
+        {
+            AssertRejected(Load(spanish), "'name' needs text in en or pt-BR");
+        }
+    }
+
+    [Fact]
+    public void Validation_messages_follow_the_interface_language()
+    {
+        using (TestCulture.Use("en-US"))
+        {
+            AssertRejected(Load(Tweak(id: "Bad Id")), "Invalid id: use lowercase letters");
+            AssertRejected(Load(Tweak(apply: Service("WinDefend"), revert: Service("WinDefend", "automatic"))), "apply[0]: the service 'WinDefend' is critical and protected.");
+        }
+    }
+
     [Theory]
     [InlineData("moderate")]
     [InlineData("advanced")]
@@ -61,7 +89,7 @@ public class TweakValidationTests
     {
         const string json = """
             { "id": "test.norevert", "name": "T", "description": "D", "category": "privacy", "risk": "safe",
-              "apply": [ { "type": "service", "name": "LimpezaTestSvc", "startType": "disabled" } ],
+              "apply": [ { "type": "service", "name": "CleanupTestSvc", "startType": "disabled" } ],
               "revert": [] }
             """;
 
@@ -302,12 +330,12 @@ public class TweakValidationTests
     }
 
     [Theory]
-    [InlineData(@"\Limpeza\Test\", "Task; calc")]
-    [InlineData(@"\Limpeza\Test\", "Task$(calc)")]
-    [InlineData(@"\Limpeza\Test\", "Task\"")]
-    [InlineData(@"\Limpeza\Test\", "")]
+    [InlineData(@"\Cleanup\Test\", "Task; calc")]
+    [InlineData(@"\Cleanup\Test\", "Task$(calc)")]
+    [InlineData(@"\Cleanup\Test\", "Task\"")]
+    [InlineData(@"\Cleanup\Test\", "")]
     [InlineData(@"Limpeza\Test\", "Task")]
-    [InlineData(@"\Limpeza\Test", "Task")]
+    [InlineData(@"\Cleanup\Test", "Task")]
     [InlineData(@"\Limpeza\..\Test\", "Task")]
     [InlineData(@"\Limpeza'; calc; '\", "Task")]
     public void Malformed_task_paths_and_names_are_rejected(string path, string name)
@@ -492,7 +520,7 @@ public class TweakValidationTests
     [InlineData(@"SOFTWARE\WOW6432Node\Microsoft\Windows Defender\Features", true)]
     [InlineData(@"SYSTEM\ControlSet003\Services\WinDefend", true)]
     [InlineData(@"SYSTEM\ControlSet001\Control\SafeBoot\Minimal", true)]
-    [InlineData(@"SOFTWARE\WOW6432Node\Limpeza\Test", false)]
+    [InlineData(@"SOFTWARE\WOW6432Node\Cleanup\Test", false)]
     [InlineData(@"SYSTEM\ControlSetX\Control\Lsa", false)]
     [InlineData(@"SOFTWARE\Microsoft\WOW6432Node\Windows Defender", false)]
     public void Protected_path_check_normalizes_aliases(string path, bool expected)
@@ -603,7 +631,7 @@ public class TweakValidationTests
     public void Delete_operations_reject_value_and_kind(string operation, string extraField)
     {
         const string guid = "{86ca1aa0-34aa-4e8b-a509-50c905bae2a2}";
-        var path = operation == "deleteKey" ? $@"Software\Classes\CLSID\{guid}" : @"Software\Limpeza\Test";
+        var path = operation == "deleteKey" ? $@"Software\Classes\CLSID\{guid}" : @"Software\Cleanup\Test";
         var name = operation == "deleteKey" ? "" : "\"name\": \"Value\",";
         var action = $$"""{ "type": "registry", "operation": "{{operation}}", "hive": "hkcu", "path": {{System.Text.Json.JsonSerializer.Serialize(path)}}, {{name}} {{extraField}} }""";
 
