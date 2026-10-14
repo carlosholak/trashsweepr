@@ -30,6 +30,12 @@ public class PowerShellScriptSyntaxTests
         PowerShellCalls.ReinstallAppx("A.B"),
         PowerShellCalls.GetRestoreProtection(),
         PowerShellCalls.CreateRestorePoint("descricao"),
+        PowerShellCalls.GetProgram(ManagedProgram.Edge),
+        PowerShellCalls.GetProgram(ManagedProgram.OneDrive),
+        PowerShellCalls.UninstallProgram(ManagedProgram.Edge),
+        PowerShellCalls.UninstallProgram(ManagedProgram.OneDrive),
+        PowerShellCalls.ReinstallProgram(ManagedProgram.Edge),
+        PowerShellCalls.ReinstallProgram(ManagedProgram.OneDrive),
     ];
 
     [Fact]
