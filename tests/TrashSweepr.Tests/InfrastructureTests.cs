@@ -1,10 +1,10 @@
 using System.Text.Json;
 using Microsoft.Win32;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Infrastructure;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Infrastructure;
 using TrashSweepr.Tests.Helpers;
-using RegistryHive = TrashSweepr.Limpeza.Core.Models.RegistryHive;
+using RegistryHive = TrashSweepr.Cleanup.Core.Models.RegistryHive;
 
 namespace TrashSweepr.Tests;
 
@@ -198,6 +198,41 @@ public class PowerShellBackedServiceTests
         Assert.Equal(PowerShellCalls.ReinstallAppx("x").Script, runner.Calls[1].Script);
     }
 
+    [Fact]
+    public async Task Missing_package_on_reinstall_is_reported_in_the_interface_language()
+    {
+        // O script só fala inglês; a mensagem que pede ação do usuário é trocada pela traduzida.
+        Assert.Contains($"throw '{PowerShellCalls.PackageNotFoundError}'", PowerShellCalls.ReinstallAppx("x").Script, StringComparison.Ordinal);
+        var service = new AppxService(FakeRunner.Failing(PowerShellCalls.PackageNotFoundError));
+
+        using (TestCulture.Use("pt-BR"))
+        {
+            var pt = await Assert.ThrowsAsync<InvalidOperationException>(() => service.ReinstallAsync("Contoso.Sample", Ct));
+            Assert.Equal("Pacote não encontrado no sistema. Reinstale pela Microsoft Store.", pt.Message);
+        }
+
+        using (TestCulture.Use("en-US"))
+        {
+            var en = await Assert.ThrowsAsync<InvalidOperationException>(() => service.ReinstallAsync("Contoso.Sample", Ct));
+            Assert.Equal("Package not found on this system. Reinstall it from the Microsoft Store.", en.Message);
+        }
+    }
+
+    [Fact]
+    public async Task Powershell_errors_from_core_follow_the_interface_language()
+    {
+        using (TestCulture.Use("en-US"))
+        {
+            var exit = await Assert.ThrowsAsync<InvalidOperationException>(() => new ServiceManager(FakeRunner.Failing(string.Empty, code: 5)).StopAsync("Foo", Ct));
+            var garbage = await Assert.ThrowsAsync<InvalidOperationException>(() => new ServiceManager(FakeRunner.Json("not json")).GetAsync("Foo", Ct));
+            var throttled = await new RestorePointService(FakeRunner.Json("""{"created":false}""")).CreateAsync("desc", Ct);
+
+            Assert.Equal("PowerShell exited with code 5.", exit.Message);
+            Assert.StartsWith("Unexpected response from PowerShell when querying the Foo service:", garbage.Message, StringComparison.Ordinal);
+            Assert.StartsWith("No new restore point was created", throttled.Detail, StringComparison.Ordinal);
+        }
+    }
+
     // ---------- Ponto de restauração ----------
 
     [Theory]
@@ -344,24 +379,24 @@ public class RealPowerShellRunnerTests
     }
 }
 
-/// <summary>Só roda com TRASHSWEEPR_INTEGRATION=1: escreve numa chave temporária em HKCU\Software\LimpezaTests.</summary>
+/// <summary>Só roda com TRASHSWEEPR_INTEGRATION=1: escreve numa chave temporária em HKCU\Software\CleanupTests.</summary>
 public sealed class IntegrationFactAttribute : FactAttribute
 {
     public IntegrationFactAttribute()
     {
         if (Environment.GetEnvironmentVariable("TRASHSWEEPR_INTEGRATION") != "1")
         {
-            Skip = "Teste de integração: defina TRASHSWEEPR_INTEGRATION=1 (usa uma chave temporária em HKCU\\Software\\LimpezaTests).";
+            Skip = "Teste de integração: defina TRASHSWEEPR_INTEGRATION=1 (usa uma chave temporária em HKCU\\Software\\CleanupTests).";
         }
     }
 }
 
 public sealed class RegistryServiceIntegrationTests : IDisposable
 {
-    private readonly string _root = @"Software\LimpezaTests\" + Guid.NewGuid().ToString("N");
+    private readonly string _root = @"Software\CleanupTests\" + Guid.NewGuid().ToString("N");
     private readonly RegistryService _registry = new();
 
-    public void Dispose() => Registry.CurrentUser.DeleteSubKeyTree(@"Software\LimpezaTests", throwOnMissingSubKey: false);
+    public void Dispose() => Registry.CurrentUser.DeleteSubKeyTree(@"Software\CleanupTests", throwOnMissingSubKey: false);
 
     [IntegrationFact]
     public void Round_trips_every_supported_type()
