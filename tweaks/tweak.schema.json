@@ -53,7 +53,8 @@
         { "$ref": "#/$defs/registryAction" },
         { "$ref": "#/$defs/serviceAction" },
         { "$ref": "#/$defs/scheduledTaskAction" },
-        { "$ref": "#/$defs/appxAction" }
+        { "$ref": "#/$defs/appxAction" },
+        { "$ref": "#/$defs/programAction" }
       ]
     },
     "registryAction": {
@@ -100,6 +101,17 @@
         "type": { "const": "appx" },
         "operation": { "enum": ["remove", "reinstall"] },
         "packageName": { "type": "string", "description": "Nome exato do pacote, sem curingas." }
+      }
+    },
+    "programAction": {
+      "description": "Desinstala ('uninstall', só em 'apply') ou reinstala ('reinstall', só em 'revert') um programa da lista fechada, pelo instalador oficial. Cada par programa/operação usa um script fixo do app: não há caminho nem comando no JSON. Um 'uninstall' exige o 'reinstall' do mesmo programa em 'revert'.",
+      "type": "object",
+      "required": ["type", "program", "operation"],
+      "additionalProperties": false,
+      "properties": {
+        "type": { "const": "program" },
+        "program": { "enum": ["edge", "onedrive"] },
+        "operation": { "enum": ["uninstall", "reinstall"] }
       }
     },
     "profile": {
