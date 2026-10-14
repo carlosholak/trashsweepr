@@ -1,9 +1,9 @@
-<UserControl x:Class="TrashSweepr.Limpeza.Views.LimpezaView"
+<UserControl x:Class="TrashSweepr.Cleanup.Views.CleanupView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:loc="clr-namespace:TrashSweepr.Limpeza.Services"
-             xmlns:conv="clr-namespace:TrashSweepr.Limpeza.Converters"
-             xmlns:vm="clr-namespace:TrashSweepr.Limpeza.ViewModels"
+             xmlns:loc="clr-namespace:TrashSweepr.Localization"
+             xmlns:conv="clr-namespace:TrashSweepr.Cleanup.Converters"
+             xmlns:vm="clr-namespace:TrashSweepr.Cleanup.ViewModels"
              Background="{StaticResource Bg}" Foreground="{StaticResource Text}" FontFamily="Segoe UI" FontSize="13">
 
     <UserControl.Resources>
@@ -254,9 +254,9 @@
 
                     <Border BorderBrush="{StaticResource Line}" BorderThickness="0,0,0,1" Padding="12,0">
                         <StackPanel Orientation="Horizontal">
-                            <RadioButton Style="{StaticResource Tab}" GroupName="LimpezaTab" Content="{loc:T Details.Title}"
+                            <RadioButton Style="{StaticResource Tab}" GroupName="CleanupTab" Content="{loc:T Details.Title}"
                                          IsChecked="{Binding IsDetailsTab, Mode=TwoWay}"/>
-                            <RadioButton Style="{StaticResource Tab}" GroupName="LimpezaTab" Content="{loc:T Details.Results}"
+                            <RadioButton Style="{StaticResource Tab}" GroupName="CleanupTab" Content="{loc:T Details.Results}"
                                          IsChecked="{Binding IsResultsTab, Mode=TwoWay}"/>
                         </StackPanel>
                     </Border>
