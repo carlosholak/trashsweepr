@@ -2,7 +2,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace TrashSweepr.Limpeza.Converters;
+namespace TrashSweepr.Cleanup.Converters;
 
 /// <summary>Visível quando o valor é nulo/vazio (ou o contrário, com <see cref="Invert"/>).</summary>
 public sealed class NullToVisibilityConverter : IValueConverter
