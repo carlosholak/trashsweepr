@@ -71,7 +71,7 @@ public sealed class DiskNode
     }
 
     public static DiskNode Aggregate(DiskNode parent, long size, int count) =>
-        new($"{Format.Count(count)} itens menores", parent, false) { Size = size, FileCount = count, IsAggregate = true };
+        new(Format.Plural(count, "Disk.SmallerItems"), parent, false) { Size = size, FileCount = count, IsAggregate = true };
 
     public static int BySizeDescending(DiskNode a, DiskNode b) => b.Size.CompareTo(a.Size);
 }
