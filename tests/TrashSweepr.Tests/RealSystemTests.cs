@@ -1,10 +1,10 @@
 using System.Reflection;
 using System.Text.Json;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Catalog;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Models;
-using TrashSweepr.Limpeza.Infrastructure;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Catalog;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Models;
+using TrashSweepr.Cleanup.Infrastructure;
 using TrashSweepr.Tests.Helpers;
 using Xunit.Abstractions;
 
@@ -98,7 +98,7 @@ public sealed class ReadOnlyRealSystemSmokeTests(ITestOutputHelper output)
     {
         var catalog = TweakCatalogLoader.LoadFromDirectory(RepoPaths.TweaksDirectory).Catalog;
         var temp = Path.Combine(Path.GetTempPath(), "trashsweepr-smoke-" + Guid.NewGuid().ToString("N"));
-        using var runtime = LimpezaRuntime.Create(new AppPaths(temp));
+        using var runtime = CleanupRuntime.Create(new AppPaths(temp));
 
         output.WriteLine($"Windows build {runtime.Windows.Build} ({runtime.Windows.DisplayVersion}), elevado: {runtime.Windows.IsElevated}");
         var states = await runtime.Detector.DetectAsync(catalog.Tweaks, CancellationToken.None);
@@ -118,7 +118,7 @@ public sealed class ReadOnlyRealSystemSmokeTests(ITestOutputHelper output)
     {
         var catalog = TweakCatalogLoader.LoadFromDirectory(RepoPaths.TweaksDirectory).Catalog;
         var temp = Path.Combine(Path.GetTempPath(), "trashsweepr-smoke-" + Guid.NewGuid().ToString("N"));
-        using var runtime = LimpezaRuntime.Create(new AppPaths(temp));
+        using var runtime = CleanupRuntime.Create(new AppPaths(temp));
 
         var batch = await runtime.Engine.ApplyAllAsync(catalog.Tweaks, new ExecutionOptions { DryRun = true }, null, CancellationToken.None);
 
