@@ -55,6 +55,12 @@ public static class BackupBuilder
             case AppxReinstallOperation add:
                 return await CaptureAppxAsync(system, add.PackageName, ct).ConfigureAwait(false);
 
+            case ProgramUninstallOperation uninstall:
+                return new ProgramBackup(uninstall.Program, await system.Programs.IsInstalledAsync(uninstall.Program, ct).ConfigureAwait(false));
+
+            case ProgramReinstallOperation reinstall:
+                return new ProgramBackup(reinstall.Program, await system.Programs.IsInstalledAsync(reinstall.Program, ct).ConfigureAwait(false));
+
             default:
                 // Parar/iniciar serviço e apagar chaves não têm estado próprio a salvar:
                 // o estado do serviço é capturado pela operação de tipo de inicialização.
