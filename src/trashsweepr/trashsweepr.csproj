@@ -9,7 +9,7 @@
     <AssemblyName>trashsweepr</AssemblyName>
     <RootNamespace>TrashSweepr</RootNamespace>
     <Product>trashsweepr</Product>
-    <Version>1.5.0</Version>
+    <Version>1.6.0</Version>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <NeutralLanguage>en</NeutralLanguage>
     <SatelliteResourceLanguages>pt</SatelliteResourceLanguages>
