@@ -1,4 +1,4 @@
-namespace TrashSweepr.Limpeza.Core.Models;
+namespace TrashSweepr.Cleanup.Core.Models;
 
 public sealed record Tweak
 {
