@@ -1,11 +1,11 @@
 using System.Runtime.Versioning;
-using TrashSweepr.Limpeza.Core.Abstractions;
-using TrashSweepr.Limpeza.Core.Backup;
-using TrashSweepr.Limpeza.Core.Execution;
-using TrashSweepr.Limpeza.Core.Logging;
-using TrashSweepr.Limpeza.Core.Operations;
+using TrashSweepr.Cleanup.Core.Abstractions;
+using TrashSweepr.Cleanup.Core.Backup;
+using TrashSweepr.Cleanup.Core.Execution;
+using TrashSweepr.Cleanup.Core.Logging;
+using TrashSweepr.Cleanup.Core.Operations;
 
-namespace TrashSweepr.Limpeza.Infrastructure;
+namespace TrashSweepr.Cleanup.Infrastructure;
 
 /// <summary>Onde o trashsweepr guarda backups e logs (%ProgramData%\trashsweepr\limpeza por padrão).</summary>
 public sealed record AppPaths(string DataDirectory)
@@ -22,9 +22,9 @@ public sealed record AppPaths(string DataDirectory)
 
 /// <summary>Tudo o que a interface precisa, já montado com as implementações reais.</summary>
 [SupportedOSPlatform("windows")]
-public sealed class LimpezaRuntime : IDisposable
+public sealed class CleanupRuntime : IDisposable
 {
-    private LimpezaRuntime(
+    private CleanupRuntime(
         AppPaths paths,
         IWindowsInfo windows,
         TweakEngine engine,
@@ -56,7 +56,7 @@ public sealed class LimpezaRuntime : IDisposable
 
     public BackupStore Backups { get; }
 
-    public static LimpezaRuntime Create(AppPaths? paths = null)
+    public static CleanupRuntime Create(AppPaths? paths = null)
     {
         paths ??= AppPaths.Default;
 
@@ -70,7 +70,7 @@ public sealed class LimpezaRuntime : IDisposable
         var engine = new TweakEngine(system, restorePoints, windows, backups, log);
         var detector = new TweakStateDetector(system, windows);
 
-        return new LimpezaRuntime(paths, windows, engine, detector, backups, restorePoints, log);
+        return new CleanupRuntime(paths, windows, engine, detector, backups, restorePoints, log);
     }
 
     public void Dispose() => Backups.Dispose();
