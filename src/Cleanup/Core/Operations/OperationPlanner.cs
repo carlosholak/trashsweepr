@@ -64,6 +64,11 @@ public static class OperationPlanner
                     ? [new AppxRemoveOperation(appx.PackageName)]
                     : [new AppxReinstallOperation(appx.PackageName)];
 
+            case ProgramAction program:
+                return program.Operation == ProgramOperation.Uninstall
+                    ? [new ProgramUninstallOperation(program.Program)]
+                    : [new ProgramReinstallOperation(program.Program)];
+
             default:
                 throw new InvalidOperationException(CoreText.Format("Engine.UnsupportedAction", action.GetType().Name));
         }
